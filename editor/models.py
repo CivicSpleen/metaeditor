@@ -9,10 +9,16 @@ class Source(models.Model):
     about = models.TextField()
     parent = models.ForeignKey('self', null=True)
     categories = models.ManyToManyField("Category")
+    
+    def __unicode__(self):
+        return self.name
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', null=True)
+
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = 'Categories'
@@ -20,6 +26,9 @@ class Category(models.Model):
 class Format(models.Model):
     name = models.CharField(max_length=100)
     parent = models.ForeignKey('self', null=True)
+
+    def __unicode__(self):
+        return self.name
 
 class Dataset(models.Model):
     title = models.CharField(max_length=200)
@@ -40,6 +49,9 @@ class Dataset(models.Model):
     has_direct_public_download = models.BooleanField(default=False)
     entry_time_minutes = models.IntegerField()
     user = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return self.title
 
 class File(models.Model):
     dataset = models.ForeignKey(Dataset)
