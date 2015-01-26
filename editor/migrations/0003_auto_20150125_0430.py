@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from editor.models import Source, Category
+from editor.models import Source, Category, Format
 
 # add root data for Source and Category model
 def add_root_data(apps, schema_editor):
@@ -20,11 +20,16 @@ def add_root_data(apps, schema_editor):
     source.save()
     source.categories.add(cat)
 
+    f = Format(name ="root", parent=None)
+    f.save()
+
 def revert(apps, schema_editor):
     for source in Source.objects.all():
         source.delete()
     for category in Category.objects.all():
         category.delete()
+    for f in Format.objects.all():
+        f.delete()
 
 class Migration(migrations.Migration):
 
@@ -35,3 +40,4 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(add_root_data, reverse_code=revert),
     ]
+
