@@ -1,0 +1,38 @@
+{% extends "editor/base.html" %}
+{% load mptt_tags %}
+
+{% block header %}
+  <div class="masthead">
+    <h3 class="text-muted">MetaEditor</h3>
+    <nav>
+      <ul class="nav nav-justified">
+        <li><a href="/">Home</a></li>
+        <li><a href="/editor/datasets">Dataset List</a></li>
+        <li><a href="/editor/sources">Source Hierarchy Editor</a></li>
+        <li class="active"><a href="/editor/formats">Formats Hierarchy Editor</a></li>
+        <li><a href="/editor/categories">Categories Hierarchy Editor</a></li>
+      </ul>
+    </nav>
+  </div>
+{% endblock %}
+
+
+{% block content %}
+
+<br/>
+
+<div id="tree"></div>
+
+<script>
+    function getTree() {
+        // Some logic to retrieve, or generate tree structure
+
+        var tree = [{{ data | safe }}];
+
+        return tree;
+    }
+
+    $('#tree').treeview({data: getTree()});
+</script>
+
+{% endblock %}

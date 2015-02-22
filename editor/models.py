@@ -1,21 +1,23 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Source(models.Model):
+from mptt.models import MPTTModel, TreeForeignKey
+
+class Source(MPTTModel):
     name = models.CharField(max_length=200)
     abbreviation = models.CharField(max_length=50)
     domain = models.CharField(max_length=50)
     homepage = models.URLField()
     about = models.TextField()
-    parent = models.ForeignKey('self', null=True)
+    parent = TreeForeignKey('self', null=True, blank=True)
     categories = models.ManyToManyField("Category")
     
     def __unicode__(self):
         return self.name
 
-class Category(models.Model):
+class Category(MPTTModel):
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey('self', null=True)
+    parent = TreeForeignKey('self', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -23,9 +25,12 @@ class Category(models.Model):
     class Meta:
         verbose_name_plural = 'Categories'
 
-class Format(models.Model):
+    class MPTTMeta:
+        order_insertion_by = ['name']
+
+class Format(MPTTModel):
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey('self', null=True)
+    parent = TreeForeignKey('self', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
