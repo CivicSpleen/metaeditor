@@ -8,7 +8,7 @@ import mptt.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('editor', '0003_auto_20150125_0430'),
+        ('editor', '0002_auto_20150124_1912'),
     ]
 
     operations = [

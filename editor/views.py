@@ -4,6 +4,7 @@ from django.template import RequestContext
 import json
 
 from editor.models import Category, Source, Format
+from editor import forms
 
 class IndexView(View):
     template_name = 'editor/index.html'
@@ -25,6 +26,13 @@ def categories(request):
     data = get_nodes(root)
 
     return render_to_response("editor/categories.html", {'data': json.dumps(data)}, context_instance=RequestContext(request))
+
+def add_category(request):
+    if request.method == 'POST':
+        pass
+    else:
+        form = forms.CategoryForm()
+        return render(request, 'editor/add_category.html', {'form': form})
 
 def sources(request):
     root = Source.objects.filter(level=0)[0]
