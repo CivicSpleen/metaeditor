@@ -1,6 +1,6 @@
 import json
 
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render, render_to_response, redirect
 from django.views.generic import View
 from django.template import RequestContext
 
@@ -65,7 +65,10 @@ def categories(request):
 def add_category(request):
     template = 'editor/add_category.html'
     if request.method == 'POST':
-        pass
+        form = forms.CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('category-list')
     else:
         form = forms.CategoryForm()
     return render_to_response(template, {'form': form}, context_instance=RequestContext(request))

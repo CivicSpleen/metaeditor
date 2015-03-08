@@ -36,6 +36,30 @@ class AddCategoryTest(TestCase):
         self.assertIn('name="name"', resp.content)
         self.assertIn('name="parent"', resp.content)
 
+    def test_creates_new_root_category_on_post(self):
+        post_params = {
+            'name': 'Category1'
+        }
+        resp = self.client.post(self.url, post_params)
+        self.assertEqual(resp.status_code, 302)
+        # TODO: check flash message
+        self.assertEqual(
+            Category.objects.filter(name='Category1', parent__isnull=True).count(),
+            1)
+
+    def test_sets_given_category_as_root_of_new_category(self):
+        categ1 = Category.objects.create(name='Category1')
+        post_params = {
+            'name': 'Category2',
+            'parent': categ1.id
+        }
+        resp = self.client.post(self.url, post_params)
+        self.assertEqual(resp.status_code, 302)
+        # TODO: check flash message
+        self.assertEqual(
+            Category.objects.filter(name='Category2', parent=categ1).count(),
+            1)
+
 
 class CategoriesTest(TestCase):
     def setUp(self):
