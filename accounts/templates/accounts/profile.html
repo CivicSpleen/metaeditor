@@ -1,5 +1,30 @@
 {% extends "editor/base.html" %}
+{% load accounts_tags %}
 
 {% block content %}
-
+<div>
+    <ul>
+        <li>First name: {{ user.first_name }}</li>
+        <li>Last name: {{ user.last_name }}</li>
+        <li>Email: {{ user.email }}</li>
+    </ul>
+    <h2>Authentications</h2>
+    {% for sublist in available_backends|social_backends %}
+        <div>
+            {% for name, backend in sublist %}
+                {% associated backend %}
+                {% if association %}
+                    <form action="{% url "social:disconnect_individual" backend=association.provider association_id=association.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Disconnect {{ backend|backend_name }}</button>
+                    </form>
+                {% else %}
+                    <a name="{{ backend|backend_class }}" href="{% url "social:begin" backend=name %}">
+                        {{ backend|backend_name }}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
 {% endblock %}

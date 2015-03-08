@@ -131,6 +131,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 AUTHENTICATION_BACKENDS = (
     'social.backends.facebook.FacebookOAuth2',
     'social.backends.google.GoogleOAuth2',
+
+    # keep django's model backend to allow admin login
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 # facebook credentials
