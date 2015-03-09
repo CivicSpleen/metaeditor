@@ -1,6 +1,11 @@
 {% extends "editor/base.html" %}
 
 {% block content %}
+<form method="get">
+    <label for="id_query">Filter</label>
+    <input id="id_query" type="text" name="query" />
+    <input type="submit" />
+</form>
 <table border="1">
     <tr>
         <th>Title</th>

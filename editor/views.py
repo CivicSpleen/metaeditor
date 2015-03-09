@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
+
 from django.shortcuts import render
 
 from django.views.generic import View
@@ -97,3 +99,14 @@ class FormatUpdate(BaseUpdateView):
 
 class DatasetList(ListView):
     model = Dataset
+
+    def get_queryset(self, *args, **kwargs):
+        qs = super(DatasetList, self).get_queryset(*args, **kwargs)
+        query = self.request.GET.get('query')
+        if query:
+            qs = qs.filter(
+                Q(title__icontains=query)
+                | Q(source__name__icontains=query)
+                | Q(page__icontains=query))
+
+        return qs.select_related('source')

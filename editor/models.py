@@ -101,6 +101,9 @@ class Dataset(models.Model):
         (STATE, 'State'),
         (STATE_AND_COUNTY, 'State and county'))
 
+    source = models.ForeignKey(
+        Source,
+        help_text='Source of the dataset.')
     title = models.CharField(
         max_length=200,
         help_text='The title of the dataset.')
@@ -147,7 +150,7 @@ class Dataset(models.Model):
 class File(models.Model):
     dataset = models.ForeignKey(Dataset)
     file_format = models.ForeignKey(Format)
-    f = models.FileField()
+    f = models.FileField(upload_to='uploads')
 
     class Meta:
         abstract = True

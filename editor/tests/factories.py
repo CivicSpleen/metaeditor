@@ -67,6 +67,7 @@ class DatasetFactory(factory.django.DjangoModelFactory):
         model = Dataset
 
     title = factory.Sequence(lambda n: 'Test dataset %03d' % n)
+    source = factory.SubFactory(SourceFactory)
     variant = factory.Sequence(lambda n: 'Test dataset %03d variant' % n)
     start_year = 1976
     end_year = 1976

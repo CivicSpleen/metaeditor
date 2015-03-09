@@ -96,6 +96,15 @@ class SourceListTest(TestCase):
         self.assertIn(source1.name, resp.content)
         self.assertIn(source2.name, resp.content)
 
+    def test_filters_by_title(self):
+        source1 = SourceFactory(title='abc 1')
+        source2 = SourceFactory(title='abc 2')
+        url = '%s?title=1'
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(source1.name, resp.content)
+        self.assertNotIn(source2.name, resp.content)
+
 
 class FormatListTest(TestCase):
     def setUp(self):
@@ -115,14 +124,42 @@ class DatasetListTest(TestCase):
     def setUp(self):
         self.url = reverse('dataset-list')
 
-    def test_renders_existing_datasets(self):
+    def test_all_existing_datasets_are_listed(self):
         dataset1 = DatasetFactory()
         dataset2 = DatasetFactory()
         dataset3 = DatasetFactory()
         resp = self.client.get(self.url)
+        self.assertEqual(resp.context['object_list'].count(), 3)
         self.assertIn(
             dataset1.title, resp.content)
         self.assertIn(
             dataset2.title, resp.content)
         self.assertIn(
             dataset3.title, resp.content)
+
+    def test_filters_by_title(self):
+        ds1 = DatasetFactory(title='abcde 1')
+        DatasetFactory(title='abcde 2')
+        url = '%s?query=de 1' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'].count(), 1)
+        self.assertEqual(resp.context['object_list'][0], ds1)
+
+    def test_filters_by_source_name(self):
+        ds1 = DatasetFactory(source__name='abcde 1')
+        DatasetFactory(source__name='abcde 2')
+        url = '%s?query=de 1' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'].count(), 1)
+        self.assertEqual(resp.context['object_list'][0], ds1)
+
+    def test_filters_by_page(self):
+        ds1 = DatasetFactory(page='abcde 1')
+        DatasetFactory(page='abcde 2')
+        url = '%s?query=de 1' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'].count(), 1)
+        self.assertEqual(resp.context['object_list'][0], ds1)
