@@ -1,2 +1,2 @@
 # metaeditor
-A Django application for eidting metadata of public datasets. 
+A Django application for editing metadata of public datasets.
