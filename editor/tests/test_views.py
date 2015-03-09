@@ -33,6 +33,17 @@ class CategoryCreateTest(TestCase):
     def setUp(self):
         self.url = reverse('category-create')
 
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+
+    def test_post_is_forbidden_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
+
     def test_renders_category_form_on_get(self):
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)

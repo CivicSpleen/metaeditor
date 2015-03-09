@@ -3,6 +3,7 @@
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseForbidden
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
@@ -30,6 +31,11 @@ class BaseTreeView(ListView):
 class BaseCreateView(CreateView):
     template_name = 'editor/tree.html'
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden('Forbidden for anonymous users.')
+        return super(BaseCreateView, self).post(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
@@ -48,6 +54,11 @@ class BaseCreateView(CreateView):
 
 class BaseUpdateView(UpdateView):
     template_name = 'editor/tree.html'
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden('Forbidden for anonymous users.')
+        return super(BaseUpdateView, self).post(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
