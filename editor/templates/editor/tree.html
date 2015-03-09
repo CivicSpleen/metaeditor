@@ -25,7 +25,15 @@
                 <input type="submit" />
             </form>
             {% if form.instance and form.instance.id %}
-            <a href="{{ create_url }}?parent={{ form.instance.id }}" title="Add new child">Add child</a>
+                <a href="{{ create_url }}?parent={{ form.instance.id }}" title="Add new child">
+                    Add child
+                </a>
+                {% if create_dataset_url %}
+                    {# source special case #}
+                    | <a href="{{ create_dataset_url }}" title="Add new dataset">
+                        Add dataset
+                    </a>
+                {% endif %}
             {% endif %}
         </div>
     {% else %}

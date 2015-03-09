@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
+from django.core.urlresolvers import reverse
 from django.db.models import Q
-
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
+from editor.forms import DatasetForm
 from editor.models import Category, Source, Format, Dataset
 
 
@@ -82,6 +82,12 @@ class SourceUpdate(BaseUpdateView):
     model = Source
     fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
 
+    def get_context_data(self, **kwargs):
+        ctx = super(SourceUpdate, self).get_context_data(**kwargs)
+        ctx['create_dataset_url'] = reverse(
+            'dataset-create', kwargs={'source_pk': self.object.pk})
+        return ctx
+
 
 class FormatList(BaseTreeView):
     model = Format
@@ -110,3 +116,31 @@ class DatasetList(ListView):
                 | Q(page__icontains=query))
 
         return qs.select_related('source')
+
+
+class DatasetCreate(CreateView):
+    model = Dataset
+    form_class = DatasetForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.source = get_object_or_404(Source, pk=self.kwargs['source_pk'])
+        return super(DatasetCreate, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        form_kwargs = self.get_form_kwargs()
+        form_kwargs['source'] = self.source
+        return form_class(self.request.user, **form_kwargs)
+
+
+class DatasetUpdate(UpdateView):
+    model = Dataset
+    form_class = DatasetForm
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        return form_class(self.request.user, **self.get_form_kwargs())

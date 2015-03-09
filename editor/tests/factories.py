@@ -71,8 +71,8 @@ class DatasetFactory(factory.django.DjangoModelFactory):
     variant = factory.Sequence(lambda n: 'Test dataset %03d variant' % n)
     start_year = 1976
     end_year = 1976
-    coverage = Dataset.COUNTY
-    region = Dataset.COUNTY
+    coverage = Dataset.STATE
+    region = Dataset.STATE
     page = factory.Sequence(lambda n: 'Test dataset %03d page' % n)
     download_page = factory.Sequence(lambda n: 'Test dataset %03d download page' % n)
     contacts = factory.Sequence(lambda n: 'Test dataset %03d contacts' % n)

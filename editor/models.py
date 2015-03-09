@@ -146,6 +146,9 @@ class Dataset(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('dataset-update', kwargs={'pk': self.id})
+
 
 class File(models.Model):
     dataset = models.ForeignKey(Dataset)
