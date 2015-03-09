@@ -2,36 +2,35 @@
 {% load mptt_tags %}
 
 {% block content %}
-<ul style="float:left;width:40%;">
-    {% recursetree nodes %}
-        <li>
-            {% if not node.is_leaf_node %}
-                <a href="#FIXME:">+</a>
+    <ul style="float:left;width:40%;">
+        {% recursetree nodes %}
+            <li>
+                {% if not node.is_leaf_node %}
+                    <a href="#FIXME:">+</a>
+                {% endif %}
+                <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+                {% if not node.is_leaf_node %}
+                    <ul class="children">
+                        {{ children }}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endrecursetree %}
+    </ul>
+    {% if form %}
+        <div style="float:left;width:59%;overflow:auto;">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_ul }}
+                <input type="submit" />
+            </form>
+            {% if form.instance and form.instance.id %}
+            <a href="{{ create_url }}?parent={{ form.instance.id }}" title="Add new child">Add child</a>
             {% endif %}
-            <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    {{ children }}
-                </ul>
-            {% endif %}
-        </li>
-    {% endrecursetree %}
-</ul>
-{% if form %}
-    <div style="float:left;width:59%;overflow:auto;">
-        <form method="POST">
-            {% csrf_token %}
-            {{ form.as_ul }}
-            <input type="submit" />
-        </form>
-        {% if form.instance and form.instance.id %}
-        <a href="{{ create_url }}?parent={{ form.instance.id }}" title="Add new child">Add</a>
-        {% endif %}
-    </div>
-{% else %}
-    {# it is the whole tree, no node is selected. #}
-    <a href="{{ create_url }}" title="Create new root node">Create root node</a>
-{% endif %}
-<div style="clear:both;"></div>
-
+        </div>
+    {% else %}
+        {# it is the whole tree, no node is selected. #}
+        <a href="{{ create_url }}" title="Create new root node">Create root node</a>
+    {% endif %}
+    <div style="clear:both;"></div>
 {% endblock %}
