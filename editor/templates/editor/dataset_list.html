@@ -16,7 +16,11 @@
     </tr>
     {% for dataset in object_list %}
         <tr>
-            <td>{{ dataset.title }}</td>
+            <td>
+                <a title="Edit dataset" href="{{ dataset.get_absolute_url }}">
+                    {{ dataset.title }}
+                </a>
+            </td>
             <td>{{ dataset.source }}</td>
             <td>{{ dataset.page }}</td>
             <td>{{ dataset.datafile_set.count }}</td>
