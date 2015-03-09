@@ -34,7 +34,7 @@
             {% if user.is_authenticated %}
                 <li>
                     <a href="{% url 'accounts:profile' %}" title="show profile">
-                        {{ user.username }}
+                        {{ user.get_full_name }}
                     </a>
                 </li>
                 <li>
