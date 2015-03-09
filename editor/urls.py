@@ -5,7 +5,7 @@ from editor import views
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view(), name='index'),
 
-    #url(r'^datasets/$', "editor.views.datasets"),
+    url(r'^dataset/$', views.DatasetList.as_view(), name='dataset-list'),
 
     url(r'^category/$', views.CategoryList.as_view(), name='category-list'),
     url(r'^category/create/$', views.CategoryCreate.as_view(), name='category-create'),

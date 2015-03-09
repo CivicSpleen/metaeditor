@@ -3,7 +3,9 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from editor.models import Category, Source, Format
+from editor.models import Category
+
+from editor.tests.factories import DatasetFactory, CategoryFactory, SourceFactory, FormatFactory
 
 
 class IndexViewTest(TestCase):
@@ -37,12 +39,8 @@ class CategoryCreateTest(TestCase):
         self.assertIn('name="parent"', resp.content)
 
     def test_renders_full_tree_on_get(self):
-        categ1 = Category.objects.create(
-            name='Test category 1')
-
-        categ2 = Category.objects.create(
-            name='Test category 2',
-            parent=categ1)
+        categ1 = CategoryFactory()
+        categ2 = CategoryFactory()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(categ1.name, resp.content)
@@ -60,7 +58,7 @@ class CategoryCreateTest(TestCase):
             1)
 
     def test_sets_given_category_as_root_of_new_category(self):
-        categ1 = Category.objects.create(name='Category1')
+        categ1 = CategoryFactory()
         post_params = {
             'name': 'Category2',
             'parent': categ1.id
@@ -78,12 +76,8 @@ class CategoryListTest(TestCase):
         self.url = reverse('category-list')
 
     def test_renders_category_tree_on_get(self):
-        categ1 = Category.objects.create(
-            name='Test category 1')
-
-        categ2 = Category.objects.create(
-            name='Test category 2',
-            parent=categ1)
+        categ1 = CategoryFactory()
+        categ2 = CategoryFactory()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(categ1.name, resp.content)
@@ -95,12 +89,8 @@ class SourceListTest(TestCase):
         self.url = reverse('source-list')
 
     def test_renders_category_tree_on_get(self):
-        source1 = Source.objects.create(
-            name='Test source 1')
-
-        source2 = Source.objects.create(
-            name='Test source 2',
-            parent=source1)
+        source1 = SourceFactory()
+        source2 = SourceFactory()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(source1.name, resp.content)
@@ -112,13 +102,27 @@ class FormatListTest(TestCase):
         self.url = reverse('format-list')
 
     def test_renders_format_tree_on_get(self):
-        format1 = Format.objects.create(
-            name='Test format 1')
-
-        format2 = Format.objects.create(
-            name='Test format 2',
-            parent=format1)
+        format1 = FormatFactory()
+        format2 = FormatFactory()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn(format1.name, resp.content)
         self.assertIn(format2.name, resp.content)
+
+
+class DatasetListTest(TestCase):
+
+    def setUp(self):
+        self.url = reverse('dataset-list')
+
+    def test_renders_existing_datasets(self):
+        dataset1 = DatasetFactory()
+        dataset2 = DatasetFactory()
+        dataset3 = DatasetFactory()
+        resp = self.client.get(self.url)
+        self.assertIn(
+            dataset1.title, resp.content)
+        self.assertIn(
+            dataset2.title, resp.content)
+        self.assertIn(
+            dataset3.title, resp.content)

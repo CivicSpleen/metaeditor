@@ -1,0 +1,22 @@
+{% extends "editor/base.html" %}
+
+{% block content %}
+<table border="1">
+    <tr>
+        <th>Title</th>
+        <th>Source</th>
+        <th>Dataset page URL</th>
+        <th>Number of datafiles</th>
+        <th>Number of documents</th>
+    </tr>
+    {% for dataset in object_list %}
+        <tr>
+            <td>{{ dataset.title }}</td>
+            <td>{{ dataset.source }}</td>
+            <td>{{ dataset.page }}</td>
+            <td>{{ dataset.datafile_set.count }}</td>
+            <td>{{ dataset.documentfile_set.count }}</td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

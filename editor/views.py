@@ -6,7 +6,7 @@ from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-from editor.models import Category, Source, Format
+from editor.models import Category, Source, Format, Dataset
 
 
 class IndexView(View):
@@ -93,3 +93,7 @@ class FormatCreate(BaseCreateView):
 class FormatUpdate(BaseUpdateView):
     model = Format
     fields = ['name', 'parent']
+
+
+class DatasetList(ListView):
+    model = Dataset

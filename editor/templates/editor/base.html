@@ -62,7 +62,10 @@
             {% url 'source-list' as source_list_url %}
             {% url 'format-list' as format_list_url %}
             {% url 'category-list' as category_list_url %}
-            <li><a href="/">Dataset List</a></li>
+            {% url 'dataset-list' as dataset_list_url %}
+            <li {% if request.path == dataset_list_url %}class="active"{% endif %}>
+                <a href={% url "dataset-list" %}>Dataset List</a>
+            </li>
             <li {% if request.path == source_list_url %}class="active"{% endif %}>
                 <a href={% url "source-list" %}>Source Hierarchy Editor</a>
             </li>
