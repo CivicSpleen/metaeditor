@@ -1,0 +1,35 @@
+{% extends "editor/base.html" %}
+
+{% block content %}
+    <h2>Note: If you want to upload many files do it one by one.</h2>
+    {# TODO: implement many files uploading #}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <input type="submit" />
+    </form>
+
+    {% if form.instance and form.instance.id %}
+        <h3>Data files</h3>
+        <ul>
+            {% for datafile in form.instance.datafile_set.all %}
+                <li>
+                    <a title="Download file" href="{{ datafile.f.url }}">
+                        {{ datafile.f.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <h3>Documents</h3>
+        <ul>
+            {% for document in form.instance.documentfile_set.all %}
+            <li>
+                <a title="Download file" href="{{ document.f.url }}">
+                    {{ document.f.name }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
