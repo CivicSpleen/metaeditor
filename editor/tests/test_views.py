@@ -3,7 +3,7 @@
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from editor.models import Category
+from editor.models import Category, Source, Format
 
 
 class IndexViewTest(TestCase):
@@ -26,15 +26,27 @@ class IndexViewTest(TestCase):
         self.assertIn(reverse('category-list'), resp.content)
 
 
-class AddCategoryTest(TestCase):
+class CategoryCreateTest(TestCase):
     def setUp(self):
-        self.url = reverse('add-category')
+        self.url = reverse('category-create')
 
     def test_renders_category_form_on_get(self):
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
         self.assertIn('name="name"', resp.content)
         self.assertIn('name="parent"', resp.content)
+
+    def test_renders_full_tree_on_get(self):
+        categ1 = Category.objects.create(
+            name='Test category 1')
+
+        categ2 = Category.objects.create(
+            name='Test category 2',
+            parent=categ1)
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(categ1.name, resp.content)
+        self.assertIn(categ2.name, resp.content)
 
     def test_creates_new_root_category_on_post(self):
         post_params = {
@@ -61,34 +73,52 @@ class AddCategoryTest(TestCase):
             1)
 
 
-class CategoriesTest(TestCase):
+class CategoryListTest(TestCase):
     def setUp(self):
         self.url = reverse('category-list')
 
-    def test_renders_categories_on_get(self):
+    def test_renders_category_tree_on_get(self):
+        categ1 = Category.objects.create(
+            name='Test category 1')
+
+        categ2 = Category.objects.create(
+            name='Test category 2',
+            parent=categ1)
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
-        # Categories tree will be added using js, so checking for placeholder only.
-        self.assertIn('id="tree"', resp.content)
+        self.assertIn(categ1.name, resp.content)
+        self.assertIn(categ2.name, resp.content)
 
 
-class SourcesTest(TestCase):
+class SourceListTest(TestCase):
     def setUp(self):
         self.url = reverse('source-list')
 
-    def test_renders_categories_on_get(self):
+    def test_renders_category_tree_on_get(self):
+        source1 = Source.objects.create(
+            name='Test source 1')
+
+        source2 = Source.objects.create(
+            name='Test source 2',
+            parent=source1)
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
-        # Source tree will be added using js, so checking for placeholder only.
-        self.assertIn('id="tree"', resp.content)
+        self.assertIn(source1.name, resp.content)
+        self.assertIn(source2.name, resp.content)
 
 
-class FormatsTest(TestCase):
+class FormatListTest(TestCase):
     def setUp(self):
         self.url = reverse('format-list')
 
-    def test_renders_categories_on_get(self):
+    def test_renders_format_tree_on_get(self):
+        format1 = Format.objects.create(
+            name='Test format 1')
+
+        format2 = Format.objects.create(
+            name='Test format 2',
+            parent=format1)
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 200)
-        # Format tree will be added using js, so checking for placeholder only.
-        self.assertIn('id="tree"', resp.content)
+        self.assertIn(format1.name, resp.content)
+        self.assertIn(format2.name, resp.content)

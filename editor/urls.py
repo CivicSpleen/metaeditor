@@ -7,9 +7,15 @@ urlpatterns = patterns('',
 
     #url(r'^datasets/$', "editor.views.datasets"),
 
-    url(r'^categories/$', 'editor.views.categories', name='category-list'),
-    url(r'^add_category/$', 'editor.views.add_category', name='add-category'),
+    url(r'^category/$', views.CategoryList.as_view(), name='category-list'),
+    url(r'^category/create/$', views.CategoryCreate.as_view(), name='category-create'),
+    url(r'^category/(?P<pk>[0-9]+)/$', views.CategoryUpdate.as_view(), name='category-update'),
 
-    url(r'^sources/$', 'editor.views.sources', name='source-list'),
-    url(r'^formats/$', 'editor.views.formats', name='format-list')
+    url(r'^source/$', views.SourceList.as_view(), name='source-list'),
+    url(r'^source/create/$', views.SourceCreate.as_view(), name='source-create'),
+    url(r'^source/(?P<pk>[0-9]+)/$', views.SourceUpdate.as_view(), name='source-update'),
+
+    url(r'^format/$', views.FormatList.as_view(), name='format-list'),
+    url(r'^format/create/$', views.FormatCreate.as_view(), name='format-create'),
+    url(r'^format/(?P<pk>[0-9]+)/$', views.FormatUpdate.as_view(), name='format-update'),
 )

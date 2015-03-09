@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey
+
 
 class Source(MPTTModel):
     name = models.CharField(max_length=200)
@@ -11,9 +15,17 @@ class Source(MPTTModel):
     about = models.TextField()
     parent = TreeForeignKey('self', null=True, blank=True)
     categories = models.ManyToManyField("Category")
-    
+
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('source-update', kwargs={'pk': self.id})
+
+    @staticmethod
+    def get_create_url():
+        return reverse('source-create')
+
 
 class Category(MPTTModel):
     name = models.CharField(max_length=100)
@@ -28,12 +40,28 @@ class Category(MPTTModel):
     class MPTTMeta:
         order_insertion_by = ['name']
 
+    def get_absolute_url(self):
+        return reverse('category-update', kwargs={'pk': self.id})
+
+    @staticmethod
+    def get_create_url():
+        return reverse('category-create')
+
+
 class Format(MPTTModel):
     name = models.CharField(max_length=100)
     parent = TreeForeignKey('self', null=True, blank=True)
 
     def __unicode__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('format-update', kwargs={'pk': self.id})
+
+    @staticmethod
+    def get_create_url():
+        return reverse('format-create')
+
 
 class Dataset(models.Model):
     title = models.CharField(max_length=200)
@@ -58,16 +86,19 @@ class Dataset(models.Model):
     def __unicode__(self):
         return self.title
 
+
 class File(models.Model):
     dataset = models.ForeignKey(Dataset)
     file_format = models.ForeignKey(Format)
     f = models.FileField()
+
     class Meta:
         abstract = True
+
 
 class DataFile(File):
     pass
 
+
 class DocumentFile(File):
     pass
-
