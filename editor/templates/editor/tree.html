@@ -2,22 +2,46 @@
 {% load mptt_tags %}
 
 {% block content %}
+    <script>
+    $(function(){
+        $('#tree')
+            .on('select_node.jstree', function (e, node) {
+                window.location.href = node.node.a_attr.href;
+            })
+        .jstree({
+            "plugins": ["search"]});
+
+        var to = false;
+        $("#query").keyup(function () {
+            if(to) {
+                clearTimeout(to);
+            }
+            to = setTimeout(function () {
+                var v = $("#query").val();
+                $("#tree").jstree(true).search(v);
+        }, 250);
+        });
+    });
+    </script>
     <br />
-    <ul style="float:left;width:40%;">
-        {% recursetree nodes %}
-            <li>
-                {% if not node.is_leaf_node %}
-                    <a href="#FIXME:">+</a>
-                {% endif %}
-                <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
-                {% if not node.is_leaf_node %}
-                    <ul class="children">
-                        {{ children }}
-                    </ul>
-                {% endif %}
-            </li>
-        {% endrecursetree %}
-    </ul>
+
+    <div style="float:left;width:40%;">
+        <label for="query">Search:</label> <input type="text" id="query"/>
+        <div id="tree">
+            <ul>
+                {% recursetree nodes %}
+                    <li {% if selected_node and selected_node == node %}data-jstree='{"opened":true,"selected":true}'{% endif %}>
+                        <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+                        {% if not node.is_leaf_node %}
+                            <ul class="children">
+                                {{ children }}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% endrecursetree %}
+            </ul>
+        </div>
+    </div>
     {% if user.is_authenticated %}
         {% if form %}
             <div style="float:left;width:59%;overflow:auto;">

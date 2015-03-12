@@ -39,6 +39,13 @@ class BaseCreateView(CreateView):
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
+        # TODO: remove copy/paste. See get_initial method.
+        try:
+            parent_pk = int(self.request.GET.get('parent', 0))
+            kwargs['selected_node'] = self.model.objects.get(pk=parent_pk)
+        except (TypeError, ValueError, self.model.DoesNotExist):
+            # TODO: add warning to logger because it is client side bug.
+            pass
         return kwargs
 
     def get_initial(self):
@@ -63,6 +70,7 @@ class BaseUpdateView(UpdateView):
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
+        kwargs['selected_node'] = self.object
         return kwargs
 
 
