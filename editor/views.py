@@ -134,6 +134,11 @@ class DatasetList(ListView):
                 | Q(source__name__icontains=query)
                 | Q(page__icontains=query))
 
+        order_by = self.request.GET.get('o')
+        if order_by not in ('title', 'source__name', 'page'):
+            order_by = None
+        if order_by:
+            qs = qs.order_by(order_by)
         return qs.select_related('source')
 
 

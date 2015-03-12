@@ -8,11 +8,11 @@
 </form>
 <table border="1">
     <tr>
-        <th>Title</th>
-        <th>Source</th>
-        <th>Dataset page URL</th>
-        <th>Number of datafiles</th>
-        <th>Number of documents</th>
+        <th><a href="?o=title">Title</a></th>
+        <th><a href="?o=source_name">Source</a></th>
+        <th><a href="?o=page">Dataset page URL</a></th>
+        <th><a href="?o=datafiles">Number of datafiles</a></th>
+        <th><a href="?o=documents">Number of documents</a></th>
     </tr>
     {% for dataset in object_list %}
         <tr>

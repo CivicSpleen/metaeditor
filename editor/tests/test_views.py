@@ -150,6 +150,7 @@ class DatasetListTest(TestCase):
         self.assertEqual(resp.context['object_list'][0], ds1)
 
     def test_filters_by_source_name(self):
+        # TODO: refactor all filters.
         ds1 = DatasetFactory(source__name='abcde 1')
         DatasetFactory(source__name='abcde 2')
         url = '%s?query=de 1' % self.url
@@ -167,6 +168,33 @@ class DatasetListTest(TestCase):
         self.assertEqual(resp.context['object_list'].count(), 1)
         self.assertEqual(resp.context['object_list'][0], ds1)
 
+    def test_sorts_by_title(self):
+        # TODO: refactor all sorts
+        ds1 = DatasetFactory(title='abcde 1')
+        ds2 = DatasetFactory(title='abcde 2')
+        url = '%s?o=title' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'][0], ds1)
+        self.assertEqual(resp.context['object_list'][1], ds2)
+
+    def test_sorts_by_source_title(self):
+        ds1 = DatasetFactory(source__name='abcde 3')
+        ds2 = DatasetFactory(source__name='abcde 2')
+        url = '%s?o=source__name' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'][0], ds2)
+        self.assertEqual(resp.context['object_list'][1], ds1)
+
+    def test_sorts_by_page(self):
+        ds1 = DatasetFactory(page='abcde 3')
+        ds2 = DatasetFactory(page='abcde 2')
+        url = '%s?o=page' % self.url
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.context['object_list'][0], ds2)
+        self.assertEqual(resp.context['object_list'][1], ds1)
 
 class DatasetCreateTest(TestCase):
     def setUp(self):
