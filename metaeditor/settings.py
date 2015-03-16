@@ -32,6 +32,7 @@ INSTALLED_APPS = (
     # 3-d party
     'mptt',
     'social.apps.django_app.default',
+    'bootstrap3',
 
     # metaeditor
     'editor',
