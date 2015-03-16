@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load editor_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +82,19 @@
           </ul>
         </nav>
       </div>
+
+      {% if messages %}
+      <br />
+      <div class="messages">
+          {% for message in messages %}
+          <div class="alert {{ message.level|to_bootstrap }}">
+              {{ message }}
+          </div>
+          {% endfor %}
+      </div>
+      <div style="clear:both;"></div>
+      {% endif %}
+
       {% block content %}
 
       {% endblock %}

@@ -2,6 +2,7 @@
 import json
 
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
@@ -33,6 +34,7 @@ class BaseTreeView(ListView):
 
 
 class BaseCreateView(CreateView):
+    # TODO: add messages
     template_name = 'editor/tree.html'
 
     def post(self, request, *args, **kwargs):
@@ -64,6 +66,7 @@ class BaseCreateView(CreateView):
 
 
 class BaseUpdateView(UpdateView):
+    # TODO: add messages
     template_name = 'editor/tree.html'
 
     def post(self, request, *args, **kwargs):
@@ -147,6 +150,7 @@ class DatasetList(ListView):
 
 
 class DatasetCreate(CreateView):
+    # TODO: that view should handle upload too.
     model = Dataset
     form_class = DatasetForm
 
@@ -177,6 +181,8 @@ class DatasetUpdate(UpdateView):
         form = self.get_form(form_class)
         datafile_formset = DataFileFormset(prefix='datafile', instance=self.object)
         docfile_formset = DocumentFileFormset(prefix='documentfile', instance=self.object)
+        if 'save-and-continue' in self.request.POST:
+            return self.object.get_absolute_url()
         return self.render_to_response(
             self.get_context_data(
                 form=form,
@@ -202,6 +208,7 @@ class DatasetUpdate(UpdateView):
             return self.form_invalid(form, datafile_formset, docfile_formset)
 
     def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Dataset saved.')
         if 'save-and-continue' in self.request.POST:
             return self.object.get_absolute_url()
         return reverse('dataset-list')
@@ -222,6 +229,7 @@ class DatasetUpdate(UpdateView):
         Called if a form is invalid. Re-renders the context data with the
         data-filled forms and errors.
         """
+        messages.add_message(self.request, messages.ERROR, 'Submitted form is invalid.')
         return self.render_to_response(
             self.get_context_data(
                 form=form,

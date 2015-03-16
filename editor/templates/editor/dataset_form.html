@@ -48,14 +48,17 @@
             </div>
         </div>
         <br />
-        <div style="float:right;">
-            <input type="submit"
-                title="Continue editing this dataset after saving"
-                value="Save and continue editing"
-                name="save-and-continue"/>
-            <input type="submit"
-                title="Save and go to the list of dataset"
-                value="Save"/>
+        <div class="btn-group" style="float:right;">
+            <button type="submit" class="btn btn-default"
+                    title="Continue editing this dataset after saving"
+                    name="save-and-continue"/>
+                Save and continue editing
+            </button>
+            <button type="submit"
+                    class="btn btn-default"
+                    title="Save and go to the list of dataset">
+                Save
+            </button>
         </div>
     </form>
 {% endblock %}
