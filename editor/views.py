@@ -201,6 +201,11 @@ class DatasetUpdate(UpdateView):
         else:
             return self.form_invalid(form, datafile_formset, docfile_formset)
 
+    def get_success_url(self):
+        if 'save-and-continue' in self.request.POST:
+            return self.object.get_absolute_url()
+        return reverse('dataset-list')
+
     def form_valid(self, form, datafile_formset, docfile_formset):
         """
         Called if all forms are valid. Creates a Recipe instance along with
