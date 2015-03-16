@@ -41,6 +41,9 @@ class FileBaseForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(FileBaseForm, self).__init__(*args, **kwargs)
         self.fields['f'].required = False
+
+        # it is time to submit the format of the file.
+        self.fields['file_format'].required = True
         self.fields['upload_id'].widget.attrs = {'class': 'upload_id'}
 
     def save(self, *args, **kwargs):
@@ -80,5 +83,7 @@ class DocumentFileForm(FileBaseForm):
         model = DocumentFile
         fields = ['f', 'file_format']
 
-DataFileFormset = inlineformset_factory(Dataset, DataFile, form=DataFileForm, extra=0)
-DocumentFileFormset = inlineformset_factory(Dataset, DocumentFile, form=DocumentFileForm, extra=0)
+DataFileFormset = inlineformset_factory(
+    Dataset, DataFile, form=DataFileForm, extra=0)
+DocumentFileFormset = inlineformset_factory(
+    Dataset, DocumentFile, form=DocumentFileForm, extra=0)

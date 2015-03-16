@@ -198,7 +198,8 @@ class DatasetUpdate(UpdateView):
         self.object = self.get_object()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        datafile_formset = DataFileFormset(self.request.POST, prefix='datafile', instance=self.object)
+        datafile_formset = DataFileFormset(
+            self.request.POST, prefix='datafile', instance=self.object)
         docfile_formset = DocumentFileFormset(
             self.request.POST, prefix='documentfile', instance=self.object)
 

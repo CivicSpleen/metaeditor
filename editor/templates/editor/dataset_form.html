@@ -1,5 +1,6 @@
 {% extends "editor/base.html" %}
 {% load staticfiles %}
+{% load bootstrap3 %}
 {% block extrajs %}
     <script src="{% static "editor/js/dropzone.js" %}"></script>
     <script src="{% static "editor/js/dataset.js" %}"></script>
@@ -7,7 +8,7 @@
 {% block content %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_ul }}
+        {% bootstrap_form form %}
         <div id="datafiles" class="section">
             <h3>Data files</h3>
             <div class="dropzone" id="datafiles-dropzone"
@@ -16,14 +17,14 @@
             </div>
 
             <div class="empty-form" style="display:none;border:solid gray 1px;">
-                {{ datafile_formset.empty_form.as_ul }}
+                {% bootstrap_form datafile_formset.empty_form %}
             </div>
             <div class="formset"
                  data-total-forms-id="id_{{ datafile_formset.prefix }}-TOTAL_FORMS">
                 {{ datafile_formset.management_form }}
                 {% for form in datafile_formset %}
                     <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {{ form.as_ul }}
+                        {% bootstrap_form form %}
                     </div>
                 {% endfor %}
             </div>
@@ -36,29 +37,31 @@
                 style="height:130px;border:1px solid gray;">
             </div>
             <div class="empty-form" style="display:none;border:solid gray 1px;">
-                {{ docfile_formset.empty_form.as_ul }}
+                {% bootstrap_form docfile_formset.empty_form %}
             </div>
             <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
                 {{ docfile_formset.management_form }}
                 {% for form in docfile_formset %}
                     <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {{ form.as_ul }}
+                        {% bootstrap_form form %}
                     </div>
                 {% endfor %}
             </div>
         </div>
         <br />
-        <div class="btn-group" style="float:right;">
+        <div style="float:right;">
+        {% buttons %}
             <button type="submit" class="btn btn-default"
                     title="Continue editing this dataset after saving"
                     name="save-and-continue"/>
                 Save and continue editing
             </button>
             <button type="submit"
-                    class="btn btn-default"
+                    class="btn btn-primary"
                     title="Save and go to the list of dataset">
                 Save
             </button>
+        {% endbuttons %}
         </div>
     </form>
 {% endblock %}
