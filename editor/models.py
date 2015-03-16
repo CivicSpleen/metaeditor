@@ -18,11 +18,13 @@ def get_upload_path(instance, filename):
     Returns:
         str:
     """
+    CLASS_TO_DIR_MAP = {
+        DataFile: 'data',
+        DocumentFile: 'documents'}
+
     if instance.dataset:
-        if isinstance(instance, DataFile):
-            return os.path.join('uploads', '%s' % instance.dataset.id, 'data', filename)
-        elif isinstance(instance, DocumentFile):
-            return os.path.join('uploads', '%s' % instance.dataset.id, 'documents', filename)
+        model_dir = CLASS_TO_DIR_MAP[instance.__class__]
+        return os.path.join('uploads', '%s' % instance.dataset.id, model_dir, filename)
     else:
         return os.path.join('uploads', 'nodataset', filename)
     return os.path.join('uploads', filename)
