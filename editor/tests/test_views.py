@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from StringIO import StringIO
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -7,6 +8,7 @@ from editor.models import Category, Dataset
 
 from editor.tests.factories import DatasetFactory, CategoryFactory,\
     SourceFactory, FormatFactory, UserFactory
+from editor.models import DataFile, DocumentFile
 
 
 class IndexViewTest(TestCase):
@@ -300,3 +302,56 @@ class DatasetUpdateTest(TestCase):
         qs = Dataset.objects.filter(title=post_params['title'])
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs[0].title, '%s updated' % self.ds1.title)
+
+
+class UploadTest(TestCase):
+    def setUp(self):
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+        self.url = reverse('upload')
+
+    def tearDown(self):
+        # remove all files created by tests
+        for df in DataFile.objects.all():
+            if df.f:
+                df.f.delete()
+            df.delete()
+        for docf in DocumentFile.objects.all():
+            if docf.f:
+                docf.f.delete()
+            docf.delete()
+
+    def test_is_disabled_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 302)
+        # TODO: Is it really redirect to login page? Test that.
+
+    def test_saves_datafile(self):
+        assert DataFile.objects.all().count() == 0
+        f = StringIO('elem1,elem2')
+        f.name = 'thefile.csv'
+        post_data = {'file': f}
+        url = '%s?datafile' % self.url
+        resp = self.client.post(
+            url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        qs = DataFile.objects.all()
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs[0].f.read(), 'elem1,elem2')
+
+    def test_saves_documentfile(self):
+        assert DocumentFile.objects.all().count() == 0
+        f = StringIO('elem1,elem2')
+        f.name = 'thefile.csv'
+        post_data = {'file': f}
+        url = '%s?docfile' % self.url
+        resp = self.client.post(
+            url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        qs = DocumentFile.objects.all()
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs[0].f.read(), 'elem1,elem2')

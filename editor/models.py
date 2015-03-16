@@ -1,10 +1,31 @@
 # -*- coding: utf-8 -*-
+import os
 
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.db import models
 
 from mptt.models import MPTTModel, TreeForeignKey
+
+
+def _get_upload_path(instance, filename):
+    """ Returns path where to file will be saved.
+
+    Args:
+        instance (DataFile or DocumentFile):
+        filename (str): name of the file
+
+    Returns:
+        str:
+    """
+    if instance.dataset:
+        if isinstance(instance, DataFile):
+            return os.path.join('uploads', '%s' % instance.dataset.id, 'data', filename)
+        elif isinstance(instance, DocumentFile):
+            return os.path.join('uploads', '%s' % instance.dataset.id, 'documents', filename)
+    else:
+        return os.path.join('uploads', 'nodataset', filename)
+    return os.path.join('uploads', filename)
 
 
 class Source(MPTTModel):
@@ -151,9 +172,13 @@ class Dataset(models.Model):
 
 
 class File(models.Model):
-    dataset = models.ForeignKey(Dataset)
-    file_format = models.ForeignKey(Format)
-    f = models.FileField(upload_to='uploads')
+    # dataset my be empty when preload occurs.
+    dataset = models.ForeignKey(Dataset, null=True, blank=True)
+    file_format = models.ForeignKey(Format, null=True, blank=True)
+    created = models.DateTimeField(
+        auto_now_add=True,
+        help_text='Creation date and time')
+    f = models.FileField(upload_to=_get_upload_path)
 
     class Meta:
         abstract = True
