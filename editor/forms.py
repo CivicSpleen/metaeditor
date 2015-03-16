@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-from django import forms
+import os
+import shutil
 
-from editor.models import Dataset, DataFile, DocumentFile, Format
+from django import forms
+from django.conf import settings
+from django.forms.models import inlineformset_factory
+
+from editor.models import Dataset, DataFile, DocumentFile, get_upload_path
 
 
 class DatasetForm(forms.ModelForm):
-    data_file = forms.FileField(required=False)
-    data_file_format = forms.ModelChoiceField(Format.objects.all(), required=False)
-    document_file = forms.FileField(required=False)
-    document_file_format = forms.ModelChoiceField(Format.objects.all(), required=False)
 
     class Meta:
         model = Dataset
@@ -24,16 +25,6 @@ class DatasetForm(forms.ModelForm):
         self.source = kwargs.pop('source', None)
         super(DatasetForm, self).__init__(*args, **kwargs)
 
-    def clean(self):
-        cd = self.cleaned_data
-        if cd.get('data_file') and not cd.get('data_file_format'):
-            raise forms.ValidationError(
-                'Data file format is required field if you are uploading data file.')
-        if cd.get('document_file') and not cd.get('document_file_format'):
-            raise forms.ValidationError(
-                'Document file format is required field if you are uploading document file.')
-        return cd
-
     def save(self, *args, **kwargs):
         instance = super(DatasetForm, self).save(commit=False, *args, **kwargs)
         if self.source:
@@ -41,17 +32,53 @@ class DatasetForm(forms.ModelForm):
             instance.source = self.source
         instance.user = self.user
         instance.save()
-        if self.cleaned_data.get('data_file'):
-            new_datafile = DataFile(
-                f=self.cleaned_data['data_file'],
-                file_format=self.cleaned_data['data_file_format'],
-                dataset=instance)
-            new_datafile.save()
-
-        if self.cleaned_data.get('document_file'):
-            new_doc = DocumentFile(
-                f=self.cleaned_data['document_file'],
-                file_format=self.cleaned_data['document_file_format'],
-                dataset=instance)
-            new_doc.save()
         return instance
+
+
+class FileBaseForm(forms.ModelForm):
+    upload_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
+
+    def __init__(self, *args, **kwargs):
+        super(FileBaseForm, self).__init__(*args, **kwargs)
+        self.fields['f'].required = False
+        self.fields['upload_id'].widget.attrs = {'class': 'upload_id'}
+
+    def save(self, *args, **kwargs):
+        if 'upload_id' in self.cleaned_data:
+            # id of the preloaded file given. Extend it with format and dataset
+            instance = self._meta.model.objects.get(id=self.cleaned_data['upload_id'])
+
+            instance.dataset = self.cleaned_data['dataset']
+            instance.file_format = self.cleaned_data['file_format']
+
+            # move uploaded file to the dataset folder.
+            upload_to = get_upload_path(instance, '')
+            full_path = os.path.join(settings.MEDIA_ROOT, upload_to)
+            if not os.path.exists(full_path):
+                os.makedirs(full_path)
+
+            new_path = os.path.join(full_path, os.path.basename(instance.f.name))
+
+            shutil.move(instance.f.path, new_path)
+            instance.f = get_upload_path(instance, os.path.basename(instance.f.name))
+            instance.save()
+            return instance
+        else:
+            return super(FileBaseForm, self).save(*args, **kwargs)
+
+
+class DataFileForm(FileBaseForm):
+
+    class Meta:
+        model = DataFile
+        fields = ['f', 'file_format']
+
+
+class DocumentFileForm(FileBaseForm):
+
+    class Meta:
+        model = DocumentFile
+        fields = ['f', 'file_format']
+
+DataFileFormset = inlineformset_factory(Dataset, DataFile, form=DataFileForm, extra=0)
+DocumentFileFormset = inlineformset_factory(Dataset, DocumentFile, form=DocumentFileForm, extra=0)

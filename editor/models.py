@@ -8,7 +8,7 @@ from django.db import models
 from mptt.models import MPTTModel, TreeForeignKey
 
 
-def _get_upload_path(instance, filename):
+def get_upload_path(instance, filename):
     """ Returns path where to file will be saved.
 
     Args:
@@ -178,7 +178,7 @@ class File(models.Model):
     created = models.DateTimeField(
         auto_now_add=True,
         help_text='Creation date and time')
-    f = models.FileField(upload_to=_get_upload_path)
+    f = models.FileField(upload_to=get_upload_path)
 
     class Meta:
         abstract = True

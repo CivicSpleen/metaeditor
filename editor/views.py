@@ -11,6 +11,7 @@ from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
+from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset
 from editor.models import Category, Source, Format, Dataset,\
     DataFile, DocumentFile
 
@@ -165,6 +166,62 @@ class DatasetCreate(CreateView):
 class DatasetUpdate(UpdateView):
     model = Dataset
     form_class = DatasetForm
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests and instantiates blank versions of the form
+        and its inline formsets.
+        """
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        datafile_formset = DataFileFormset(prefix='datafile', instance=self.object)
+        docfile_formset = DocumentFileFormset(prefix='documentfile', instance=self.object)
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                datafile_formset=datafile_formset,
+                docfile_formset=docfile_formset))
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance and its inline
+        formsets with the passed POST variables and then checking them for
+        validity.
+        """
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        datafile_formset = DataFileFormset(self.request.POST, prefix='datafile', instance=self.object)
+        docfile_formset = DocumentFileFormset(
+            self.request.POST, prefix='documentfile', instance=self.object)
+
+        if (form.is_valid() and datafile_formset.is_valid() and docfile_formset.is_valid()):
+            return self.form_valid(form, datafile_formset, docfile_formset)
+        else:
+            return self.form_invalid(form, datafile_formset, docfile_formset)
+
+    def form_valid(self, form, datafile_formset, docfile_formset):
+        """
+        Called if all forms are valid. Creates a Recipe instance along with
+        associated Ingredients and Instructions and then redirects to a
+        success page.
+        """
+        self.object = form.save()
+        datafile_formset.save()
+        docfile_formset.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, datafile_formset, docfile_formset):
+        """
+        Called if a form is invalid. Re-renders the context data with the
+        data-filled forms and errors.
+        """
+        return self.render_to_response(
+            self.get_context_data(
+                form=form,
+                datafile_formset=datafile_formset,
+                docfile_formset=docfile_formset))
 
     def get_form(self, form_class):
         """

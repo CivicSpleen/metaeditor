@@ -1,35 +1,52 @@
 {% extends "editor/base.html" %}
-
+{% load staticfiles %}
+{% block extrajs %}
+    <script src="{% static "editor/js/dropzone.js" %}"></script>
+    <script src="{% static "editor/js/dataset.js" %}"></script>
+{% endblock %}
 {% block content %}
-    <h2>Note: If you want to upload many files do it one by one.</h2>
-    {# TODO: implement many files uploading #}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form.as_ul }}
+        <div id="datafiles" class="section">
+            <h3>Data files</h3>
+            <div class="dropzone" id="datafiles-dropzone"
+                 data-dropzone-upload-url="{% url 'upload' %}?datafile"
+                 style="height:130px;border:1px solid gray;">
+            </div>
+
+            <div class="empty-form" style="display:none;border:solid gray 1px;">
+                {{ datafile_formset.empty_form.as_ul }}
+            </div>
+            <div class="formset"
+                 data-total-forms-id="id_{{ datafile_formset.prefix }}-TOTAL_FORMS">
+                {{ datafile_formset.management_form }}
+                {% for form in datafile_formset %}
+                    <div style="border:1px solid gray;" class="dynamic-formset-form">
+                        {{ form.as_ul }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="docfiles" class="section">
+            <h3>Documents</h3>
+            <div class="dropzone"
+                id="docfiles-dropzone"
+                data-dropzone-upload-url="{% url 'upload' %}?docfile"
+                style="height:130px;border:1px solid gray;">
+            </div>
+            <div class="empty-form" style="display:none;border:solid gray 1px;">
+                {{ docfile_formset.empty_form.as_ul }}
+            </div>
+            <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
+                {{ docfile_formset.management_form }}
+                {% for form in docfile_formset %}
+                    <div style="border:1px solid gray;" class="dynamic-formset-form">
+                        {{ form.as_ul }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
         <input type="submit" />
     </form>
-
-    {% if form.instance and form.instance.id %}
-        <h3>Data files</h3>
-        <ul>
-            {% for datafile in form.instance.datafile_set.all %}
-                <li>
-                    <a title="Download file" href="{{ datafile.f.url }}">
-                        {{ datafile.f.name }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-
-        <h3>Documents</h3>
-        <ul>
-            {% for document in form.instance.documentfile_set.all %}
-            <li>
-                <a title="Download file" href="{{ document.f.url }}">
-                    {{ document.f.name }}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
-    {% endif %}
 {% endblock %}
