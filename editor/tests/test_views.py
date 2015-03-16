@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 from StringIO import StringIO
 
 from django.core.urlresolvers import reverse
@@ -339,9 +340,12 @@ class UploadTest(TestCase):
         resp = self.client.post(
             url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('file', content)
         qs = DataFile.objects.all()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs[0].f.read(), 'elem1,elem2')
+        self.assertEqual(qs[0].id, content['file']['id'])
 
     def test_saves_documentfile(self):
         assert DocumentFile.objects.all().count() == 0
@@ -352,6 +356,9 @@ class UploadTest(TestCase):
         resp = self.client.post(
             url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('file', content)
         qs = DocumentFile.objects.all()
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs[0].f.read(), 'elem1,elem2')
+        self.assertEqual(qs[0].id, content['file']['id'])
