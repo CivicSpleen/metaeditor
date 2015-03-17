@@ -18,7 +18,9 @@
             </div>
 
             <div class="empty-form" style="display:none;border:solid gray 1px;">
-                {% bootstrap_form datafile_formset.empty_form %}
+                <div style="border:1px solid gray;">
+                    {% bootstrap_form datafile_formset.empty_form %}
+                </div>
             </div>
             <div class="formset"
                  data-total-forms-id="id_{{ datafile_formset.prefix }}-TOTAL_FORMS">
@@ -38,7 +40,9 @@
                 style="height:130px;border:1px solid gray;">
             </div>
             <div class="empty-form" style="display:none;border:solid gray 1px;">
-                {% bootstrap_form docfile_formset.empty_form %}
+                <div style="border:1px solid gray;">
+                    {% bootstrap_form docfile_formset.empty_form %}
+                </div>
             </div>
             <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
                 {{ docfile_formset.management_form }}
