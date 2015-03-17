@@ -42,6 +42,18 @@ class BaseCreateView(CreateView):
             return HttpResponseForbidden('Forbidden for anonymous users.')
         return super(BaseCreateView, self).post(request, *args, **kwargs)
 
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Saved.')
+        return super(BaseCreateView, self).get_success_url()
+
+    def form_invalid(self, form):
+        """
+        Called if a form is invalid. Re-renders the context data with the
+        data-filled forms and errors.
+        """
+        messages.add_message(self.request, messages.ERROR, 'Submitted form is invalid.')
+        return super(BaseCreateView, self).form_invalid(form)
+
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
@@ -73,6 +85,18 @@ class BaseUpdateView(UpdateView):
         if not request.user.is_authenticated():
             return HttpResponseForbidden('Forbidden for anonymous users.')
         return super(BaseUpdateView, self).post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        messages.add_message(self.request, messages.SUCCESS, 'Saved.')
+        return super(BaseUpdateView, self).get_success_url()
+
+    def form_invalid(self, form):
+        """
+        Called if a form is invalid. Re-renders the context data with the
+        data-filled forms and errors.
+        """
+        messages.add_message(self.request, messages.ERROR, 'Submitted form is invalid.')
+        return super(BaseUpdateView, self).form_invalid(form)
 
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()

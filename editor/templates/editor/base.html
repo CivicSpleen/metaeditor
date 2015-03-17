@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>metaeditor</title>
+    <title>{% block title_prefix %}{% endblock %}metaeditor</title>
 
     <!-- Bootstrap core CSS -->
     <link href="{% static "editor/css/bootstrap.css" %}" rel="stylesheet">
@@ -35,7 +35,7 @@
 
   <body>
     <div class="container">
-        <ul style="float:right;">
+        <ul style="float:right;" class="auth">
             {% if user.is_authenticated %}
                 <li>
                     <a href="{% url 'accounts:profile' %}" title="show profile">

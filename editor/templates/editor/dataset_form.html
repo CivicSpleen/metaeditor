@@ -1,6 +1,7 @@
 {% extends "editor/base.html" %}
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% block title_prefix %}Dataset Edit - {% endblock %}
 {% block extrajs %}
     <script src="{% static "editor/js/dropzone.js" %}"></script>
     <script src="{% static "editor/js/dataset.js" %}"></script>
