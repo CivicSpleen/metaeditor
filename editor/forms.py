@@ -32,6 +32,7 @@ class DatasetForm(forms.ModelForm):
             instance.source = self.source
         instance.user = self.user
         instance.save()
+        self.save_m2m()
         return instance
 
 

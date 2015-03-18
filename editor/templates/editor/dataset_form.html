@@ -19,7 +19,7 @@
 
             <div class="empty-form" style="display:none;border:solid gray 1px;">
                 <div style="border:1px solid gray;">
-                    {% bootstrap_form datafile_formset.empty_form %}
+                    {% bootstrap_form datafile_formset.empty_form layout="inline" %}
                 </div>
             </div>
             <div class="formset"
@@ -27,7 +27,7 @@
                 {{ datafile_formset.management_form }}
                 {% for form in datafile_formset %}
                     <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {% bootstrap_form form %}
+                        {% bootstrap_form form layout="inline" %}
                     </div>
                 {% endfor %}
             </div>
@@ -41,14 +41,14 @@
             </div>
             <div class="empty-form" style="display:none;border:solid gray 1px;">
                 <div style="border:1px solid gray;">
-                    {% bootstrap_form docfile_formset.empty_form %}
+                    {% bootstrap_form docfile_formset.empty_form layout="inline" %}
                 </div>
             </div>
             <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
                 {{ docfile_formset.management_form }}
                 {% for form in docfile_formset %}
                     <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {% bootstrap_form form %}
+                        {% bootstrap_form form layout="inline" %}
                     </div>
                 {% endfor %}
             </div>
