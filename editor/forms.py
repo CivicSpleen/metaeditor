@@ -6,10 +6,21 @@ from django import forms
 from django.conf import settings
 from django.forms.models import inlineformset_factory
 
-from editor.models import Dataset, DataFile, DocumentFile, get_upload_path
+from editor.models import Dataset, DataFile, DocumentFile, Category,\
+    Format, get_upload_path
 
 
 class DatasetForm(forms.ModelForm):
+
+    categories = forms.ModelMultipleChoiceField(
+        queryset=Category.objects,
+        widget=forms.CheckboxSelectMultiple(),
+        required=False)
+
+    formats = forms.ModelMultipleChoiceField(
+        queryset=Format.objects,
+        widget=forms.CheckboxSelectMultiple(),
+        required=False)
 
     class Meta:
         model = Dataset
