@@ -9,48 +9,54 @@
 {% block content %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {% bootstrap_form form %}
-        <div id="datafiles" class="section">
-            <h3>Data files</h3>
-            <div class="dropzone" id="datafiles-dropzone"
-                 data-dropzone-upload-url="{% url 'upload' %}?datafile"
-                 style="height:130px;border:1px solid gray;">
+        <div class="row">
+            <div class="col-xs-6">
+                {% bootstrap_form form %}
             </div>
+            <div class="col-xs-6">
+                <div id="datafiles" class="section">
+                    <h3>Data files</h3>
+                    <div class="dropzone" id="datafiles-dropzone"
+                         data-dropzone-upload-url="{% url 'upload' %}?datafile"
+                         style="height:130px;border:1px solid gray;">
+                    </div>
 
-            <div class="empty-form" style="display:none;border:solid gray 1px;">
-                <div style="border:1px solid gray;">
-                    {% bootstrap_form datafile_formset.empty_form layout="inline" %}
-                </div>
-            </div>
-            <div class="formset"
-                 data-total-forms-id="id_{{ datafile_formset.prefix }}-TOTAL_FORMS">
-                {{ datafile_formset.management_form }}
-                {% for form in datafile_formset %}
-                    <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {% bootstrap_form form layout="inline" %}
+                    <div class="empty-form" style="display:none;border:solid gray 1px;">
+                        <div style="border:1px solid gray;">
+                            {% bootstrap_form datafile_formset.empty_form layout="inline" %}
+                        </div>
                     </div>
-                {% endfor %}
-            </div>
-        </div>
-        <div id="docfiles" class="section">
-            <h3>Documents</h3>
-            <div class="dropzone"
-                id="docfiles-dropzone"
-                data-dropzone-upload-url="{% url 'upload' %}?docfile"
-                style="height:130px;border:1px solid gray;">
-            </div>
-            <div class="empty-form" style="display:none;border:solid gray 1px;">
-                <div style="border:1px solid gray;">
-                    {% bootstrap_form docfile_formset.empty_form layout="inline" %}
-                </div>
-            </div>
-            <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
-                {{ docfile_formset.management_form }}
-                {% for form in docfile_formset %}
-                    <div style="border:1px solid gray;" class="dynamic-formset-form">
-                        {% bootstrap_form form layout="inline" %}
+                    <div class="formset"
+                         data-total-forms-id="id_{{ datafile_formset.prefix }}-TOTAL_FORMS">
+                        {{ datafile_formset.management_form }}
+                        {% for form in datafile_formset %}
+                            <div style="border:1px solid gray;" class="dynamic-formset-form">
+                                {% bootstrap_form form layout="inline" %}
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
+                <div id="docfiles" class="section">
+                    <h3>Documents</h3>
+                    <div class="dropzone"
+                        id="docfiles-dropzone"
+                        data-dropzone-upload-url="{% url 'upload' %}?docfile"
+                        style="height:130px;border:1px solid gray;">
+                    </div>
+                    <div class="empty-form" style="display:none;border:solid gray 1px;">
+                        <div style="border:1px solid gray;">
+                            {% bootstrap_form docfile_formset.empty_form layout="inline" %}
+                        </div>
+                    </div>
+                    <div class="formset" data-total-forms-id="id_{{ docfile_formset.prefix }}-TOTAL_FORMS">
+                        {{ docfile_formset.management_form }}
+                        {% for form in docfile_formset %}
+                            <div style="border:1px solid gray;" class="dynamic-formset-form">
+                                {% bootstrap_form form layout="inline" %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
         <br />
