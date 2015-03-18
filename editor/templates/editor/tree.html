@@ -68,6 +68,21 @@
                         | <a href="{{ create_dataset_url }}" title="Add new dataset">
                             Add dataset
                         </a>
+
+                        {# TODO: use `extends` to add extra data to form #}
+                        <div style="clear:both;"></div>
+                        <div>Datasets</div>
+                        <ul>
+                            {% for dataset in form.instance.dataset_set.all %}
+                                <li>
+                                    <a href="{{ dataset.get_absolute_url }}" title="edit dataset">
+                                        {{ dataset.title }}
+                                    </a>
+                                </li>
+                            {% empty %}
+                                <li>Source does not have datasets yet.</li>
+                            {% endfor %}
+                        </ul>
                     {% endif %}
                 {% endif %}
             </div>
