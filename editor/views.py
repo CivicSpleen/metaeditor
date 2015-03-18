@@ -34,7 +34,6 @@ class BaseTreeView(ListView):
 
 
 class BaseCreateView(CreateView):
-    # TODO: add messages
     template_name = 'editor/tree.html'
 
     def post(self, request, *args, **kwargs):
@@ -78,7 +77,6 @@ class BaseCreateView(CreateView):
 
 
 class BaseUpdateView(UpdateView):
-    # TODO: add messages
     template_name = 'editor/tree.html'
 
     def post(self, request, *args, **kwargs):
@@ -99,6 +97,9 @@ class BaseUpdateView(UpdateView):
         return super(BaseUpdateView, self).form_invalid(form)
 
     def get_context_data(self, **kwargs):
+        """
+        Returns context of the template.
+        """
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
         kwargs['selected_node'] = self.object
@@ -173,40 +174,23 @@ class DatasetList(ListView):
         return qs.select_related('source')
 
 
-class DatasetCreate(CreateView):
-    # TODO: that view should handle upload too.
-    model = Dataset
-    form_class = DatasetForm
-
-    def dispatch(self, request, *args, **kwargs):
-        self.source = get_object_or_404(Source, pk=self.kwargs['source_pk'])
-        return super(DatasetCreate, self).dispatch(request, *args, **kwargs)
-
-    def get_form(self, form_class):
+class DatasetEditMixin(object):
+    def get_formset_instance(self):
         """
-        Returns an instance of the form to be used in this view.
+        Returns an instance of the formset.
         """
-        form_kwargs = self.get_form_kwargs()
-        form_kwargs['source'] = self.source
-        return form_class(self.request.user, **form_kwargs)
-
-
-class DatasetUpdate(UpdateView):
-    model = Dataset
-    form_class = DatasetForm
+        raise NotImplementedError('Implement me')
 
     def get(self, request, *args, **kwargs):
         """
         Handles GET requests and instantiates blank versions of the form
         and its inline formsets.
         """
-        self.object = self.get_object()
+        self.object = self.get_formset_instance()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         datafile_formset = DataFileFormset(prefix='datafile', instance=self.object)
         docfile_formset = DocumentFileFormset(prefix='documentfile', instance=self.object)
-        if 'save-and-continue' in self.request.POST:
-            return self.object.get_absolute_url()
         return self.render_to_response(
             self.get_context_data(
                 form=form,
@@ -219,7 +203,7 @@ class DatasetUpdate(UpdateView):
         formsets with the passed POST variables and then checking them for
         validity.
         """
-        self.object = self.get_object()
+        self.object = self.get_formset_instance()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         datafile_formset = DataFileFormset(
@@ -233,6 +217,9 @@ class DatasetUpdate(UpdateView):
             return self.form_invalid(form, datafile_formset, docfile_formset)
 
     def get_success_url(self):
+        """
+        Returns url where to redirect after success save.
+        """
         messages.add_message(self.request, messages.SUCCESS, 'Dataset saved.')
         if 'save-and-continue' in self.request.POST:
             return self.object.get_absolute_url()
@@ -240,12 +227,12 @@ class DatasetUpdate(UpdateView):
 
     def form_valid(self, form, datafile_formset, docfile_formset):
         """
-        Called if all forms are valid. Creates a Recipe instance along with
-        associated Ingredients and Instructions and then redirects to a
-        success page.
+        Called if form and formsets are valid. Saves forms and redirects to success page.
         """
         self.object = form.save()
+        datafile_formset.instance = self.object
         datafile_formset.save()
+        docfile_formset.instance = self.object
         docfile_formset.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -260,6 +247,40 @@ class DatasetUpdate(UpdateView):
                 form=form,
                 datafile_formset=datafile_formset,
                 docfile_formset=docfile_formset))
+
+
+class DatasetCreate(DatasetEditMixin, CreateView):
+    model = Dataset
+    form_class = DatasetForm
+
+    def dispatch(self, request, *args, **kwargs):
+        self.source = get_object_or_404(Source, pk=self.kwargs['source_pk'])
+        return super(DatasetCreate, self).dispatch(request, *args, **kwargs)
+
+    def get_formset_instance(self):
+        """
+        Returns an instance of the formset.
+        """
+        return None
+
+    def get_form(self, form_class):
+        """
+        Returns an instance of the form to be used in this view.
+        """
+        form_kwargs = self.get_form_kwargs()
+        form_kwargs['source'] = self.source
+        return form_class(self.request.user, **form_kwargs)
+
+
+class DatasetUpdate(DatasetEditMixin, UpdateView):
+    model = Dataset
+    form_class = DatasetForm
+
+    def get_formset_instance(self):
+        """
+        Returns an instance of the formset.
+        """
+        return self.get_object()
 
     def get_form(self, form_class):
         """
