@@ -29,26 +29,26 @@ class ProfileTest(TestCase):
 
     def test_changes_user_data_on_post(self):
         post_data = {
-            'first_name': '%s updated' % self.user.first_name,
-            'last_name': '%s updated' % self.user.last_name,
-            'email': 'updated_%s' % self.user.email
+            'first_name': '%s updated' % self.user1.first_name,
+            'last_name': '%s updated' % self.user1.last_name,
+            'email': 'updated_%s' % self.user1.email
         }
         resp = self.client.post(self.url, post_data)
         self.assertEqual(resp.status_code, 302)
 
-        updated_user = User.objects.get(username=self.user.username)
+        updated_user = User.objects.get(username=self.user1.username)
 
         # is it the same object?
-        self.assertEqual(updated_user.id, self.user.id)
+        self.assertEqual(updated_user.id, self.user1.id)
 
         self.assertEqual(
             updated_user.first_name,
-            '%s updated' % self.user.first_name)
+            '%s updated' % self.user1.first_name)
 
         self.assertEqual(
             updated_user.last_name,
-            '%s updated' % self.user.last_name)
+            '%s updated' % self.user1.last_name)
 
         self.assertEqual(
             updated_user.email,
-            'updated_%s' % self.user.email)
+            'updated_%s' % self.user1.email)

@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
-import json
 
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset
-from editor.models import Category, Source, Format, Dataset,\
-    DataFile, DocumentFile
+from editor.models import Category, Source, Format, Dataset
 
 
 class IndexView(View):
@@ -287,25 +283,3 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
         Returns an instance of the form to be used in this view.
         """
         return form_class(self.request.user, **self.get_form_kwargs())
-
-
-# FIXME: remove csrf_exempt and learn client side to send cookie
-@csrf_exempt
-@login_required
-def upload(request):
-    if 'docfile' in request.GET:
-        model_class = DocumentFile
-    else:
-        model_class = DataFile
-    df = model_class()
-    df.save()
-    df.f.save(request.FILES['file'].name, request.FILES['file'])
-    response_data = {}
-    response_data['file'] = {
-        'id': df.id,
-        'url': df.f.url,
-        'name': df.f.name
-    }
-    return HttpResponse(
-        json.dumps(response_data),
-        content_type='application/json')

@@ -1,0 +1,15 @@
+{% load editor_tags %}
+<div id="{{ id }}" class="section">
+    <h3>{{ title }}</h3>
+
+    <div class="empty-form" style="display:none;border:solid gray 1px;">
+        {% formset_form formset.empty_form %}
+    </div>
+    <div class="formset"
+         data-total-forms-id="id_{{ formset.prefix }}-TOTAL_FORMS">
+        {{ formset.management_form }}
+        {% formset_forms formset.forms %}
+    </div>
+    <div style="clear:both;"></div>
+    <a class="add-new" href="#" title="Add new data file">Add</a>
+</div>

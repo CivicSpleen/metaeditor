@@ -47,8 +47,4 @@ urlpatterns = patterns('',
     url(r'^format/(?P<pk>[0-9]+)/$',
         views.FormatUpdate.as_view(),
         name='format-update'),
-
-    url(r'^upload/$',
-        views.upload,
-        name='upload'),
 )

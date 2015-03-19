@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='datafile',
             name='f',
-            field=models.FileField(upload_to=editor.models.get_upload_path),
+            field=models.FileField(upload_to='files'),
             preserve_default=True,
         ),
         migrations.AlterField(
@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='documentfile',
             name='f',
-            field=models.FileField(upload_to=editor.models.get_upload_path),
+            field=models.FileField(upload_to='files'),
             preserve_default=True,
         ),
         migrations.AlterField(

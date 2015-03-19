@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-from StringIO import StringIO
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -9,7 +7,6 @@ from editor.models import Category, Dataset
 
 from editor.tests.factories import DatasetFactory, CategoryFactory,\
     SourceFactory, FormatFactory, UserFactory
-from editor.models import DataFile, DocumentFile
 
 
 class IndexViewTest(TestCase):
@@ -65,6 +62,7 @@ class CategoryCreateTest(TestCase):
         post_params = {
             'name': 'Category1'
         }
+
         resp = self.client.post(self.url, post_params)
         self.assertEqual(resp.status_code, 302)
         # TODO: check flash message
@@ -199,6 +197,7 @@ class DatasetListTest(TestCase):
         self.assertEqual(resp.context['object_list'][0], ds2)
         self.assertEqual(resp.context['object_list'][1], ds1)
 
+
 class DatasetCreateTest(TestCase):
     def setUp(self):
         self.user1 = UserFactory()
@@ -241,7 +240,14 @@ class DatasetCreateTest(TestCase):
             'download_page': 'http://ya.ru',
             'contacts': 'contact@gmail.com',
             'formats': [FormatFactory().id],
-            'entry_time_minutes': 15}
+            'entry_time_minutes': 15,
+            'datafile-MAX_NUM_FORMS': 1000,
+            'datafile-TOTAL_FORMS': 0,
+            'datafile-INITIAL_FORMS': 1,
+            'documentfile-MAX_NUM_FORMS': 1000,
+            'documentfile-TOTAL_FORMS': 0,
+            'documentfile-INITIAL_FORMS': 1,
+        }
 
         resp = self.client.post(self.url, post_params)
         if resp.status_code == 200:
@@ -293,7 +299,14 @@ class DatasetUpdateTest(TestCase):
             'download_page': 'http://ya.ru',
             'contacts': 'contact@gmail.com',
             'formats': [FormatFactory().id],
-            'entry_time_minutes': 15}
+            'entry_time_minutes': 15,
+            'datafile-MAX_NUM_FORMS': 1000,
+            'datafile-TOTAL_FORMS': 0,
+            'datafile-INITIAL_FORMS': 1,
+            'documentfile-MAX_NUM_FORMS': 1000,
+            'documentfile-TOTAL_FORMS': 0,
+            'documentfile-INITIAL_FORMS': 1,
+        }
 
         resp = self.client.post(self.url, post_params)
         if resp.status_code == 200:
@@ -303,62 +316,3 @@ class DatasetUpdateTest(TestCase):
         qs = Dataset.objects.filter(title=post_params['title'])
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs[0].title, '%s updated' % self.ds1.title)
-
-
-class UploadTest(TestCase):
-    def setUp(self):
-        self.user1 = UserFactory()
-        logged_in = self.client.login(
-            username=self.user1.username,
-            password='1')
-        self.assertTrue(logged_in)
-        self.url = reverse('upload')
-
-    def tearDown(self):
-        # remove all files created by tests
-        for df in DataFile.objects.all():
-            if df.f:
-                df.f.delete()
-            df.delete()
-        for docf in DocumentFile.objects.all():
-            if docf.f:
-                docf.f.delete()
-            docf.delete()
-
-    def test_is_disabled_for_anonymous(self):
-        self.client.logout()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 302)
-        # TODO: Is it really redirect to login page? Test that.
-
-    def test_saves_datafile(self):
-        assert DataFile.objects.all().count() == 0
-        f = StringIO('elem1,elem2')
-        f.name = 'thefile.csv'
-        post_data = {'file': f}
-        url = '%s?datafile' % self.url
-        resp = self.client.post(
-            url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(resp.status_code, 200)
-        content = json.loads(resp.content)
-        self.assertIn('file', content)
-        qs = DataFile.objects.all()
-        self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs[0].f.read(), 'elem1,elem2')
-        self.assertEqual(qs[0].id, content['file']['id'])
-
-    def test_saves_documentfile(self):
-        assert DocumentFile.objects.all().count() == 0
-        f = StringIO('elem1,elem2')
-        f.name = 'thefile.csv'
-        post_data = {'file': f}
-        url = '%s?docfile' % self.url
-        resp = self.client.post(
-            url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        self.assertEqual(resp.status_code, 200)
-        content = json.loads(resp.content)
-        self.assertIn('file', content)
-        qs = DocumentFile.objects.all()
-        self.assertEqual(qs.count(), 1)
-        self.assertEqual(qs[0].f.read(), 'elem1,elem2')
-        self.assertEqual(qs[0].id, content['file']['id'])

@@ -1,0 +1,14 @@
+{% load bootstrap3 %}
+{% for form in forms %}
+    <div style="border:1px solid gray;" class="dynamic-formset-form">
+        {% for field in form.hidden_fields %}
+            {{ field }}
+        {% endfor %}
+        {% for field in form.visible_fields %}
+            <div class="col-xs-3">
+                {% bootstrap_field field %}
+            </div>
+        {% endfor %}
+        <div style="clear:both;"></div>
+    </div>
+{% endfor %}

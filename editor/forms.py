@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
-import os
-import shutil
 
 from django import forms
-from django.conf import settings
 from django.forms.models import inlineformset_factory
 
 from editor.models import Dataset, DataFile, DocumentFile, Category,\
-    Format, get_upload_path
+    Format
 
 
 class DatasetForm(forms.ModelForm):
@@ -47,55 +44,20 @@ class DatasetForm(forms.ModelForm):
         return instance
 
 
-class FileBaseForm(forms.ModelForm):
-    upload_id = forms.IntegerField(required=False, widget=forms.HiddenInput)
-
-    def __init__(self, *args, **kwargs):
-        super(FileBaseForm, self).__init__(*args, **kwargs)
-        self.fields['f'].required = False
-
-        # it is time to submit the format of the file.
-        self.fields['file_format'].required = True
-        self.fields['upload_id'].widget.attrs = {'class': 'upload_id'}
-
-    def save(self, *args, **kwargs):
-        if 'upload_id' in self.cleaned_data:
-            # id of the preloaded file given. Extend it with format and dataset
-            instance = self._meta.model.objects.get(id=self.cleaned_data['upload_id'])
-
-            instance.dataset = self.cleaned_data['dataset']
-            instance.file_format = self.cleaned_data['file_format']
-
-            # move uploaded file to the dataset folder.
-            upload_to = get_upload_path(instance, '')
-            full_path = os.path.join(settings.MEDIA_ROOT, upload_to)
-            if not os.path.exists(full_path):
-                os.makedirs(full_path)
-
-            new_path = os.path.join(full_path, os.path.basename(instance.f.name))
-
-            shutil.move(instance.f.path, new_path)
-            instance.f = get_upload_path(instance, os.path.basename(instance.f.name))
-            instance.save()
-            return instance
-        else:
-            return super(FileBaseForm, self).save(*args, **kwargs)
-
-
-class DataFileForm(FileBaseForm):
+class DataFileForm(forms.ModelForm):
 
     class Meta:
         model = DataFile
-        fields = ['f', 'file_format']
+        fields = ['name', 'dataset', 'file_format', 'url']
 
 
-class DocumentFileForm(FileBaseForm):
+class DocumentFileForm(forms.ModelForm):
 
     class Meta:
         model = DocumentFile
-        fields = ['f', 'file_format']
+        fields = ['name', 'dataset', 'file_format', 'url']
 
 DataFileFormset = inlineformset_factory(
-    Dataset, DataFile, form=DataFileForm, extra=0)
+    Dataset, DataFile, form=DataFileForm, extra=1)
 DocumentFileFormset = inlineformset_factory(
-    Dataset, DocumentFile, form=DocumentFileForm, extra=0)
+    Dataset, DocumentFile, form=DocumentFileForm, extra=1)
