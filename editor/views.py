@@ -1,16 +1,23 @@
 # -*- coding: utf-8 -*-
+import json
+import logging
 
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
+
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset
 from editor.models import Category, Source, Format, Dataset
+from editor.utils import get_links
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(View):
@@ -132,7 +139,8 @@ class SourceUpdate(BaseUpdateView):
     def get_context_data(self, **kwargs):
         ctx = super(SourceUpdate, self).get_context_data(**kwargs)
         ctx['create_dataset_url'] = reverse(
-            'dataset-create', kwargs={'source_pk': self.object.pk})
+            'editor:dataset-create',
+            kwargs={'source_pk': self.object.pk})
         return ctx
 
 
@@ -219,7 +227,7 @@ class DatasetEditMixin(object):
         messages.add_message(self.request, messages.SUCCESS, 'Dataset saved.')
         if 'save-and-continue' in self.request.POST:
             return self.object.get_absolute_url()
-        return reverse('dataset-list')
+        return reverse('editor:dataset-list')
 
     def form_valid(self, form, datafile_formset, docfile_formset):
         """
@@ -283,3 +291,19 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
         Returns an instance of the form to be used in this view.
         """
         return form_class(self.request.user, **self.get_form_kwargs())
+
+
+@login_required
+def scrape(request):
+    url = request.POST['url']
+
+    # FIXME: validate url
+    response_data = {}
+    try:
+        response_data['links'] = get_links(url)
+    except Exception as exc:
+        logger.error(u'Failed to retrieve links from %s because of %s' % (exc, url))
+
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type='application/json')

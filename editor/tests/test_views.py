@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
+
+import fudge
 
 from django.core.urlresolvers import reverse
 from django.test import TestCase
@@ -20,18 +23,18 @@ class IndexViewTest(TestCase):
         self.assertIn('Dataset List', resp.content)
 
         self.assertIn('Source Hierarchy Editor', resp.content)
-        self.assertIn(reverse('source-list'), resp.content)
+        self.assertIn(reverse('editor:source-list'), resp.content)
 
         self.assertIn('Formats Hierarchy Editor', resp.content)
-        self.assertIn(reverse('format-list'), resp.content)
+        self.assertIn(reverse('editor:format-list'), resp.content)
 
         self.assertIn('Categories Hierarchy Editor', resp.content)
-        self.assertIn(reverse('category-list'), resp.content)
+        self.assertIn(reverse('editor:category-list'), resp.content)
 
 
 class CategoryCreateTest(TestCase):
     def setUp(self):
-        self.url = reverse('category-create')
+        self.url = reverse('editor:category-create')
 
         self.user1 = UserFactory()
         logged_in = self.client.login(
@@ -86,7 +89,7 @@ class CategoryCreateTest(TestCase):
 
 class CategoryListTest(TestCase):
     def setUp(self):
-        self.url = reverse('category-list')
+        self.url = reverse('editor:category-list')
 
     def test_renders_category_tree_on_get(self):
         categ1 = CategoryFactory()
@@ -99,7 +102,7 @@ class CategoryListTest(TestCase):
 
 class SourceListTest(TestCase):
     def setUp(self):
-        self.url = reverse('source-list')
+        self.url = reverse('editor:source-list')
 
     def test_renders_category_tree_on_get(self):
         source1 = SourceFactory()
@@ -112,7 +115,7 @@ class SourceListTest(TestCase):
 
 class FormatListTest(TestCase):
     def setUp(self):
-        self.url = reverse('format-list')
+        self.url = reverse('editor:format-list')
 
     def test_renders_format_tree_on_get(self):
         format1 = FormatFactory()
@@ -126,7 +129,7 @@ class FormatListTest(TestCase):
 class DatasetListTest(TestCase):
 
     def setUp(self):
-        self.url = reverse('dataset-list')
+        self.url = reverse('editor:dataset-list')
 
     def test_all_existing_datasets_are_listed(self):
         dataset1 = DatasetFactory()
@@ -206,7 +209,7 @@ class DatasetCreateTest(TestCase):
             password='1')
         self.assertTrue(logged_in)
         self.source1 = SourceFactory()
-        self.url = reverse('dataset-create', kwargs={'source_pk': self.source1.id})
+        self.url = reverse('editor:dataset-create', kwargs={'source_pk': self.source1.id})
 
     def test_is_disabled_for_anonymous(self):
         self.client.logout()
@@ -266,7 +269,7 @@ class DatasetUpdateTest(TestCase):
             password='1')
         self.assertTrue(logged_in)
         self.ds1 = DatasetFactory()
-        self.url = reverse('dataset-update', kwargs={'pk': self.ds1.id})
+        self.url = reverse('editor:dataset-update', kwargs={'pk': self.ds1.id})
 
     def test_is_disabled_for_anonymous(self):
         self.client.logout()
@@ -316,3 +319,35 @@ class DatasetUpdateTest(TestCase):
         qs = Dataset.objects.filter(title=post_params['title'])
         self.assertEqual(qs.count(), 1)
         self.assertEqual(qs[0].title, '%s updated' % self.ds1.title)
+
+
+class ScrapeTest(TestCase):
+    def setUp(self):
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+        self.url = reverse('editor:scrape')
+
+    def test_is_disabled_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 302)
+        # TODO: Is it really redirect to login page? Test that.
+
+    @fudge.patch('editor.views.get_links')
+    def test_returns_all_links_from_given_url(self, fake_get):
+        fake_get.expects_call()\
+            .returns([{'text': 'Yandex', 'url': 'http://yandex.ru'}])
+
+        post_data = {'url': 'http://yandex.ru'}
+        resp = self.client.post(
+            self.url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('links', content)
+        self.assertIn('text', content['links'][0])
+        self.assertIn('url', content['links'][0])
+        self.assertEquals(content['links'][0]['url'], 'http://yandex.ru')
+        self.assertEquals(content['links'][0]['text'], 'Yandex')

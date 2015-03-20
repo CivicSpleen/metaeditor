@@ -64,21 +64,21 @@
         </h3>
         <nav>
           <ul class="nav nav-justified">
-            {% url 'source-list' as source_list_url %}
-            {% url 'format-list' as format_list_url %}
-            {% url 'category-list' as category_list_url %}
-            {% url 'dataset-list' as dataset_list_url %}
+            {% url 'editor:source-list' as source_list_url %}
+            {% url 'editor:format-list' as format_list_url %}
+            {% url 'editor:category-list' as category_list_url %}
+            {% url 'editor:dataset-list' as dataset_list_url %}
             <li {% if request.path == dataset_list_url %}class="active"{% endif %}>
-                <a href={% url "dataset-list" %}>Dataset List</a>
+                <a href="{{ dataset_list_url }}">Dataset List</a>
             </li>
             <li {% if request.path == source_list_url %}class="active"{% endif %}>
-                <a href={% url "source-list" %}>Source Hierarchy Editor</a>
+                <a href="{{ source_list_url }}">Source Hierarchy Editor</a>
             </li>
             <li {% if request.path == format_list_url %}class="active"{% endif %}>
-                <a href={% url "format-list" %}>Formats Hierarchy Editor</a>
+                <a href="{{ format_list_url }}">Formats Hierarchy Editor</a>
             </li>
             <li {% if request.path == category_list_url %}class="active"{% endif %}>
-                <a href={% url "category-list" %}>Categories Hierarchy Editor</a>
+                <a href="{{ category_list_url }}">Categories Hierarchy Editor</a>
             </li>
           </ul>
         </nav>

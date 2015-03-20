@@ -32,11 +32,11 @@ class Source(MPTTModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('source-update', kwargs={'pk': self.id})
+        return reverse('editor:source-update', kwargs={'pk': self.id})
 
     @staticmethod
     def get_create_url():
-        return reverse('source-create')
+        return reverse('editor:source-create')
 
 
 class Category(MPTTModel):
@@ -57,11 +57,11 @@ class Category(MPTTModel):
         order_insertion_by = ['name']
 
     def get_absolute_url(self):
-        return reverse('category-update', kwargs={'pk': self.id})
+        return reverse('editor:category-update', kwargs={'pk': self.id})
 
     @staticmethod
     def get_create_url():
-        return reverse('category-create')
+        return reverse('editor:category-create')
 
 
 class Format(MPTTModel):
@@ -76,11 +76,11 @@ class Format(MPTTModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('format-update', kwargs={'pk': self.id})
+        return reverse('editor:format-update', kwargs={'pk': self.id})
 
     @staticmethod
     def get_create_url():
-        return reverse('format-create')
+        return reverse('editor:format-create')
 
 
 class Dataset(models.Model):
@@ -147,7 +147,7 @@ class Dataset(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('dataset-update', kwargs={'pk': self.id})
+        return reverse('editor:dataset-update', kwargs={'pk': self.id})
 
 
 class File(models.Model):
