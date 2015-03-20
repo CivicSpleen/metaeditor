@@ -4,12 +4,16 @@
     $(function() {
         $(".add-new").click(function(e) {
             e.preventDefault();
-            var $section = $(this).closest('.section');
-            var formIdx = $('.dynamic-formset-form', $section).size();
-            var $newForm = $($('.empty-form', $section).html().replace(/__prefix__/g, formIdx));
+            var $fieldset = $(this).closest('fieldset');
+            var formIdx = $('.dynamic-formset-form', $fieldset).size();
+            var $newForm = $($('.empty-form', $fieldset).html().replace(/__prefix__/g, formIdx));
             $newForm.addClass('dynamic-formset-form');
-            $newForm.appendTo($('.formset', $section));
-            $('#' + $('.formset', $section).attr('data-total-forms-id')).val(parseInt(formIdx) + 1);
+            $newForm.appendTo($('.formset', $fieldset));
+            $('#' + $('.formset', $fieldset).attr('data-total-forms-id')).val(parseInt(formIdx) + 1);
+        });
+        $(".scrape").click(function(e) {
+            e.preventDefault();
+            // TODO: implement scrape.
         });
     });
 })();

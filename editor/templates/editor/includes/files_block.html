@@ -1,7 +1,6 @@
 {% load editor_tags %}
-<div id="{{ id }}" class="section">
-    <h3>{{ title }}</h3>
-
+<fieldset>
+    <legend>{{ title }}</legend>
     <div class="empty-form" style="display:none;border:solid gray 1px;">
         {% formset_form formset.empty_form %}
     </div>
@@ -12,4 +11,7 @@
     </div>
     <div style="clear:both;"></div>
     <a class="add-new" href="#" title="Add new data file">Add</a>
-</div>
+    <button class="scrape" title="Scrape urls from download urls">Scrape</button>
+    <br />
+    <br />
+</fieldset>
