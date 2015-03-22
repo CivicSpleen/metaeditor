@@ -36,6 +36,33 @@
             }
         });
 
+        var showLinks = function(links) {
+            // populates remote links popup with links.
+            var length = links.length;
+            if (length === 0) {
+                alert('No urls found on remote site.');
+            } else {
+                var $tmpl = $("#remoteLinksModal .modal-body table tr.tmpl");
+                var elemsToAppend = $();
+                var $current = null;
+                for (var i = 0; i < links.length; ++i) {
+                    $current = $tmpl.clone();
+                    $("a", $current).text(links[i].text);
+                    $("a", $current).attr("href", links[i].href);
+                    $("a", $current).attr("title", links[i].title);
+                    elemsToAppend = elemsToAppend.add($current);
+                }
+                elemsToAppend.appendTo("#remoteLinksModal .modal-body table.links tbody.content");
+            }
+        };
+
+        var showErrors = function(errors) {
+            // shows given errors to user.
+            // TODO: use bootstrap error instead of alert.
+            alert(errors.join('; '));
+        };
+
+
         $("#remoteLinksModal").on("shown.bs.modal", function () {
             // Gets remote links from server side and populates popup.
             var downloadUrl = $("#id_download_page").val();
@@ -46,22 +73,23 @@
                 .text("Scrapping " + downloadUrl + " . Please wait...");
             $("#remoteLinksModal .modal-body table tbody.content").empty();
             $.ajax({
+                statusCode: {
+                    500: function() {
+                        showErrors(["Server error. Please, try later."]);
+                        $("#remoteLinksModal").modal("hide");
+                    }
+                },
                 url: "/editor/scrape",
                 type: "post",
                 data: {url: downloadUrl},
                 success: function(response) {
-                    var $tmpl = $("#remoteLinksModal .modal-body table tr.tmpl");
-                    var elemsToAppend = $();
                     $("#remoteLinksModal .modal-body .wait").text("").hide();
-                    for (var i = 0; i < response.links.length; ++i) {
-                        var $current = $tmpl.clone();
-                        $("a", $current).text(response.links[i].text);
-                        $("a", $current).attr("href", response.links[i].href);
-                        $("a", $current).attr("title", response.links[i].title);
-                        elemsToAppend = elemsToAppend.add($current);
+                    if (response.errors) {
+                        showErrors(response.errors);
+                        $("#remoteLinksModal").modal("hide");
+                    } else {
+                        showLinks(response.links);
                     }
-                    elemsToAppend.appendTo("#remoteLinksModal .modal-body table.links tbody.content");
-                    $("#remoteLinksModal .modal-body .wait").hide();
                 }
             });
         });
@@ -72,7 +100,7 @@
                 var $a = $("a", $(e).closest("tr"));
                 addNewForm($($("fieldset").get(0)), $a.text(), $a.attr("href"));
             });
-            $('#remoteLinksModal').modal('hide');
+            $("#remoteLinksModal").modal("hide");
         });
     });
 })();
