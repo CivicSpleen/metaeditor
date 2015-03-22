@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
-
 from django.db.models.signals import post_save
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import mail_admins
 from django.core.urlresolvers import reverse
@@ -19,10 +19,9 @@ def send_success_registration(sender, **kwargs):
         tmpl = 'editor/emails/success_registration.txt'
         html_tmpl = 'editor/emails/success_registration.html'
 
-        # TODO: move site to settings.
-        site = 'http://metaeditor.org'
+        site_domain = settings.SITE_DOMAIN
         user_edit_url = reverse('admin:auth_user_change', args=[user.id])
-        ctx = {'user_edit_url': '%s%s' % (site, user_edit_url)}
+        ctx = {'user_edit_url': 'http://%s%s' % (site_domain, user_edit_url)}
         message = render_to_string(tmpl, ctx)
         html_message = render_to_string(html_tmpl, ctx)
         try:
