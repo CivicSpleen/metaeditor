@@ -159,6 +159,59 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_GOOGLE_OAUTH2_SEC
 
 LOGIN_URL = '/'
 
+# ###### logging #######
+LOG_ROOT = os.path.join(BASE_DIR, '..', 'logs')
+if not os.path.exists(LOG_ROOT):
+    os.mkdir(LOG_ROOT)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        }
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }
+    },
+    'handlers': {
+        'log_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_ROOT, 'metaeditor.log'),
+            'encoding': 'utf-8',
+            'maxBytes': 1024 * 1024,  # 1 MB
+            'backupCount': 10,
+            'formatter': 'verbose'
+        },
+        'console': {
+            'level': 'WARN',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['console', 'log_file', 'mail_admins'],
+            'propagate': False
+        },
+        'playlist': {
+            'handlers': ['log_file', 'mail_admins'],
+            'level': 'INFO',
+        }
+    }
+}
+
 from local_settings import *
 
 # Parse database configuration from $DATABASE_URL
