@@ -25,3 +25,7 @@ Given you are running metaeditor app on metaeditor.org
     SOCIAL_AUTH_FACEBOOK_SECRET = "..."  # App secret
     TODO: describe env vars populating too.
 4. Now try to log in and log out.
+
+## Email notification setup.
+1. Add your email to ADMINS settings.
+2. Set up your email account as described here - <TODO: link to django site>
