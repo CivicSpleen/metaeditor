@@ -201,13 +201,13 @@ LOGGING = {
         }
     },
     'loggers': {
+        '': {
+            'handlers': ['console', 'log_file', 'mail_admins'],
+            'level': 'INFO',
+        },
         'django.request': {
             'handlers': ['console', 'log_file', 'mail_admins'],
             'propagate': False
-        },
-        'playlist': {
-            'handlers': ['log_file', 'mail_admins'],
-            'level': 'INFO',
         }
     }
 }
