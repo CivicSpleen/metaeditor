@@ -305,7 +305,7 @@ def scrape(request):
         except Exception as exc:
             response_data['errors'] = [u'Failed to get urls. Please, try later.']
             logger.error(
-                u'Failed to retrieve links from %s because of %s' % (exc, form.cleaned_data['url']))
+                u'Failed to retrieve links from %s because of %s' % (form.cleaned_data['url'], exc))
     else:
         errors = []
         for field, field_errors in form.errors.iteritems():
