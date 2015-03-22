@@ -34,6 +34,9 @@ class Source(MPTTModel):
     def get_absolute_url(self):
         return reverse('editor:source-update', kwargs={'pk': self.id})
 
+    def get_dataset_create_url(self):
+        return reverse('editor:dataset-create', kwargs={'source_pk': self.id})
+
     @staticmethod
     def get_create_url():
         return reverse('editor:source-create')

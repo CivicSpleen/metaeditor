@@ -21,7 +21,7 @@ class LinksParser(HTMLParser):
             self.in_a = True
             link = {val: key for val, key in attrs}
             href = link.get('href', '')
-            if href.startswith('/') and not href.startswith('//'):
+            if not href.startswith('http'):
                 # relative path, convert to full
                 link['href'] = urlparse(self.url)._replace(path=href).geturl()
             self.links.append(link)

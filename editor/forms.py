@@ -44,14 +44,22 @@ class DatasetForm(forms.ModelForm):
         return instance
 
 
-class DataFileForm(forms.ModelForm):
+class BaseFileForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseFileForm, self).__init__(*args, **kwargs)
+        self.fields['name'].widget.attrs['class'] = 'name'
+        self.fields['url'].widget.attrs['class'] = 'url'
+
+
+class DataFileForm(BaseFileForm):
 
     class Meta:
         model = DataFile
         fields = ['name', 'dataset', 'file_format', 'url']
 
 
-class DocumentFileForm(forms.ModelForm):
+class DocumentFileForm(BaseFileForm):
 
     class Meta:
         model = DocumentFile
