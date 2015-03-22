@@ -44,6 +44,10 @@ class DatasetForm(forms.ModelForm):
         return instance
 
 
+class ScrapeForm(forms.Form):
+    url = forms.URLField(required=True)
+
+
 class BaseFileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):

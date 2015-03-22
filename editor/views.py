@@ -15,7 +15,7 @@ from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset
+from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm
 from editor.models import Category, Source, Format, Dataset
 from editor.utils import get_links
 
@@ -299,14 +299,20 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
 @login_required
 @require_POST
 def scrape(request):
-    url = request.POST['url']
-
-    # FIXME: validate url
     response_data = {}
-    try:
-        response_data['links'] = get_links(url)
-    except Exception as exc:
-        logger.error(u'Failed to retrieve links from %s because of %s' % (exc, url))
+    form = ScrapeForm(request.POST)
+    if form.is_valid():
+        try:
+            response_data['links'] = get_links(form.cleaned_data['url'])
+        except Exception as exc:
+            response_data['errors'] = [u'Failed to get urls. Please, try later.']
+            logger.error(
+                u'Failed to retrieve links from %s because of %s' % (exc, form.cleaned_data['url']))
+    else:
+        errors = []
+        for field, field_errors in form.errors.iteritems():
+            errors.append('%s' % '; '.join(field_errors))
+        response_data['errors'] = errors
 
     return HttpResponse(
         json.dumps(response_data),

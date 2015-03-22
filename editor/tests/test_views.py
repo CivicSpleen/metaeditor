@@ -351,3 +351,29 @@ class ScrapeTest(TestCase):
         self.assertIn('url', content['links'][0])
         self.assertEquals(content['links'][0]['url'], 'http://yandex.ru')
         self.assertEquals(content['links'][0]['text'], 'Yandex')
+
+    def test_returns_error_if_wrong_url_given(self):
+        post_data = {'url': 'ru'}
+        resp = self.client.post(
+            self.url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('errors', content)
+        self.assertIn('Enter a valid URL', content['errors'][0])
+        self.assertNotIn('links', content)
+
+    @fudge.patch(
+        'editor.views.get_links',
+        'editor.views.logger.error')
+    def test_get_links_error_goes_to_log(self, fake_get, fake_error):
+        fake_get.expects_call()\
+            .raises(Exception('My fake exception'))
+        fake_error.expects_call()
+        post_data = {'url': 'http://yandex.ru/'}
+        resp = self.client.post(
+            self.url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('errors', content)
+        self.assertIn('Failed to get urls', content['errors'][0])
+        self.assertNotIn('links', content)
