@@ -9,7 +9,6 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
@@ -295,9 +294,8 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
         return form_class(self.request.user, **self.get_form_kwargs())
 
 
-@csrf_exempt
-@login_required
 @require_POST
+@login_required
 def scrape(request):
     response_data = {}
     form = ScrapeForm(request.POST)
