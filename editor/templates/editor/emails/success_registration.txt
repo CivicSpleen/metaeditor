@@ -1,0 +1,3 @@
+New user without permissions registered. You set permissions here - {{ user_edit_url }}
+
+With best, metaeditor.
