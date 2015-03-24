@@ -6,7 +6,9 @@ import fudge
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
-from editor.models import Category, Dataset
+from accounts.tests.helpers import give_perm
+
+from editor.models import Category, Dataset, DataFile, DocumentFile
 
 from editor.tests.factories import DatasetFactory, CategoryFactory,\
     SourceFactory, FormatFactory, UserFactory
@@ -41,9 +43,15 @@ class CategoryCreateTest(TestCase):
             username=self.user1.username,
             password='1')
         self.assertTrue(logged_in)
+        give_perm(self.user1, Category, 'add_category')
 
     def test_post_is_forbidden_for_anonymous(self):
         self.client.logout()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
+
+    def test_post_is_forbidden_without_permission(self):
+        self.user1.user_permissions.all().delete()
         resp = self.client.post(self.url, {})
         self.assertEqual(resp.status_code, 403)
 
@@ -211,11 +219,18 @@ class DatasetCreateTest(TestCase):
         self.source1 = SourceFactory()
         self.url = reverse('editor:dataset-create', kwargs={'source_pk': self.source1.id})
 
+        give_perm(self.user1, Dataset, 'add_dataset')
+
     def test_is_disabled_for_anonymous(self):
         self.client.logout()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 302)
         # TODO: Is it really redirect to login page? Test that.
+
+    def test_post_is_forbidden_without_permission(self):
+        self.user1.user_permissions.all().delete()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
 
     def test_renders_dataset_form_on_get(self):
         resp = self.client.get(self.url)
@@ -270,12 +285,18 @@ class DatasetUpdateTest(TestCase):
         self.assertTrue(logged_in)
         self.ds1 = DatasetFactory()
         self.url = reverse('editor:dataset-update', kwargs={'pk': self.ds1.id})
+        give_perm(self.user1, Dataset, 'change_dataset')
 
     def test_is_disabled_for_anonymous(self):
         self.client.logout()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 302)
         # TODO: Is it really redirect to login page? Test that.
+
+    def test_post_is_forbidden_without_permission(self):
+        self.user1.user_permissions.all().delete()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
 
     def test_renders_dataset_form_on_get(self):
         resp = self.client.get(self.url)
@@ -329,12 +350,19 @@ class ScrapeTest(TestCase):
             password='1')
         self.assertTrue(logged_in)
         self.url = reverse('editor:scrape')
+        give_perm(self.user1, DataFile, 'add_datafile')
+        give_perm(self.user1, DocumentFile, 'add_documentfile')
 
     def test_is_disabled_for_anonymous(self):
         self.client.logout()
-        resp = self.client.get(self.url)
+        resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, 302)
         # TODO: Is it really redirect to login page? Test that.
+
+    def test_post_is_forbidden_without_permission(self):
+        self.user1.user_permissions.all().delete()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
 
     @fudge.patch('editor.views.get_links')
     def test_returns_all_links_from_given_url(self, fake_get):

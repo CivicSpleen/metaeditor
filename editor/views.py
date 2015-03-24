@@ -43,6 +43,8 @@ class BaseCreateView(CreateView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated():
             return HttpResponseForbidden('Forbidden for anonymous users.')
+        if not request.user.has_perm('editor.add_%s' % self.model._meta.model_name):
+            return HttpResponseForbidden('You do not have permission to perform this action.')
         return super(BaseCreateView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -86,6 +88,8 @@ class BaseUpdateView(UpdateView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated():
             return HttpResponseForbidden('Forbidden for anonymous users.')
+        if not request.user.has_perm('editor.change_%s' % self.model._meta.model_name):
+            return HttpResponseForbidden('You do not have permission to perform this action.')
         return super(BaseUpdateView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -262,6 +266,11 @@ class DatasetCreate(DatasetEditMixin, CreateView):
         self.source = get_object_or_404(Source, pk=self.kwargs['source_pk'])
         return super(DatasetCreate, self).dispatch(request, *args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.has_perm('editor.add_%s' % self.model._meta.model_name):
+            return HttpResponseForbidden('You do not have permission to perform this action.')
+        return super(DatasetCreate, self).post(request, *args, **kwargs)
+
     def get_formset_instance(self):
         """
         Returns an instance of the formset.
@@ -281,6 +290,11 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
     model = Dataset
     form_class = DatasetForm
 
+    def post(self, request, *args, **kwargs):
+        if not request.user.has_perm('editor.change_%s' % self.model._meta.model_name):
+            return HttpResponseForbidden('You do not have permission to perform this action.')
+        return super(DatasetUpdate, self).post(request, *args, **kwargs)
+
     def get_formset_instance(self):
         """
         Returns an instance of the formset.
@@ -297,6 +311,10 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
 @require_POST
 @login_required
 def scrape(request):
+    has_perm = request.user.has_perm('editor.add_datafile')\
+        and request.user.has_perm('editor.add_documentfile')
+    if not has_perm:
+        return HttpResponseForbidden('You do not have permission to perform this action.')
     response_data = {}
     form = ScrapeForm(request.POST)
     if form.is_valid():
