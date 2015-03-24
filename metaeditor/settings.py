@@ -212,6 +212,8 @@ LOGGING = {
     }
 }
 
+SITE_DOMAIN = 'metaeditor.org'
+
 from local_settings import *
 
 # Parse database configuration from $DATABASE_URL
