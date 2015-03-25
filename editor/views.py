@@ -165,6 +165,7 @@ class FormatUpdate(BaseUpdateView):
 
 class DatasetList(ListView):
     model = Dataset
+    paginate_by = 5
 
     def get_queryset(self, *args, **kwargs):
         qs = super(DatasetList, self).get_queryset(*args, **kwargs)

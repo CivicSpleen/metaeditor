@@ -1,37 +1,43 @@
 {% extends "editor/base.html" %}
 {% block title_prefix %}Dataset List - {% endblock %}
 {% load urls %}
+{% load bootstrap3 %}
 
 {% block content %}
 <form method="get">
     <label for="id_query">Filter</label>
-    <input id="id_query" type="text" name="query" value="{{ query }}"/>
+    <input
+        title="Search by title or source name or page url"
+        id="id_query"
+        type="text"
+        name="query"
+        value="{{ query }}"/>
     <input type="submit" />
 </form>
 <table border="1">
     <tr>
         <th>
-            <a href="{% add_params request.get_full_path o="title" %}">
+            <a href="{% add_params request.get_full_path o="title" page="1" %}">
                 Title
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="source__name" %}">
+            <a href="{% add_params request.get_full_path o="source__name" page="1" %}">
                 Source
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="page" %}">
+            <a href="{% add_params request.get_full_path o="page" page="1" %}">
                 Dataset page URL
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="datafile__count" %}">
+            <a href="{% add_params request.get_full_path o="datafile__count" page="1" %}">
                 Number of datafiles
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="documentfile__count" %}">
+            <a href="{% add_params request.get_full_path o="documentfile__count" page="1" %}">
                 Number of documents
             </a>
         </th>
@@ -50,4 +56,7 @@
         </tr>
     {% endfor %}
 </table>
+{% if is_paginated %}
+    {% bootstrap_pagination page_obj %}
+{% endif %}
 {% endblock %}
