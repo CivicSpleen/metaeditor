@@ -63,6 +63,7 @@
             if ($("#id_download_page").val() === "") {
                 alert("Set download page first.");
             } else {
+                $.data($("#remoteLinksModal").get(0), "fieldset", $(this).closest("fieldset"));
                 $("#remoteLinksModal").modal("show");
             }
         });
@@ -92,7 +93,6 @@
             // TODO: use bootstrap error instead of alert.
             alert(errors.join('; '));
         };
-
 
         $("#remoteLinksModal").on("shown.bs.modal", function () {
             // Gets remote links from server side and populates popup.
@@ -133,7 +133,8 @@
             // user selected urls and clicked Ok.
             $("#remoteLinksModal table tbody.content input:checked").each(function(i, e) {
                 var $a = $("a", $(e).closest("tr"));
-                addNewForm($($("fieldset").get(0)), $a.text(), $a.attr("href"));
+                var $fieldset = $("#remoteLinksModal").data("fieldset");
+                addNewForm($fieldset, $a.text(), $a.attr("href"));
             });
             $("#remoteLinksModal").modal("hide");
         });
