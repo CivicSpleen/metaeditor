@@ -1,19 +1,40 @@
 {% extends "editor/base.html" %}
 {% block title_prefix %}Dataset List - {% endblock %}
+{% load urls %}
 
 {% block content %}
 <form method="get">
     <label for="id_query">Filter</label>
-    <input id="id_query" type="text" name="query" />
+    <input id="id_query" type="text" name="query" value="{{ query }}"/>
     <input type="submit" />
 </form>
 <table border="1">
     <tr>
-        <th><a href="?o=title">Title</a></th>
-        <th><a href="?o=source_name">Source</a></th>
-        <th><a href="?o=page">Dataset page URL</a></th>
-        <th><a href="?o=datafiles">Number of datafiles</a></th>
-        <th><a href="?o=documents">Number of documents</a></th>
+        <th>
+            <a href="{% add_params request.get_full_path o="title" %}">
+                Title
+            </a>
+        </th>
+        <th>
+            <a href="{% add_params request.get_full_path o="source__name" %}">
+                Source
+            </a>
+        </th>
+        <th>
+            <a href="{% add_params request.get_full_path o="page" %}">
+                Dataset page URL
+            </a>
+        </th>
+        <th>
+            <a href="{% add_params request.get_full_path o="datafile__count" %}">
+                Number of datafiles
+            </a>
+        </th>
+        <th>
+            <a href="{% add_params request.get_full_path o="documentfile__count" %}">
+                Number of documents
+            </a>
+        </th>
     </tr>
     {% for dataset in object_list %}
         <tr>
@@ -24,8 +45,8 @@
             </td>
             <td>{{ dataset.source }}</td>
             <td>{{ dataset.page }}</td>
-            <td>{{ dataset.datafile_set.count }}</td>
-            <td>{{ dataset.documentfile_set.count }}</td>
+            <td>{{ dataset.datafile__count }}</td>
+            <td>{{ dataset.documentfile__count }}</td>
         </tr>
     {% endfor %}
 </table>

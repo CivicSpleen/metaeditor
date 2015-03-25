@@ -5,7 +5,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -169,6 +169,10 @@ class DatasetList(ListView):
     def get_queryset(self, *args, **kwargs):
         qs = super(DatasetList, self).get_queryset(*args, **kwargs)
         query = self.request.GET.get('query')
+        qs = qs.annotate(
+            datafile__count=Count('datafile'),
+            documentfile__count=Count('documentfile'))
+
         if query:
             qs = qs.filter(
                 Q(title__icontains=query)
@@ -176,11 +180,16 @@ class DatasetList(ListView):
                 | Q(page__icontains=query))
 
         order_by = self.request.GET.get('o')
-        if order_by not in ('title', 'source__name', 'page'):
+        if order_by not in ('title', 'source__name', 'page', 'datafile__count', 'documentfile__count'):
             order_by = None
         if order_by:
             qs = qs.order_by(order_by)
         return qs.select_related('source')
+
+    def get_context_data(self, **kwargs):
+        ctx = super(DatasetList, self).get_context_data(**kwargs)
+        ctx['query'] = self.request.GET.get('query', '')
+        return ctx
 
 
 class DatasetEditMixin(object):

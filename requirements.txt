@@ -17,3 +17,4 @@ requests-oauthlib==0.4.2
 six==1.9.0
 static3==0.5.1
 wsgiref==0.1.2
+django-url-tools==0.0.8
