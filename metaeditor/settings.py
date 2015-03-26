@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'bootstrap3',
     'url_tools',
+    'django_extensions',
 
     # metaeditor
     'editor',

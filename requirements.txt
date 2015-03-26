@@ -18,3 +18,4 @@ six==1.9.0
 static3==0.5.1
 wsgiref==0.1.2
 django-url-tools==0.0.8
+django-extensions==1.5.2
