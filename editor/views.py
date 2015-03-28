@@ -334,7 +334,7 @@ def scrape(request):
     form = ScrapeForm(request.POST)
 
     # find which extensions should be included to the response.
-    include_extensions = None
+    include_extensions = []
     if 'documentfiles' in request.GET:
         include_extensions.extend(settings.EDITOR_DOCUMENT_EXTENSIONS)
     if 'datafiles' in request.GET:
