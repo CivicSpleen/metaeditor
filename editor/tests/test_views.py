@@ -429,10 +429,8 @@ class ValidateURLTest(TestCase):
         resp = self.client.post(self.url, {'url': 'bla'})
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)
-        self.assertIn('errors', content)
-        self.assertIn('code', content['errors'][0])
-        self.assertIn('messages', content['errors'][0])
-        self.assertIn('Enter a valid URL', content['errors'][0]['messages'][0])
+        self.assertIn('error', content)
+        self.assertIn('Enter a valid URL', content['error'])
 
     @fudge.patch('editor.views.requests.head')
     def test_returns_error_with_http_stasus_if_status_is_not_200(self, fake_head):
@@ -446,9 +444,8 @@ class ValidateURLTest(TestCase):
         resp = self.client.post(self.url, {'url': 'http://ya.ru'})
         self.assertEqual(resp.status_code, 200)
         content = json.loads(resp.content)
-        self.assertIn('errors', content)
-        self.assertIn('code', content['errors'][0])
-        self.assertEqual(content['errors'][0]['code'], 'http_403')
+        self.assertIn('error', content)
+        self.assertIn('403', content['error'])
 
     @fudge.patch('editor.views.requests.head')
     def test_returns_success_if_url_found(self, fake_head):
