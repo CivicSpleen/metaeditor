@@ -377,26 +377,26 @@ def validate_url(request):
 
     # validate url format.
     validate = URLValidator()
-    errors = []
+    error = None
+
     try:
         validate(url)
-
     except ValidationError, e:
-        errors.append({'code': e.code, 'messages': e.messages})
+        error = '; '.join(e.messages)
 
-    if not errors:
+    if not error:
         # it is valid. What about existance?
         try:
             resp = requests.head(url)
             if resp.status_code != 200:
-                errors.append({'code': 'http_%s' % resp.status_code, 'messages': [resp.reason]})
+                error = '%s %s' % (resp.status_code, resp.reason)
         except Exception, exc:
             logger.error(
                 u'Failed to validate existance of `%s` because of `%s`.' % (url, exc))
-            errors.append({'code': 'exception', 'messages': ['Failed to validate existance.']})
+            error = 'Not available.'
 
-    if errors:
-        response_data['errors'] = errors
+    if error:
+        response_data['error'] = error
     else:
         response_data['is_valid'] = True
     return HttpResponse(

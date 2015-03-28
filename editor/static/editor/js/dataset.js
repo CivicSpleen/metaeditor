@@ -46,6 +46,7 @@
             }
             if (name || url) {
                 $newForm.prependTo($(".formset", $fieldset));
+                validateURL($(".url", $newForm));
             } else {
                 $newForm.appendTo($(".formset", $fieldset));
             }
@@ -85,6 +86,7 @@
                     elemsToAppend = elemsToAppend.add($current);
                 }
                 elemsToAppend.appendTo("#remoteLinksModal .modal-body table.links tbody.content");
+
             }
         };
 
@@ -137,6 +139,45 @@
                 addNewForm($fieldset, $a.text(), $a.attr("href"));
             });
             $("#remoteLinksModal").modal("hide");
+        });
+
+        var validateURL = function($input) {
+            // validates url and its existance.
+            if ($input.data("bs.popover")) {
+                // popover already exists, change content.
+                $input.data("bs.popover").options.content = "Validating...";
+            } else {
+                // initialize popover.
+                $input.popover({"content": "Validating...", "trigger": "manual click"});
+            }
+            $input.popover("show");
+            $.ajax({
+                statusCode: {
+                    500: function() {
+                        $input.data("bs.popover").options.content = "Server error.";
+                        $input.popover("show");
+                    },
+                    403: function() {
+                        $input.data("bs.popover").options.content = "Forbidden.";
+                    }
+                },
+                url: "/editor/validate-url",
+                type: "post",
+                data: {url: $input.val()},
+                success: function(response) {
+                    if (response.error) {
+                        $input.data("bs.popover").options.content = response.error;
+                        $input.popover("show");
+                    } else {
+                        $input.data("bs.popover").options.content = "Available";
+                        $input.popover("hide");
+                    }
+                }
+            });
+        };
+
+        $("#datafiles, #documentfiles").on("change", ".url", function(e) {
+            validateURL($(this));
         });
     });
 })();
