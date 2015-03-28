@@ -2,6 +2,7 @@
 import json
 import logging
 
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -16,7 +17,7 @@ from django.views.generic.list import ListView
 
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm
 from editor.models import Category, Source, Format, Dataset
-from editor.utils import get_links
+from editor.utils import get_links, filter_links
 
 logger = logging.getLogger(__name__)
 
@@ -327,14 +328,29 @@ def scrape(request):
         return HttpResponseForbidden('You do not have permission to perform this action.')
     response_data = {}
     form = ScrapeForm(request.POST)
+
+    # find wich extensions should be included to the response.
+    include_extensions = None
+    if 'documentfiles' in request.GET:
+        include_extensions.extend(settings.EDITOR_DOCUMENT_EXTENSIONS)
+    if 'datafiles' in request.GET:
+        include_extensions.extend(settings.EDITOR_DATAFILE_EXTENSIONS)
+
     if form.is_valid():
         try:
-            response_data['links'] = get_links(form.cleaned_data['url'])
+            # find links on remote site.
+            links = get_links(form.cleaned_data['url'])
+
+            # remove all links do not match to extensions to include.
+            links = filter_links(links, include_extensions)
+
+            response_data['links'] = links
         except Exception as exc:
             response_data['errors'] = [u'Failed to get urls. Please, try later.']
             logger.error(
                 u'Failed to retrieve links from %s because of %s' % (form.cleaned_data['url'], exc))
     else:
+        # form has errors, collect them and add to response.
         errors = []
         for field, field_errors in form.errors.iteritems():
             errors.append('%s' % '; '.join(field_errors))

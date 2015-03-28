@@ -52,3 +52,27 @@ def get_links(url):
     parser = LinksParser(url)
     parser.feed(resp.content)
     return parser.links
+
+
+def filter_links(links, include_extensions=None):
+    """ Removes all links who disagree with given extensions.
+
+    Args:
+        links (list of dicts): links to filter.
+        include_extensions (list or None): extensions to match to. If empty, returns
+            given links without any changes.
+
+    Returns:
+        filtered links (list of dicts):
+
+    """
+
+    if not include_extensions:
+        return links
+
+    filtered_links = []
+    for link in links:
+        for ext in include_extensions:
+            if link['href'].endswith(ext):
+                filtered_links.append(link)
+    return filtered_links

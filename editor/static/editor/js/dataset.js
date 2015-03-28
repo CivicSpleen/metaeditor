@@ -114,7 +114,7 @@
                         $("#remoteLinksModal").modal("hide");
                     }
                 },
-                url: "/editor/scrape",
+                url: "/editor/scrape?" + $("#remoteLinksModal").data("fieldset").attr("id"),
                 type: "post",
                 data: {url: downloadUrl},
                 success: function(response) {

@@ -217,6 +217,14 @@ LOGGING = {
 
 SITE_DOMAIN = 'metaeditor.org'
 
+# ## Editor settings ## #
+
+# wich urls may be included to the documents formset
+EDITOR_DOCUMENT_EXTENSIONS = ['.doc', '.docx', '.pdf']
+
+# wich urls may be included to the data files formset
+EDITOR_DATAFILE_EXTENSIONS = ['.xls', '.xlsx', '.txt', '.csv']
+
 from local_settings import *
 
 # Parse database configuration from $DATABASE_URL

@@ -1,5 +1,5 @@
 {% load editor_tags %}
-<fieldset>
+<fieldset id="{{ id }}">
     <legend>{{ title }}</legend>
     <div class="empty-form" style="display:none;border:solid gray 1px;">
         {% formset_form formset.empty_form %}
