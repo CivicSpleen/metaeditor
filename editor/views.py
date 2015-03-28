@@ -2,10 +2,14 @@
 import json
 import logging
 
+import requests
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
+from django.core.validators import URLValidator
 from django.db.models import Q, Count
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
@@ -329,7 +333,7 @@ def scrape(request):
     response_data = {}
     form = ScrapeForm(request.POST)
 
-    # find wich extensions should be included to the response.
+    # find which extensions should be included to the response.
     include_extensions = None
     if 'documentfiles' in request.GET:
         include_extensions.extend(settings.EDITOR_DOCUMENT_EXTENSIONS)
@@ -356,6 +360,45 @@ def scrape(request):
             errors.append('%s' % '; '.join(field_errors))
         response_data['errors'] = errors
 
+    return HttpResponse(
+        json.dumps(response_data),
+        content_type='application/json')
+
+
+@require_POST
+@login_required
+def validate_url(request):
+    """ Validates given url and checks for its existance. """
+
+    # let it fail client side does not give url. Allows to catch client side error immediatelly.
+    url = request.POST['url']
+
+    response_data = {}
+
+    # validate url format.
+    validate = URLValidator()
+    errors = []
+    try:
+        validate(url)
+
+    except ValidationError, e:
+        errors.append({'code': e.code, 'messages': e.messages})
+
+    if not errors:
+        # it is valid. What about existance?
+        try:
+            resp = requests.head(url)
+            if resp.status_code != 200:
+                errors.append({'code': 'http_%s' % resp.status_code, 'messages': [resp.reason]})
+        except Exception, exc:
+            logger.error(
+                u'Failed to validate existance of `%s` because of `%s`.' % (url, exc))
+            errors.append({'code': 'exception', 'messages': ['Failed to validate existance.']})
+
+    if errors:
+        response_data['errors'] = errors
+    else:
+        response_data['is_valid'] = True
     return HttpResponse(
         json.dumps(response_data),
         content_type='application/json')

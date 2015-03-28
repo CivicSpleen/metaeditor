@@ -405,3 +405,63 @@ class ScrapeTest(TestCase):
         self.assertIn('errors', content)
         self.assertIn('Failed to get urls', content['errors'][0])
         self.assertNotIn('links', content)
+
+
+class ValidateURLTest(TestCase):
+    def setUp(self):
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+        self.url = reverse('editor:validate-url')
+
+    def test_is_disabled_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.post(self.url)
+        self.assertEqual(resp.status_code, 302)
+
+    def test_get_is_not_allowed(self):
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 405)
+
+    def test_returns_error_for_invalid_url(self):
+        resp = self.client.post(self.url, {'url': 'bla'})
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('errors', content)
+        self.assertIn('code', content['errors'][0])
+        self.assertIn('messages', content['errors'][0])
+        self.assertIn('Enter a valid URL', content['errors'][0]['messages'][0])
+
+    @fudge.patch('editor.views.requests.head')
+    def test_returns_error_with_http_stasus_if_status_is_not_200(self, fake_head):
+        class FakeForbidden(object):
+            status_code = 403
+            content = ''
+            reason = ''
+
+        fake_head.expects_call()\
+            .returns(FakeForbidden)
+        resp = self.client.post(self.url, {'url': 'http://ya.ru'})
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('errors', content)
+        self.assertIn('code', content['errors'][0])
+        self.assertEqual(content['errors'][0]['code'], 'http_403')
+
+    @fudge.patch('editor.views.requests.head')
+    def test_returns_success_if_url_found(self, fake_head):
+        class FakeSuccess(object):
+            status_code = 200
+            content = ''
+
+        fake_head.expects_call()\
+            .returns(FakeSuccess)
+
+        resp = self.client.post(self.url, {'url': 'http://ya.ru'})
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('is_valid', content)
+        self.assertTrue(content['is_valid'])
+        self.assertNotIn('errors', content)

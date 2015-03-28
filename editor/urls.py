@@ -48,4 +48,7 @@ urlpatterns = patterns('',
     url(r'^scrape$',
         views.scrape,
         name='scrape'),
+    url(r'^validate-url$',
+        views.validate_url,
+        name='validate-url'),
 )
