@@ -43,7 +43,7 @@
             </ul>
         </div>
     </div>
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and has_add_perm and has_change_perm %}
         {% if form %}
             <div style="float:left;width:59%;overflow:auto;">
                 <form method="POST">
@@ -91,11 +91,15 @@
             <a href="{{ create_url }}" title="Create new root node">Create root node</a>
         {% endif %}
     {% else %}
-        {# anonymous user #}
+        {# anonymous user or user without permissions #}
         {% if form %}
             <div style="float:left;width:59%;overflow:auto;">
                 <h2>{{ form.instance.name }}</h2>
-                <div>Authenticate to edit</div>
+                {% if not user.is_authenticated %}
+                    <div>Authenticate to edit</div>
+                {% else %}
+                    <div>You do not have permission to edit</div>
+                {% endif %}
             </div>
         {% endif %}
     {% endif %}

@@ -7,33 +7,40 @@
     <script src="{% static "editor/js/dataset.js" %}"></script>
 {% endblock %}
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-xs-6">
-                {% bootstrap_form form %}
+    {% if has_add_perm and has_change_perm %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-xs-6">
+                    {% bootstrap_form form %}
+                </div>
+                <div class="col-xs-6">
+                    {% files_block datafile_formset "Data files" "datafiles" %}
+                    {% files_block docfile_formset "Documents" "documentfiles" %}
+                </div>
             </div>
-            <div class="col-xs-6">
-                {% files_block datafile_formset "Data files" "datafiles" %}
-                {% files_block docfile_formset "Documents" "documentfiles" %}
+            <br />
+            <div style="float:right;">
+            {% buttons %}
+                <button type="submit" class="btn btn-default"
+                        title="Continue editing this dataset after saving"
+                        name="save-and-continue"/>
+                    Save and continue editing
+                </button>
+                <button type="submit"
+                        class="btn btn-primary"
+                        title="Save and go to the list of dataset">
+                    Save
+                </button>
+            {% endbuttons %}
             </div>
-        </div>
-        <br />
-        <div style="float:right;">
-        {% buttons %}
-            <button type="submit" class="btn btn-default"
-                    title="Continue editing this dataset after saving"
-                    name="save-and-continue"/>
-                Save and continue editing
-            </button>
-            <button type="submit"
-                    class="btn btn-primary"
-                    title="Save and go to the list of dataset">
-                Save
-            </button>
-        {% endbuttons %}
-        </div>
-    </form>
+        </form>
+    {% else %}
+        {# user does not have permission or is anonymous #}
+        {% if object %}
+            <h2>{{ object.title }}</h2>
+        {% endif %}
+    {% endif %}
 
     <div class="modal fade" id="remoteLinksModal">
       <div class="modal-dialog">

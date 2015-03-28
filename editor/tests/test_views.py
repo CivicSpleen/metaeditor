@@ -8,10 +8,38 @@ from django.test import TestCase
 
 from accounts.tests.helpers import give_perm
 
-from editor.models import Category, Dataset, DataFile, DocumentFile
+from editor.models import Category, Dataset, DataFile, DocumentFile, Source, Format
 
 from editor.tests.factories import DatasetFactory, CategoryFactory,\
     SourceFactory, FormatFactory, UserFactory
+
+
+class CreatePermissionTestMixin(object):
+
+    def test_post_is_not_available_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 302)
+
+    def test_post_is_not_available_without_permission(self):
+        self.user1.user_permissions.all().delete()
+        resp = self.client.post(self.url, {})
+        self.assertEqual(resp.status_code, 403)
+
+
+class ListPermissionTestMixin(object):
+
+    def test_does_not_show_create_root_node_for_user_without_permission(self):
+        self.user1.user_permissions.all().delete()
+        resp = self.client.get(self.url)
+        self.assertNotIn(
+            reverse('editor:category-create'),
+            resp.content,
+            'Category create url unexpectedly found.')
+
+
+class UpdatePermissionTestMixin(CreatePermissionTestMixin):
+    pass
 
 
 class IndexViewTest(TestCase):
@@ -34,26 +62,32 @@ class IndexViewTest(TestCase):
         self.assertIn(reverse('editor:category-list'), resp.content)
 
 
-class CategoryCreateTest(TestCase):
+class BaseTest(TestCase):
     def setUp(self):
-        self.url = reverse('editor:category-create')
-
         self.user1 = UserFactory()
         logged_in = self.client.login(
             username=self.user1.username,
             password='1')
         self.assertTrue(logged_in)
-        give_perm(self.user1, Category, 'add_category')
+        self.url = self.get_url()
+        model_class = self.get_model_class()
+        give_perm(self.user1, model_class, 'add_%s' % model_class._meta.model_name)
+        give_perm(self.user1, model_class, 'change_%s' % model_class._meta.model_name)
 
-    def test_post_is_forbidden_for_anonymous(self):
-        self.client.logout()
-        resp = self.client.post(self.url, {})
-        self.assertEqual(resp.status_code, 403)
+    def get_url(self):
+        raise NotImplementedError
 
-    def test_post_is_forbidden_without_permission(self):
-        self.user1.user_permissions.all().delete()
-        resp = self.client.post(self.url, {})
-        self.assertEqual(resp.status_code, 403)
+    def get_model_class(self):
+        raise NotImplementedError
+
+
+class CategoryCreateTest(BaseTest, CreatePermissionTestMixin):
+
+    def get_url(self):
+        return reverse('editor:category-create')
+
+    def get_model_class(self):
+        return Category
 
     def test_renders_category_form_on_get(self):
         resp = self.client.get(self.url)
@@ -95,11 +129,24 @@ class CategoryCreateTest(TestCase):
             1)
 
 
-class CategoryListTest(TestCase):
-    def setUp(self):
-        self.url = reverse('editor:category-list')
+class CategoryListTest(BaseTest, ListPermissionTestMixin):
 
-    def test_renders_category_tree_on_get(self):
+    def get_url(self):
+        return reverse('editor:category-list')
+
+    def get_model_class(self):
+        return Category
+
+    def test_renders_category_tree_on_get_by_anonymous(self):
+        self.client.logout()
+        categ1 = CategoryFactory()
+        categ2 = CategoryFactory()
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(categ1.name, resp.content)
+        self.assertIn(categ2.name, resp.content)
+
+    def test_renders_category_tree_on_get_by_authenticated(self):
         categ1 = CategoryFactory()
         categ2 = CategoryFactory()
         resp = self.client.get(self.url)
@@ -108,11 +155,22 @@ class CategoryListTest(TestCase):
         self.assertIn(categ2.name, resp.content)
 
 
-class SourceListTest(TestCase):
-    def setUp(self):
-        self.url = reverse('editor:source-list')
+class SourceCreateTest(BaseTest, CreatePermissionTestMixin):
+    def get_url(self):
+        return reverse('editor:source-create')
 
-    def test_renders_category_tree_on_get(self):
+    def get_model_class(self):
+        return Source
+
+
+class SourceListTest(BaseTest, ListPermissionTestMixin):
+    def get_url(self):
+        return reverse('editor:source-list')
+
+    def get_model_class(self):
+        return Source
+
+    def test_renders_source_tree_on_get(self):
         source1 = SourceFactory()
         source2 = SourceFactory()
         resp = self.client.get(self.url)
@@ -121,9 +179,21 @@ class SourceListTest(TestCase):
         self.assertIn(source2.name, resp.content)
 
 
-class FormatListTest(TestCase):
-    def setUp(self):
-        self.url = reverse('editor:format-list')
+class FormatCreateTest(BaseTest, CreatePermissionTestMixin):
+    def get_url(self):
+        return reverse('editor:format-create')
+
+    def get_model_class(self):
+        return Format
+
+
+class FormatListTest(BaseTest, ListPermissionTestMixin):
+
+    def get_url(self):
+        return reverse('editor:format-list')
+
+    def get_model_class(self):
+        return Format
 
     def test_renders_format_tree_on_get(self):
         format1 = FormatFactory()
@@ -209,25 +279,22 @@ class DatasetListTest(TestCase):
         self.assertEqual(resp.context['object_list'][1], ds1)
 
 
-class DatasetCreateTest(TestCase):
-    def setUp(self):
-        self.user1 = UserFactory()
-        logged_in = self.client.login(
-            username=self.user1.username,
-            password='1')
-        self.assertTrue(logged_in)
+class DatasetCreateTest(BaseTest):
+
+    def get_url(self):
         self.source1 = SourceFactory()
-        self.url = reverse('editor:dataset-create', kwargs={'source_pk': self.source1.id})
+        return reverse('editor:dataset-create', kwargs={'source_pk': self.source1.id})
 
-        give_perm(self.user1, Dataset, 'add_dataset')
+    def get_model_class(self):
+        return Dataset
 
-    def test_is_disabled_for_anonymous(self):
+    def test_is_not_available_for_anonymous(self):
         self.client.logout()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 302)
         # TODO: Is it really redirect to login page? Test that.
 
-    def test_post_is_forbidden_without_permission(self):
+    def test_post_is_not_available_without_permission(self):
         self.user1.user_permissions.all().delete()
         resp = self.client.post(self.url, {})
         self.assertEqual(resp.status_code, 403)
@@ -285,13 +352,14 @@ class DatasetUpdateTest(TestCase):
         self.assertTrue(logged_in)
         self.ds1 = DatasetFactory()
         self.url = reverse('editor:dataset-update', kwargs={'pk': self.ds1.id})
+        give_perm(self.user1, Dataset, 'add_dataset')
         give_perm(self.user1, Dataset, 'change_dataset')
 
-    def test_is_disabled_for_anonymous(self):
+    def test_returns_details_for_anonymous(self):
         self.client.logout()
         resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 302)
-        # TODO: Is it really redirect to login page? Test that.
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(self.ds1.title, resp.content)
 
     def test_post_is_forbidden_without_permission(self):
         self.user1.user_permissions.all().delete()

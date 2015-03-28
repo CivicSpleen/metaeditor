@@ -39,6 +39,10 @@ class BaseTreeView(ListView):
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
+        kwargs['has_add_perm'] = self.request.user.has_perm(
+            'editor.add_%s' % self.model._meta.model_name)
+        kwargs['has_change_perm'] = self.request.user.has_perm(
+            'editor.change_%s' % self.model._meta.model_name)
         return kwargs
 
 
@@ -67,6 +71,10 @@ class BaseCreateView(CreateView):
     def get_context_data(self, **kwargs):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
+        kwargs['has_add_perm'] = self.request.user.has_perm(
+            'editor.add_%s' % self.model._meta.model_name)
+        kwargs['has_change_perm'] = self.request.user.has_perm(
+            'editor.change_%s' % self.model._meta.model_name)
         # TODO: remove copy/paste. See get_initial method.
         try:
             parent_pk = int(self.request.GET.get('parent', 0))
@@ -116,6 +124,10 @@ class BaseUpdateView(UpdateView):
         kwargs['nodes'] = self.model.objects.all()
         kwargs['create_url'] = self.model.get_create_url()
         kwargs['selected_node'] = self.object
+        kwargs['has_add_perm'] = self.request.user.has_perm(
+            'editor.add_%s' % self.model._meta.model_name)
+        kwargs['has_change_perm'] = self.request.user.has_perm(
+            'editor.change_%s' % self.model._meta.model_name)
         return kwargs
 
 
@@ -148,9 +160,10 @@ class SourceUpdate(BaseUpdateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(SourceUpdate, self).get_context_data(**kwargs)
-        ctx['create_dataset_url'] = reverse(
-            'editor:dataset-create',
-            kwargs={'source_pk': self.object.pk})
+        if self.request.user.has_perm('editor.add_%s' % self.model._meta.model_name):
+            ctx['create_dataset_url'] = reverse(
+                'editor:dataset-create',
+                kwargs={'source_pk': self.object.pk})
         return ctx
 
 
@@ -300,6 +313,14 @@ class DatasetCreate(DatasetEditMixin, CreateView):
         form_kwargs['source'] = self.source
         return form_class(self.request.user, **form_kwargs)
 
+    def get_context_data(self, **kwargs):
+        ctx = super(DatasetCreate, self).get_context_data(**kwargs)
+        ctx['has_add_perm'] = self.request.user.has_perm(
+            'editor.add_%s' % self.model._meta.model_name)
+        ctx['has_change_perm'] = self.request.user.has_perm(
+            'editor.change_%s' % self.model._meta.model_name)
+        return ctx
+
 
 class DatasetUpdate(DatasetEditMixin, UpdateView):
     model = Dataset
@@ -321,6 +342,14 @@ class DatasetUpdate(DatasetEditMixin, UpdateView):
         Returns an instance of the form to be used in this view.
         """
         return form_class(self.request.user, **self.get_form_kwargs())
+
+    def get_context_data(self, **kwargs):
+        ctx = super(DatasetUpdate, self).get_context_data(**kwargs)
+        ctx['has_add_perm'] = self.request.user.has_perm(
+            'editor.add_%s' % self.model._meta.model_name)
+        ctx['has_change_perm'] = self.request.user.has_perm(
+            'editor.change_%s' % self.model._meta.model_name)
+        return ctx
 
 
 @require_POST
