@@ -10,12 +10,12 @@ from editor.models import Dataset, DataFile, DocumentFile, Category,\
 class DatasetForm(forms.ModelForm):
 
     categories = forms.ModelMultipleChoiceField(
-        queryset=Category.objects,
+        queryset=Category.objects.all().order_by('name'),
         widget=forms.CheckboxSelectMultiple(),
         required=False)
 
     formats = forms.ModelMultipleChoiceField(
-        queryset=Format.objects,
+        queryset=Format.objects.all().order_by('name'),
         widget=forms.CheckboxSelectMultiple(),
         required=False)
 

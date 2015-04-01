@@ -20,6 +20,17 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static "editor/css/justified-nav.css" %}" rel="stylesheet">
+    <link href="{% static "editor/css/editor.css" %}" rel="stylesheet">
+
+    <!-- columns fallback for ie -->
+    <!--[if lt IE 10]>
+        <style>
+            #id_categories div, #id_formats div {
+                width: 33%;
+                float: left;
+            }
+        </style>
+    <![endif]-->
 
     <script src="{% static "editor/js/jquery.js" %}"></script>
     <script src="{% static "editor/jstree/jstree.min.js" %}" type="text/javascript"></script>
