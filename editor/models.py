@@ -13,19 +13,23 @@ class Source(MPTTModel):
         help_text='Formal name of the source. such as "Department of Health and Human Services".')
     abbreviation = models.CharField(
         max_length=50,
+        null=True, blank=True,
         help_text='A common abbreviation for the name of the source, such as "HHS".')
     domain = models.CharField(
         max_length=50,
+        null=True, blank=True,
         help_text='A short string, by default derived from the Home page url.')
     homepage = models.URLField(
         help_text='URL of the home page for the organization.')
     about = models.TextField(
-        help_text='Freeform text, paragraph length.')
+        help_text='Freeform text, paragraph length.',
+        null=True, blank=True)
     parent = TreeForeignKey(
         'self', null=True, blank=True,
         help_text='A link to another source.')
     categories = models.ManyToManyField(
         'Category',
+        null=True, blank=True,
         help_text='Multiple links to names of categories.')
 
     def __unicode__(self):
