@@ -12,7 +12,28 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-xs-6">
-                    {% bootstrap_form form %}
+                    {% bootstrap_field form.title %}
+                    {% bootstrap_field form.categories %}
+                    {% bootstrap_field form.variant %}
+                    {% bootstrap_field form.start_year %}
+                    {% bootstrap_field form.end_year %}
+                    {% bootstrap_field form.coverage %}
+                    {% bootstrap_field form.region %}
+                    {% bootstrap_field form.page %}
+                    {% bootstrap_field form.download_page %}
+                    {% bootstrap_field form.contacts %}
+                    {% bootstrap_field form.formats %}
+                    <div class="form-group">
+                        <label class="control-label">Flags</label>
+                        <div id="id_flags">
+                            {% bootstrap_field form.is_complex %}
+                            {% bootstrap_field form.is_reviewed %}
+                            {% bootstrap_field form.has_restricted_version %}
+                            {% bootstrap_field form.has_restrictive_licensing %}
+                            {% bootstrap_field form.has_direct_public_download %}
+                        </div>
+                    </div>
+                    {% bootstrap_field form.entry_time_minutes %}
                 </div>
                 <div class="col-xs-6">
                     {% files_block datafile_formset "Data files" "datafiles" %}
