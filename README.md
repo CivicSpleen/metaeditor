@@ -29,3 +29,18 @@ Given you are running metaeditor app on metaeditor.org
 ## Email notification setup.
 1. Add your email to ADMINS settings.
 2. Set up your email account as described here - <TODO: link to django site>
+
+## Importing initial data.
+
+### Importing sources.
+Sources will be imported from editor/data/sources.csv.
+
+To import sources use load_sources management command:
+```bash
+python manage.py load_sources
+```
+
+If you already have sources call load_sources with --delete option. (this will delete all dataset too):
+```bash
+python manage.py load_sources --delete
+```
