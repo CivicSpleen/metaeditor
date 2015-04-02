@@ -3,29 +3,6 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    <script>
-    $(function(){
-        $('#tree')
-            .on('select_node.jstree', function (e, node) {
-                window.location.href = node.node.a_attr.href;
-            })
-        .jstree({
-            "plugins": ["search"]});
-
-        var to = false;
-        $("#query").keyup(function () {
-            if(to) {
-                clearTimeout(to);
-            }
-            to = setTimeout(function () {
-                var v = $("#query").val();
-                $("#tree").jstree(true).search(v);
-        }, 250);
-        });
-    });
-    </script>
-    <br />
-
     <div style="float:left;width:40%;">
         <label for="query">Search:</label> <input type="text" id="query"/>
         <div id="tree">
