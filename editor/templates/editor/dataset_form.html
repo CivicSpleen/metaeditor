@@ -6,21 +6,28 @@
 {% block extrajs %}
     <script src="{% static "editor/js/dataset.js" %}"></script>
 {% endblock %}
+
+{% block page_class %}dataset-form{% endblock %}
+
 {% block content %}
     {% if has_add_perm and has_change_perm %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
                 <div class="col-xs-6">
-                    {% bootstrap_field form.title %}
+                    <div class="form-horizontal">
+                        {% bootstrap_field form.title layout="horizontal" %}
+                    </div>
                     {% bootstrap_field form.categories %}
-                    {% bootstrap_field form.variant %}
-                    {% bootstrap_field form.start_year %}
-                    {% bootstrap_field form.end_year %}
-                    {% bootstrap_field form.coverage %}
-                    {% bootstrap_field form.region %}
-                    {% bootstrap_field form.page %}
-                    {% bootstrap_field form.download_page %}
+                    <div class="form-horizontal">
+                        {% bootstrap_field form.variant layout="horizontal" %}
+                    {% bootstrap_field form.start_year layout="horizontal" %}
+                    {% bootstrap_field form.end_year layout="horizontal" %}
+                    {% bootstrap_field form.coverage layout="horizontal" %}
+                    {% bootstrap_field form.region layout="horizontal" %}
+                    {% bootstrap_field form.page layout="horizontal" %}
+                    {% bootstrap_field form.download_page layout="horizontal" %}
+                    </div>
                     {% bootstrap_field form.contacts %}
                     {% bootstrap_field form.formats %}
                     <div class="form-group">
@@ -33,7 +40,9 @@
                             {% bootstrap_field form.has_direct_public_download %}
                         </div>
                     </div>
-                    {% bootstrap_field form.entry_time_minutes %}
+                    <div class="form-horizontal">
+                        {% bootstrap_field form.entry_time_minutes layout="horizontal" %}
+                    </div>
                 </div>
                 <div class="col-xs-6">
                     {% files_block datafile_formset "Data files" "datafiles" %}

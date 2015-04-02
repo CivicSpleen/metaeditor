@@ -19,7 +19,8 @@ from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm
+from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm,\
+    SourceForm, CategoryForm, FormatForm
 from editor.models import Category, Source, Format, Dataset
 from editor.utils import get_links, filter_links
 
@@ -137,12 +138,12 @@ class CategoryList(BaseTreeView):
 
 class CategoryCreate(BaseCreateView):
     model = Category
-    fields = ['name', 'parent']
+    form_class = CategoryForm
 
 
 class CategoryUpdate(BaseUpdateView):
     model = Category
-    fields = ['name', 'parent']
+    form_class = CategoryForm
 
 
 class SourceList(BaseTreeView):
@@ -151,12 +152,12 @@ class SourceList(BaseTreeView):
 
 class SourceCreate(BaseCreateView):
     model = Source
-    fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
+    form_class = SourceForm
 
 
 class SourceUpdate(BaseUpdateView):
     model = Source
-    fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
+    form_class = SourceForm
 
     def get_context_data(self, **kwargs):
         ctx = super(SourceUpdate, self).get_context_data(**kwargs)
@@ -174,11 +175,12 @@ class FormatList(BaseTreeView):
 class FormatCreate(BaseCreateView):
     model = Format
     fields = ['name', 'parent']
+    form_class = FormatForm
 
 
 class FormatUpdate(BaseUpdateView):
     model = Format
-    fields = ['name', 'parent']
+    form_class = FormatForm
 
 
 class DatasetList(ListView):

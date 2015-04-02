@@ -4,7 +4,7 @@ from django import forms
 from django.forms.models import inlineformset_factory
 
 from editor.models import Dataset, DataFile, DocumentFile, Category,\
-    Format
+    Format, Source
 
 
 class DatasetForm(forms.ModelForm):
@@ -46,6 +46,51 @@ class DatasetForm(forms.ModelForm):
 
 class ScrapeForm(forms.Form):
     url = forms.URLField(required=True)
+
+
+class SourceForm(forms.ModelForm):
+
+    class Meta:
+        model = Source
+        fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+
+        # display some fields horizontally
+        self.fields['name'].horizontal = True
+        self.fields['parent'].horizontal = True
+        self.fields['abbreviation'].horizontal = True
+        self.fields['domain'].horizontal = True
+        self.fields['homepage'].horizontal = True
+
+
+class CategoryForm(forms.ModelForm):
+
+    class Meta:
+        model = Category
+        fields = ['name', 'parent']
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+
+        # display some fields horizontally
+        self.fields['name'].horizontal = True
+        self.fields['parent'].horizontal = True
+
+
+class FormatForm(forms.ModelForm):
+
+    class Meta:
+        model = Format
+        fields = ['name', 'parent']
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+
+        # display some fields horizontally
+        self.fields['name'].horizontal = True
+        self.fields['parent'].horizontal = True
 
 
 class BaseFileForm(forms.ModelForm):

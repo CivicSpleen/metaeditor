@@ -25,10 +25,15 @@
     <!-- columns fallback for ie -->
     <!--[if lt IE 10]>
         <style>
-            #id_formats div, #id_flags div {
+            #id_formats div {
                 width: 33%;
                 float: left;
             }
+            #id_flags div {
+                width: 50%;
+                float: left;
+            }
+
         </style>
     <![endif]-->
 
@@ -45,7 +50,7 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container {% block page_class %}{% endblock %}">
         <ul style="float:right;" class="auth">
             {% if user.is_authenticated %}
                 <li>

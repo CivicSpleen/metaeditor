@@ -17,3 +17,9 @@
 #id_formats div:first-child, #id_flags div:first-child {
     margin-top: 0;
 }
+
+.form-horizontal label.control-label {
+    text-align: left;
+    padding-right: 0;
+    padding-top: 0;
+}

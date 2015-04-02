@@ -48,7 +48,15 @@
             <div style="float:left;width:59%;overflow:auto;">
                 <form method="POST">
                     {% csrf_token %}
-                    {% bootstrap_form form %}
+                    {% for field in form %}
+                        {% if field.field.horizontal %}
+                            <div class="form-horizontal">
+                                {% bootstrap_field field layout="horizontal" %}
+                            </div>
+                        {% else %}
+                            {% bootstrap_field field %}
+                        {% endif %}
+                    {% endfor %}
                     <div style="float:right;">
                     {% buttons %}
                         <button type="submit"

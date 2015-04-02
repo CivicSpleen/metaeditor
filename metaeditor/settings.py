@@ -217,6 +217,13 @@ LOGGING = {
 
 SITE_DOMAIN = 'metaeditor.org'
 
+# ## django-bootstrap3 settings
+
+BOOTSTRAP3 = {
+    'horizontal_label_class': 'col-md-2',
+    'horizontal_field_class': 'col-md-8'
+}
+
 # ## Editor settings ## #
 
 # wich urls may be included to the documents formset
