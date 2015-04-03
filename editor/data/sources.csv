@@ -1,107 +1,115 @@
 id,name,abbreviation,domain,homepage,about,level,lft,rght,tree_id,parent_id
 1,Root,,0,0,None,0,,,1,
-2,US Federal Government,US,usa.gov,http://usa.gov,None,,,,1,1
-3,US States,,0,0,None,,,,1,1
-4,State of California,CA,0,0,None,,,,1,3
-5,California Department of Consumer Affairs,,dca.ca.gov,http://dca.ca.gov,Economics,,,,1,4
-6,California Department of Finance,,dof.ca.gov,http://dof.ca.gov,Economics,,,,1,4
-7,California Department of Health Care Services,DHCS,dhcs.ca.gov,http://dhcs.ca.gov,Health,,,,1,4
-8,California Department of Social Services,CDSS,cdss.ca.gov,http://cdss.ca.gov,Human Services,,,,1,4
-9,California Department of Transportation,,dot.ca.gov,http://dot.ca.gov,Transportation,,,,1,4
-10,California Highway Patrol,,chp.ca.gov,http://chp.ca.gov,Safety,,,,1,9
-11,California Office of the Patient Advocate,,opa.ca.gov,http://opa.ca.gov,Health,,,,1,4
-12,Office of Statewide Health Planning and Development,,oshpd.ca.gov,http://oshpd.ca.gov,Health,,,,1,4
-13,RAND California,RAND,ca.rand.org,http://ca.rand.org,None,,,,1,54
-14,State of California Geoportal,,atlas.ca.gov,http://atlas.ca.gov,None,,,,1,4
-15,State Water Resources Control Board,,waterboards.ca.gov,http://waterboards.ca.gov/,None,,,,1,4
-16,The California Department of Public Health West Nile Virus Website,,westnile.ca.gov,http://westnile.ca.gov,Health,,,,1,47
-17,Centers for Medicare & Medicaid Services,CMS,cms.gov,http://cms.gov,Health,,,,1,2
-18,Data.gov,,data.gov,http://data.gov,None,,,,1,2
-19,Federal Bureau of Investigation,FBI,fbi.gov,http://fbi.gov,Justice,,,,1,2
-20,Federal Financial Institutions Examination Council,,ffiec.gov,http://www.ffiec.gov/,Commerce,,,,1,2
-21,National Institutes of Health,NIH,nih.gov,http://www.nih.gov/,Health,,,,1,2
-22,National Traffic Highway Safety Administration,NTHS,nhtsa.gov,http://www.nhtsa.gov/,Transportation,,,,1,2
-23,United States Census Bureau,,census.gov,http://census.gov,Demographics,,,,1,2
-24,United States Department of Agriculture,USDA,usda.gov,http://www.usda.gov/,Agriculture,,,,1,2
-25,US Department of the Treasury,,treasury.gov,http://www.treasury.gov/,Economics,,,,1,2
-26,US Health and Human Services,HHS,hhs.gov,http://hhs.gov,Health,,,,1,2
-27,Administration for Children and Families (ACF),ACF,acf.hhs.gov,http://www.acf.hhs.gov,Health,,,,1,26
-28,Agency for Healthcare Research and Quality,AHRQ,ahrq.gov,http://www.ahrq.gov/,Health,,,,1,26
-29,AGing Integrated Database ,AGID,agid.acl.gov,http://agid.acl.gov,Health,,,,1,107
-30,Child Welfare Information Gateway,,childwelfare.gov,http://childwelfare.gov,Health,,,,1,27
-31,Health Data Community,,healthdata.gov,http://healthdata.gov,Health,,,,1,26
-32,Health Resources and Services Administration,HRSA,hrsa.gov,http://hrsa.gov,Health,,,,1,26
-33,Substance Abuse & Mental Health Services Administration,SAMHSA,samhsa.gov,http://samhsa.gov,Health,,,,1,26
-34,Centers for Disease Control and Prevention,CDC,cdc.org,,None,,,,1,26
-35,Hcupnet - Agency for Healthcare Research and Quality,HCUP,hcupnet.ahrq.gov,http://hcupnet.ahrq.gov,Health,,,,1,36
-36,Healthcare Cost and Utilization Project,HCUP,hcup-us.ahrq.gov,http://hcup-us.ahrq.gov,Health,,,,1,28
-37,Medical Expenditure Panel Survey,,meps.ahrq.gov,http://meps.ahrq.gov,Health,,,,1,28
-38,National Healthcare Quality and Disparities Reports,,nhqrnet.ahrq.gov,http://nhqrnet.ahrq.gov,Health,,,,1,28
-39,Federal Interagency Forum on Aging-Related Statistics,,agingstats.gov,http://agingstats.gov,Health,,,,1,29
-40,Healthcare Cost and Utilization Project,HCUP,hcup-us.ahrq.gov,http://www.hcup-us.ahrq.gov/,Health,,,,1,24
-41,United States Department of Agriculture - Economic Research Service,ERS,ers.usda.gov,http://ers.usda.gov,Agriculture,,,,1,24
-42,Community Development Financial Institutions Fund,,cdfifund.gov,http://www.cdfifund.gov/,Commerce,,,,1,2
-43,National Center for Health Statistics ,NCHS,cdc.gov/nchs,http://www.cdc.gov/nchs/,Health,,,,1,34
-44,Centers for Medicare & Medicaid Services Data Navigator,,dnav.cms.gov,http://dnav.cms.gov,Health,,,,1,17
-45,Chronic Conditions Data Warehouse,CCW,ccwdata.org,http://www.ccwdata.org,Health,,,,1,26
-46,Medicare,,medicare.gov,http://medicare.gov,Health,,,,1,17
-47,California Department of Public Health,CDPH,cdph.ca.gov,,None,,,,1,4
-48,California Cancer Registry,CCR,ccrcal.org,http://ccrcal.org,Health,,,,1,54
-49,California Community Care Licensing Division,,ccld.ca.gov,http://ccld.ca.gov/,Health,,,,1,4
-51,California Health Care Quality Report Cards,,reportcard.opa.ca.gov,http://reportcard.opa.ca.gov,Health,,,,1,11
-52,Health Indicators Warehouse,,healthindicators.gov,http://healthindicators.gov,Health,,,,1,43
-53,U.S. National Library of Medicine - National Institutes of Health,NLS,nlm.nih.gov,http://nlm.nih.gov,Health,,,,1,21
 54,Organizations,,0,0,None,,,,,1
-55,Aligning Forces Humboldt,,aligningforceshumboldt.org,http://aligningforceshumboldt.org,None,,,,1,54
-56,America's Health Rankings,,americashealthrankings.org,http://americashealthrankings.org,Health,,,,1,54
-57,Berkeley Center for Social Services Research,,cssr.berkeley.edu,http://cssr.berkeley.edu,None,,,,1,56
-58,California Adolescent Health Collaborative,,californiateenhealth.org,http://californiateenhealth.org,Health,,,,1,54
-59,California Breathing,,californiabreathing.org,http://californiabreathing.org,Health,,,,1,54
-60,California Health Interview Survey,,chis.ucla.edu,http://chis.ucla.edu,Health,,,,1,59
+104,Trust for America's Health,,healthyamericans.org,http://healthyamericans.org,Health,,,,1,54
+105,UCLA Center for Health Policy Research,UCLA,healthpolicy.ucla.edu,http://healthpolicy.ucla.edu,Health,,,,1,109
 61,California Healthcare Performance Information System,,chpis.org,http://chpis.org,Health,,,,1,54
 62,California Healthy Kids Survey,,chks.wested.org,http://chks.wested.org,Health,,,,1,54
 63,California Hospital Association,,calhospital.org,http://calhospital.org,Health,,,,1,54
 64,California Pan-Ethnic Health Network,,cpehn.org,http://cpehn.org,Health,,,,1,54
 65,California School-Based Health Alliance,,schoolhealthcenters.org,http://schoolhealthcenters.org,Health,,,,1,54
 66,CalQualityCare.org - Quality Health Care in California,,calqualitycare.org,http://calqualitycare.org,Health,,,,1,54
-67,Cancer Incidence and Mortality Data,,cancer-rates.info,http://cancer-rates.info,Health,,,,1,66
+67,Cancer Incidence and Mortality Data,,cancer-rates.info,http://cancer-rates.info,Health,,,,1,54
+103,The Working Poor Families Project,,workingpoorfamilies.org,http://workingpoorfamilies.org,None,,,,1,54
 68,Children Now,,childrennow.org,http://childrennow.org,None,,,,1,54
-69,Childstats.gov,,childstats.gov,http://childstats.gov,None,,,,1,68
-70,Community Commons,,communitycommons.org,http://communitycommons.org,None,,,,1,54
-71,Community Health Needs Assessment Report,,assessment.communitycommons.org,http://assessment.communitycommons.org,Health,,,,1,54
-72,County and Statewide Archive of Tobacco Statistics,,cstats.info,http://cstats.info,Health,,,,1,71
-73,County Health Calculator,,countyhealthcalculator.org,http://countyhealthcalculator.org,Health,,,,1,54
-74,County Health Rankings & Roadmaps,,countyhealthrankings.org,http://countyhealthrankings.org,Health,,,,1,54
-75,Covered California,,coveredca.com,http://coveredca.com,Health,,,,1,74
-76,Dartmouth Atlas of Health Care,,dartmouthatlas.org,http://dartmouthatlas.org,Health,,,,1,54
-77,Data Resource Center for Child & Adolescent Health,,childhealthdata.org,http://childhealthdata.org,Health,,,,1,54
-78,Drinking Water Source Assessment and Protection Program,,swap.ice.ucdavis.edu,http://swap.ice.ucdavis.edu,Health,,,,1,77
-79,Environmental Health Investigations Branch,,ehib.org,http://ehib.org,Health,,,,1,54
-80,Family Health Outcomes Project,,fhop.ucsf.edu,http://fhop.ucsf.edu,Health,,,,1,79
+69,Childstats.gov,,childstats.gov,http://childstats.gov,None,,,,1,54
 81,Feeding America,,feedingamerica.org,http://feedingamerica.org,Human Services,,,,1,54
-82,Find The Best,,findthebest.com,http://findthebest.com,None,,,,1,81
-83,Governing,,governing.com,http://governing.com,None,,,,1,82
-84,Health Access,,health-access.org,http://health-access.org,Health,,,,1,54
-85,Healthy City,,healthycity.org,http://healthycity.org,Health,,,,1,54
+82,Find The Best,,findthebest.com,http://findthebest.com,None,,,,1,54
+83,Governing,,governing.com,http://governing.com,None,,,,1,54
 86,Improved Perinatal Outcome Data Reports,,ipodr.org,http://ipodr.org,Health,,,,1,54
 87,Insight Center for Community Economic Development,,insightcced.org,http://insightcced.org,None,,,,1,54
-88,Inter-university Consortium for Political and Social Research,ICPSR,icpsr.umich.edu,http://icpsr.umich.edu,None,,,,1,87
-89,Kids Count,,kidscount.org,http://kidscount.org,None,,,,1,54
-90,KidsData,,kidsdata.org,http://kidsdata.org,None,,,,1,54
-91,Los Angeles Department of Public Health,,dqs.publichealth.lacounty.gov,http://dqs.publichealth.lacounty.gov,Health,,,,1,90
-92,March of Dimes,,marchofdimes.com,http://marchofdimes.com,Health,,,,1,91
-93,NACo County Intelligence Connection 2.0,,cic.naco.org,http://cic.naco.org,None,,,,1,54
-94,Public Health Alliance of Southern California,,phasocal.org,http://phasocal.org,Health,,,,1,54
-95,Quick Health Data Online,,healthstatus2020.com,http://healthstatus2020.com,Health,,,,1,94
-96,Research Data Assistance Center,,resdac.org,http://resdac.org,None,,,,1,54
+88,Inter-university Consortium for Political and Social Research,ICPSR,icpsr.umich.edu,http://icpsr.umich.edu,None,,,,1,113
+84,Health Access,,health-access.org,http://health-access.org,Health,,,,1,54
+85,Healthy City,,healthycity.org,http://healthycity.org,Health,,,,1,54
+48,California Cancer Registry,CCR,ccrcal.org,http://ccrcal.org,Health,,,,1,54
 97,Robert Wood Johnson Foundation,,rwjf.org,http://rwjf.org,None,,,,1,54
-98,State Health Access Data Assistance Center,,shadac.org,http://shadac.org,Health,,,,1,54
-99,The Commonwealth Fund,,commonwealthfund.org,http://commonwealthfund.org,None,,,,1,54
 100,The Henry J. Kaiser Family Foundation,,kff.org,http://kff.org,None,,,,1,54
-101,The Library,UCSD,libraries.ucsd.edu,http://libraries.ucsd.edu,None,,,,1,100
+101,The Library,UCSD,libraries.ucsd.edu,http://libraries.ucsd.edu,None,,,,1,110
+77,Data Resource Center for Child & Adolescent Health,,childhealthdata.org,http://childhealthdata.org,Health,,,,1,54
+78,Drinking Water Source Assessment and Protection Program,,swap.ice.ucdavis.edu,http://swap.ice.ucdavis.edu,Health,,,,1,112
+76,Dartmouth Atlas of Health Care,,dartmouthatlas.org,http://dartmouthatlas.org,Health,,,,1,54
+74,County Health Rankings & Roadmaps,,countyhealthrankings.org,http://countyhealthrankings.org,Health,,,,1,54
+75,Covered California,,coveredca.com,http://coveredca.com,Health,,,,1,54
+73,County Health Calculator,,countyhealthcalculator.org,http://countyhealthcalculator.org,Health,,,,1,54
+71,Community Health Needs Assessment Report,,assessment.communitycommons.org,http://assessment.communitycommons.org,Health,,,,1,54
+72,County and Statewide Archive of Tobacco Statistics,,cstats.info,http://cstats.info,Health,,,,1,54
+70,Community Commons,,communitycommons.org,http://communitycommons.org,None,,,,1,54
 102,The National Association of County & City Health Officials,,naccho.org,http://naccho.org,Health,,,,1,54
-103,The Working Poor Families Project,,workingpoorfamilies.org,http://workingpoorfamilies.org,None,,,,1,54
-104,Trust for America's Health,,healthyamericans.org,http://healthyamericans.org,Health,,,,1,54
-105,UCLA Center for Health Policy Research,UCLA,healthpolicy.ucla.edu,http://healthpolicy.ucla.edu,Health,,,,1,104
+90,KidsData,,kidsdata.org,http://kidsdata.org,None,,,,1,54
+91,Los Angeles Department of Public Health,,dqs.publichealth.lacounty.gov,http://dqs.publichealth.lacounty.gov,Health,,,,1,113
+92,March of Dimes,,marchofdimes.com,http://marchofdimes.com,Health,,,,1,54
+93,NACo County Intelligence Connection 2.0,,cic.naco.org,http://cic.naco.org,None,,,,1,54
 106,Why Not The Best,,whynotthebest.org,http://whynotthebest.org,None,,,,1,54
+94,Public Health Alliance of Southern California,,phasocal.org,http://phasocal.org,Health,,,,1,54
+95,Quick Health Data Online,,healthstatus2020.com,http://healthstatus2020.com,Health,,,,1,54
+79,Environmental Health Investigations Branch,,ehib.org,http://ehib.org,Health,,,,1,54
+80,Family Health Outcomes Project,,fhop.ucsf.edu,http://fhop.ucsf.edu,Health,,,,1,114
+96,Research Data Assistance Center,,resdac.org,http://resdac.org,None,,,,1,54
+99,The Commonwealth Fund,,commonwealthfund.org,http://commonwealthfund.org,None,,,,1,54
+13,RAND California,RAND,ca.rand.org,http://ca.rand.org,None,,,,1,54
+59,California Breathing,,californiabreathing.org,http://californiabreathing.org,Health,,,,1,54
+60,California Health Interview Survey,,chis.ucla.edu,http://chis.ucla.edu,Health,,,,1,109
+58,California Adolescent Health Collaborative,,californiateenhealth.org,http://californiateenhealth.org,Health,,,,1,54
+98,State Health Access Data Assistance Center,,shadac.org,http://shadac.org,Health,,,,1,54
+55,Aligning Forces Humboldt,,aligningforceshumboldt.org,http://aligningforceshumboldt.org,None,,,,1,54
+56,America's Health Rankings,,americashealthrankings.org,http://americashealthrankings.org,Health,,,,1,54
+57,Berkeley Center for Social Services Research,,cssr.berkeley.edu,http://cssr.berkeley.edu,None,,,,1,111
+89,Kids Count,,kidscount.org,http://kidscount.org,None,,,,1,54
+3,US States,,0,0,None,,,,1,1
+4,State of California,CA,0,0,None,,,,1,3
+11,California Office of the Patient Advocate,,opa.ca.gov,http://opa.ca.gov,Health,,,,1,4
+51,California Health Care Quality Report Cards,,reportcard.opa.ca.gov,http://reportcard.opa.ca.gov,Health,,,,1,11
+12,Office of Statewide Health Planning and Development,,oshpd.ca.gov,http://oshpd.ca.gov,Health,,,,1,4
+15,State Water Resources Control Board,,waterboards.ca.gov,http://waterboards.ca.gov/,None,,,,1,4
+14,State of California Geoportal,,atlas.ca.gov,http://atlas.ca.gov,None,,,,1,4
+49,California Community Care Licensing Division,,ccld.ca.gov,http://ccld.ca.gov/,Health,,,,1,4
+47,California Department of Public Health,CDPH,cdph.ca.gov,,None,,,,1,4
+16,The California Department of Public Health West Nile Virus Website,,westnile.ca.gov,http://westnile.ca.gov,Health,,,,1,47
+5,California Department of Consumer Affairs,,dca.ca.gov,http://dca.ca.gov,Economics,,,,1,4
+7,California Department of Health Care Services,DHCS,dhcs.ca.gov,http://dhcs.ca.gov,Health,,,,1,4
+6,California Department of Finance,,dof.ca.gov,http://dof.ca.gov,Economics,,,,1,4
+9,California Department of Transportation,,dot.ca.gov,http://dot.ca.gov,Transportation,,,,1,4
+10,California Highway Patrol,,chp.ca.gov,http://chp.ca.gov,Safety,,,,1,9
+8,California Department of Social Services,CDSS,cdss.ca.gov,http://cdss.ca.gov,Human Services,,,,1,4
+2,US Federal Government,US,usa.gov,http://usa.gov,None,,,,1,1
+24,United States Department of Agriculture,USDA,usda.gov,http://www.usda.gov/,Agriculture,,,,1,2
+40,Healthcare Cost and Utilization Project,HCUP,hcup-us.ahrq.gov,http://www.hcup-us.ahrq.gov/,Health,,,,1,24
+41,United States Department of Agriculture - Economic Research Service,ERS,ers.usda.gov,http://ers.usda.gov,Agriculture,,,,1,24
+25,US Department of the Treasury,,treasury.gov,http://www.treasury.gov/,Economics,,,,1,2
+26,US Health and Human Services,HHS,hhs.gov,http://hhs.gov,Health,,,,1,2
+27,Administration for Children and Families (ACF),ACF,acf.hhs.gov,http://www.acf.hhs.gov,Health,,,,1,26
+30,Child Welfare Information Gateway,,childwelfare.gov,http://childwelfare.gov,Health,,,,1,27
+33,Substance Abuse & Mental Health Services Administration,SAMHSA,samhsa.gov,http://samhsa.gov,Health,,,,1,26
+32,Health Resources and Services Administration,HRSA,hrsa.gov,http://hrsa.gov,Health,,,,1,26
+31,Health Data Community,,healthdata.gov,http://healthdata.gov,Health,,,,1,26
+45,Chronic Conditions Data Warehouse,CCW,ccwdata.org,http://www.ccwdata.org,Health,,,,1,26
+28,Agency for Healthcare Research and Quality,AHRQ,ahrq.gov,http://www.ahrq.gov/,Health,,,,1,26
+38,National Healthcare Quality and Disparities Reports,,nhqrnet.ahrq.gov,http://nhqrnet.ahrq.gov,Health,,,,1,28
+37,Medical Expenditure Panel Survey,,meps.ahrq.gov,http://meps.ahrq.gov,Health,,,,1,28
+36,Healthcare Cost and Utilization Project,HCUP,hcup-us.ahrq.gov,http://hcup-us.ahrq.gov,Health,,,,1,28
+35,Hcupnet - Agency for Healthcare Research and Quality,HCUP,hcupnet.ahrq.gov,http://hcupnet.ahrq.gov,Health,,,,1,36
+34,Centers for Disease Control and Prevention,CDC,cdc.org,,None,,,,1,26
+43,National Center for Health Statistics ,NCHS,cdc.gov/nchs,http://www.cdc.gov/nchs/,Health,,,,1,34
+52,Health Indicators Warehouse,,healthindicators.gov,http://healthindicators.gov,Health,,,,1,43
 107,Administration for Community Living,ACL,acl.gov,http://acl.gov,Health,,,,1,26
+29,AGing Integrated Database ,AGID,agid.acl.gov,http://agid.acl.gov,Health,,,,1,107
+39,Federal Interagency Forum on Aging-Related Statistics,,agingstats.gov,http://agingstats.gov,Health,,,,1,29
+20,Federal Financial Institutions Examination Council,,ffiec.gov,http://www.ffiec.gov/,Commerce,,,,1,2
+21,National Institutes of Health,NIH,nih.gov,http://www.nih.gov/,Health,,,,1,2
+53,U.S. National Library of Medicine - National Institutes of Health,NLS,nlm.nih.gov,http://nlm.nih.gov,Health,,,,1,21
+22,National Traffic Highway Safety Administration,NTHS,nhtsa.gov,http://www.nhtsa.gov/,Transportation,,,,1,2
+23,United States Census Bureau,,census.gov,http://census.gov,Demographics,,,,1,2
+19,Federal Bureau of Investigation,FBI,fbi.gov,http://fbi.gov,Justice,,,,1,2
+18,Data.gov,,data.gov,http://data.gov,None,,,,1,2
+42,Community Development Financial Institutions Fund,,cdfifund.gov,http://www.cdfifund.gov/,Commerce,,,,1,2
+17,Centers for Medicare & Medicaid Services,CMS,cms.gov,http://cms.gov,Health,,,,1,2
+46,Medicare,,medicare.gov,http://medicare.gov,Health,,,,1,17
+44,Centers for Medicare & Medicaid Services Data Navigator,,dnav.cms.gov,http://dnav.cms.gov,Health,,,,1,17
+108,Education,,,,,,,,,1
+109,UCLA,,,,,,,,,108
+111,Berkeley,,,,,,,,,108
+110,UCSD,,,,,,,,,108
+113,University of Michigan,,,,,,,,,108
+112,UC Davis,,,,,,,,,108
+113,Los Angeles County,,,,,,,,,4
+114,University of San Francisco,,,,,,,,,108
