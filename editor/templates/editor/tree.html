@@ -28,13 +28,29 @@
                     <div style="float:right">
                         {% buttons %}
                             <button type="submit"
-                                    class="btn btn-primary"
+                                    class="btn btn-primary pull-right"
                                     title="Save and continue editing">
                                 Save
                             </button>
+                            {% if form.instance and form.instance.id %}
+                                <a class="btn btn-default pull-right"
+                                    href="{{ create_url }}?parent={{ form.instance.id }}"
+                                    title="Add new child">
+                                    Add child
+                                </a>
+                                {% if create_dataset_url %}
+                                    {# source is special case #}
+                                    <a class="btn btn-default pull-right"
+                                        href="{{ create_dataset_url }}"
+                                        title="Add new dataset">
+                                        Add dataset
+                                    </a>
+                                {% endif %}
+                            {% endif %}
                         {% endbuttons %}
                     </div>
                     <div style="clear:both;"></div>
+                    <br />
                     {% for field in form %}
                         {% if field.field.horizontal %}
                             <div class="form-horizontal">
@@ -54,31 +70,22 @@
                     {% endbuttons %}
                     </div>
                 </form>
-                {% if form.instance and form.instance.id %}
-                    <a href="{{ create_url }}?parent={{ form.instance.id }}" title="Add new child">
-                        Add child
-                    </a>
-                    {% if create_dataset_url %}
-                        {# source is special case #}
-                        | <a href="{{ create_dataset_url }}" title="Add new dataset">
-                            Add dataset
-                        </a>
-
-                        {# TODO: use `extends` to add extra data to form #}
-                        <div style="clear:both;"></div>
-                        <div>Datasets</div>
-                        <ul>
-                            {% for dataset in form.instance.dataset_set.all %}
-                                <li>
-                                    <a href="{{ dataset.get_absolute_url }}" title="edit dataset">
-                                        {{ dataset.title }}
-                                    </a>
-                                </li>
-                            {% empty %}
-                                <li>Source does not have datasets yet.</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
+                <div class="clear:both;"></div>
+                <br />
+                <br />
+                {% if create_dataset_url %}
+                    <div>Datasets</div>
+                    <ul>
+                        {% for dataset in form.instance.dataset_set.all %}
+                            <li>
+                                <a href="{{ dataset.get_absolute_url }}" title="Edit dataset">
+                                    {{ dataset.title }}
+                                </a>
+                            </li>
+                        {% empty %}
+                            <li>Source does not have datasets yet.</li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
             </div>
         {% else %}
