@@ -38,7 +38,8 @@ class BaseTreeView(ListView):
     template_name = 'editor/tree.html'
 
     def get_context_data(self, **kwargs):
-        kwargs['nodes'] = self.model.objects.all()
+        # do not show parent node
+        kwargs['nodes'] = self.model.objects.filter(parent__isnull=False)
         kwargs['create_url'] = self.model.get_create_url()
         kwargs['has_add_perm'] = self.request.user.has_perm(
             'editor.add_%s' % self.model._meta.model_name)
@@ -70,7 +71,9 @@ class BaseCreateView(CreateView):
         return super(BaseCreateView, self).form_invalid(form)
 
     def get_context_data(self, **kwargs):
-        kwargs['nodes'] = self.model.objects.all()
+        # do not render root node
+        kwargs['nodes'] = self.model.objects.filter(parent__isnull=False)
+
         kwargs['create_url'] = self.model.get_create_url()
         kwargs['has_add_perm'] = self.request.user.has_perm(
             'editor.add_%s' % self.model._meta.model_name)
@@ -122,7 +125,7 @@ class BaseUpdateView(UpdateView):
         """
         Returns context of the template.
         """
-        kwargs['nodes'] = self.model.objects.all()
+        kwargs['nodes'] = self.model.objects.filter(parent__isnull=False)
         kwargs['create_url'] = self.model.get_create_url()
         kwargs['selected_node'] = self.object
         kwargs['has_add_perm'] = self.request.user.has_perm(
@@ -260,9 +263,7 @@ class DatasetEditMixin(object):
         Returns url where to redirect after success save.
         """
         messages.add_message(self.request, messages.SUCCESS, 'Dataset saved.')
-        if 'save-and-continue' in self.request.POST:
-            return self.object.get_absolute_url()
-        return reverse('editor:dataset-list')
+        return self.object.get_absolute_url()
 
     def form_valid(self, form, datafile_formset, docfile_formset):
         """
@@ -271,6 +272,7 @@ class DatasetEditMixin(object):
         self.object = form.save()
         datafile_formset.instance = self.object
         datafile_formset.save()
+
         docfile_formset.instance = self.object
         docfile_formset.save()
         return HttpResponseRedirect(self.get_success_url())
@@ -401,7 +403,7 @@ def scrape(request):
 def validate_url(request):
     """ Validates given url and checks for its existance. """
 
-    # let it fail client side does not give url. Allows to catch client side error immediatelly.
+    # let it fail if client side does not give url. That means client side error.
     url = request.POST['url']
 
     response_data = {}

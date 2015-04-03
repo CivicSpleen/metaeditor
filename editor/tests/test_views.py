@@ -14,7 +14,44 @@ from editor.tests.factories import DatasetFactory, CategoryFactory,\
     SourceFactory, FormatFactory, UserFactory
 
 
+class BaseTest(TestCase):
+    def setUp(self):
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+        self.url = self.get_url()
+        self.model_class = self.get_model_class()
+        self.model_factory_class = self.get_model_factory_class()
+        give_perm(
+            self.user1, self.model_class,
+            'add_%s' % self.model_class._meta.model_name)
+        give_perm(
+            self.user1, self.model_class,
+            'change_%s' % self.model_class._meta.model_name)
+
+    def get_url(self):
+        raise NotImplementedError
+
+    def get_model_class(self):
+        raise NotImplementedError
+
+    def get_model_factory_class(self):
+        raise NotImplementedError
+
+
+class BaseCreateTest(BaseTest):
+    def setUp(self):
+        super(BaseCreateTest, self).setUp()
+        self.create_params = self.get_create_params()
+
+    def get_create_params(self):
+        raise NotImplementedError
+
+
 class CreatePermissionTestMixin(object):
+    """ Group of the tests of the permission of the creating model. """
 
     def test_post_is_not_available_for_anonymous(self):
         self.client.logout()
@@ -28,6 +65,7 @@ class CreatePermissionTestMixin(object):
 
 
 class ListPermissionTestMixin(object):
+    """ Group of the tests of the permissions of the listing. """
 
     def test_does_not_show_create_root_node_for_user_without_permission(self):
         self.user1.user_permissions.all().delete()
@@ -39,7 +77,88 @@ class ListPermissionTestMixin(object):
 
 
 class UpdatePermissionTestMixin(CreatePermissionTestMixin):
+    """ Group of the tests of the permissions of the updating. """
     pass
+
+
+class NodeCreateTestMixin(object):
+    """ Group of the tests related to node creation. Expects `model_class` and `model_factory_class`
+        properties from base class. """
+
+    def test_renders_node_form_on_get(self):
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('name="name"', resp.content)
+        self.assertIn('name="parent"', resp.content)
+
+    def test_renders_full_tree_on_get(self):
+        root = self.model_factory_class()
+        node1 = self.model_factory_class(parent=root)
+        node2 = self.model_factory_class(parent=root)
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(node1.name, resp.content)
+        self.assertIn(node2.name, resp.content)
+
+    def test_does_not_render_root_node(self):
+        root = self.model_factory_class(parent=None, name='root-categ123')
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotIn(root.name, resp.content, 'Root node unexpectedly found.')
+
+    def test_assigns_global_root_if_parent_was_not_given(self):
+        root = self.model_factory_class(parent=None, name='root-categ123')
+        post_params = self.create_params
+        post_params['parent'] = ''
+
+        resp = self.client.post(self.url, post_params)
+        self.assertEqual(resp.status_code, 302)
+        qs = self.model_class.objects.filter(name=post_params['name'])
+        self.assertEqual(qs.count(), 1)
+        self.assertEqual(qs[0].parent, root)
+
+    def test_sets_given_node_as_parent_of_new_node(self):
+        root = self.model_factory_class(parent=None)
+        node1 = self.model_factory_class(parent=root)
+        post_params = self.create_params
+        post_params['parent'] = node1.id
+        resp = self.client.post(self.url, post_params)
+        self.assertEqual(resp.status_code, 302)
+        self.assertEqual(
+            self.model_class.objects.filter(name='Node 2', parent=node1).count(),
+            1)
+
+
+class NodeListTestMixin(object):
+    """ Group of tests of tree views. Expecting model_class and model_factory_class
+        properties. """
+
+    def test_renders_tree_on_get_by_anonymous(self):
+        self.client.logout()
+        root = self.model_factory_class(parent=None)
+        node1 = self.model_factory_class(parent=root)
+        node2 = self.model_factory_class(parent=root)
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            node1.name, resp.content,
+            '%s node was not found in the response' % node1.name)
+        self.assertIn(
+            node2.name, resp.content,
+            '%s node was not found in the response' % node2.name)
+
+    def test_renders_tree_on_get_by_authenticated(self):
+        root = self.model_factory_class(parent=None)
+        node1 = self.model_factory_class(parent=root)
+        node2 = self.model_factory_class(parent=root)
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            node1.name, resp.content,
+            '%s node was not found in the response' % node1.name)
+        self.assertIn(
+            node2.name, resp.content,
+            '%s node was not found in the response' % node2.name)
 
 
 class IndexViewTest(TestCase):
@@ -62,26 +181,7 @@ class IndexViewTest(TestCase):
         self.assertIn(reverse('editor:category-list'), resp.content)
 
 
-class BaseTest(TestCase):
-    def setUp(self):
-        self.user1 = UserFactory()
-        logged_in = self.client.login(
-            username=self.user1.username,
-            password='1')
-        self.assertTrue(logged_in)
-        self.url = self.get_url()
-        model_class = self.get_model_class()
-        give_perm(self.user1, model_class, 'add_%s' % model_class._meta.model_name)
-        give_perm(self.user1, model_class, 'change_%s' % model_class._meta.model_name)
-
-    def get_url(self):
-        raise NotImplementedError
-
-    def get_model_class(self):
-        raise NotImplementedError
-
-
-class CategoryCreateTest(BaseTest, CreatePermissionTestMixin):
+class CategoryNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreateTestMixin):
 
     def get_url(self):
         return reverse('editor:category-create')
@@ -89,47 +189,18 @@ class CategoryCreateTest(BaseTest, CreatePermissionTestMixin):
     def get_model_class(self):
         return Category
 
-    def test_renders_category_form_on_get(self):
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn('name="name"', resp.content)
-        self.assertIn('name="parent"', resp.content)
+    def get_model_factory_class(self):
+        return CategoryFactory
 
-    def test_renders_full_tree_on_get(self):
-        categ1 = CategoryFactory()
-        categ2 = CategoryFactory()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(categ1.name, resp.content)
-        self.assertIn(categ2.name, resp.content)
-
-    def test_creates_new_root_category_on_post(self):
-        post_params = {
-            'name': 'Category1'
+    def get_create_params(self):
+        params = {
+            'name': 'Node 2',
+            'parent': None
         }
-
-        resp = self.client.post(self.url, post_params)
-        self.assertEqual(resp.status_code, 302)
-        # TODO: check flash message
-        self.assertEqual(
-            Category.objects.filter(name='Category1', parent__isnull=True).count(),
-            1)
-
-    def test_sets_given_category_as_root_of_new_category(self):
-        categ1 = CategoryFactory()
-        post_params = {
-            'name': 'Category2',
-            'parent': categ1.id
-        }
-        resp = self.client.post(self.url, post_params)
-        self.assertEqual(resp.status_code, 302)
-        # TODO: check flash message
-        self.assertEqual(
-            Category.objects.filter(name='Category2', parent=categ1).count(),
-            1)
+        return params
 
 
-class CategoryListTest(BaseTest, ListPermissionTestMixin):
+class CategoryListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
 
     def get_url(self):
         return reverse('editor:category-list')
@@ -137,57 +208,61 @@ class CategoryListTest(BaseTest, ListPermissionTestMixin):
     def get_model_class(self):
         return Category
 
-    def test_renders_category_tree_on_get_by_anonymous(self):
-        self.client.logout()
-        categ1 = CategoryFactory()
-        categ2 = CategoryFactory()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(categ1.name, resp.content)
-        self.assertIn(categ2.name, resp.content)
-
-    def test_renders_category_tree_on_get_by_authenticated(self):
-        categ1 = CategoryFactory()
-        categ2 = CategoryFactory()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(categ1.name, resp.content)
-        self.assertIn(categ2.name, resp.content)
+    def get_model_factory_class(self):
+        return CategoryFactory
 
 
-class SourceCreateTest(BaseTest, CreatePermissionTestMixin):
+class SourceNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreateTestMixin):
+
     def get_url(self):
         return reverse('editor:source-create')
 
     def get_model_class(self):
         return Source
 
+    def get_model_factory_class(self):
+        return SourceFactory
 
-class SourceListTest(BaseTest, ListPermissionTestMixin):
+    def get_create_params(self):
+        params = {
+            'name': 'Node 2',
+            'homepage': 'http://ya.ru',
+            'parent': None
+        }
+        return params
+
+
+class SourceListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
     def get_url(self):
         return reverse('editor:source-list')
 
     def get_model_class(self):
         return Source
 
-    def test_renders_source_tree_on_get(self):
-        source1 = SourceFactory()
-        source2 = SourceFactory()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(source1.name, resp.content)
-        self.assertIn(source2.name, resp.content)
+    def get_model_factory_class(self):
+        return SourceFactory
 
 
-class FormatCreateTest(BaseTest, CreatePermissionTestMixin):
+class FormatNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreateTestMixin):
+
     def get_url(self):
         return reverse('editor:format-create')
 
     def get_model_class(self):
         return Format
 
+    def get_model_factory_class(self):
+        return FormatFactory
 
-class FormatListTest(BaseTest, ListPermissionTestMixin):
+    def get_create_params(self):
+        params = {
+            'name': 'Node 2',
+            'parent': None
+        }
+        return params
+
+
+class FormatListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
 
     def get_url(self):
         return reverse('editor:format-list')
@@ -195,13 +270,8 @@ class FormatListTest(BaseTest, ListPermissionTestMixin):
     def get_model_class(self):
         return Format
 
-    def test_renders_format_tree_on_get(self):
-        format1 = FormatFactory()
-        format2 = FormatFactory()
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-        self.assertIn(format1.name, resp.content)
-        self.assertIn(format2.name, resp.content)
+    def get_model_factory_class(self):
+        return FormatFactory
 
 
 class DatasetListTest(TestCase):
@@ -288,11 +358,13 @@ class DatasetCreateTest(BaseTest):
     def get_model_class(self):
         return Dataset
 
+    def get_model_factory_class(self):
+        return DatasetFactory
+
     def test_is_not_available_for_anonymous(self):
         self.client.logout()
         resp = self.client.get(self.url)
         self.assertEqual(resp.status_code, 302)
-        # TODO: Is it really redirect to login page? Test that.
 
     def test_post_is_not_available_without_permission(self):
         self.user1.user_permissions.all().delete()

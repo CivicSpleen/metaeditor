@@ -1,10 +1,36 @@
 # -*- coding: utf-8 -*-
+from logging import getLogger
 
 from django import forms
 from django.forms.models import inlineformset_factory
 
 from editor.models import Dataset, DataFile, DocumentFile, Category,\
     Format, Source
+
+logger = getLogger(__name__)
+
+
+class NodeBaseForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(NodeBaseForm, self).__init__(*args, **kwargs)
+
+        # display some fields horizontally
+        for field_name in getattr(self, 'horizontal_fields', []):
+            self.fields[field_name].horizontal = True
+
+        # do not render root node
+        self.fields['parent'].queryset = self.fields['parent'].queryset.exclude(parent__isnull=True)
+
+    def clean_parent(self):
+        parent = self.cleaned_data.get('parent')
+        if not parent:
+            # find and return root
+            try:
+                parent = self.Meta.model.objects.get(parent__isnull=True)
+            except self.models.DoesNotExist:
+                logger.warning('%s model does not have root node. Create it.' % self.Meta.model)
+        return parent
 
 
 class DatasetForm(forms.ModelForm):
@@ -48,67 +74,49 @@ class ScrapeForm(forms.Form):
     url = forms.URLField(required=True)
 
 
-class SourceForm(forms.ModelForm):
+class SourceForm(NodeBaseForm):
+
+    horizontal_fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage']
 
     class Meta:
         model = Source
         fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
 
-    def __init__(self, *args, **kwargs):
-        super(self.__class__, self).__init__(*args, **kwargs)
 
-        # display some fields horizontally
-        self.fields['name'].horizontal = True
-        self.fields['parent'].horizontal = True
-        self.fields['abbreviation'].horizontal = True
-        self.fields['domain'].horizontal = True
-        self.fields['homepage'].horizontal = True
+class CategoryForm(NodeBaseForm):
 
-
-class CategoryForm(forms.ModelForm):
+    horizontal_fields = ['name', 'parent']
 
     class Meta:
         model = Category
         fields = ['name', 'parent']
 
-    def __init__(self, *args, **kwargs):
-        super(self.__class__, self).__init__(*args, **kwargs)
 
-        # display some fields horizontally
-        self.fields['name'].horizontal = True
-        self.fields['parent'].horizontal = True
+class FormatForm(NodeBaseForm):
 
-
-class FormatForm(forms.ModelForm):
+    horizontal_fields = ['name', 'parent']
 
     class Meta:
         model = Format
         fields = ['name', 'parent']
 
-    def __init__(self, *args, **kwargs):
-        super(self.__class__, self).__init__(*args, **kwargs)
 
-        # display some fields horizontally
-        self.fields['name'].horizontal = True
-        self.fields['parent'].horizontal = True
-
-
-class BaseFileForm(forms.ModelForm):
+class FileBaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(BaseFileForm, self).__init__(*args, **kwargs)
+        super(FileBaseForm, self).__init__(*args, **kwargs)
         self.fields['name'].widget.attrs['class'] = 'name'
         self.fields['url'].widget.attrs['class'] = 'url'
 
 
-class DataFileForm(BaseFileForm):
+class DataFileForm(FileBaseForm):
 
     class Meta:
         model = DataFile
         fields = ['name', 'dataset', 'file_format', 'url']
 
 
-class DocumentFileForm(BaseFileForm):
+class DocumentFileForm(FileBaseForm):
 
     class Meta:
         model = DocumentFile
