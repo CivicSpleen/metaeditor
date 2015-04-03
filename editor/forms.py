@@ -63,6 +63,8 @@ class SourceForm(forms.ModelForm):
         self.fields['abbreviation'].horizontal = True
         self.fields['domain'].horizontal = True
         self.fields['homepage'].horizontal = True
+        
+        self.fields['about'].widget.attrs['rows'] = 4
 
 
 class CategoryForm(forms.ModelForm):
