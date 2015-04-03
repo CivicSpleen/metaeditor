@@ -1,6 +1,20 @@
 # metaeditor
 A Django application for editing metadata of public datasets.
 
+## Install.
+Clone repo.
+Setup database. TODO: Explain or add link to django docs.
+Migrate database. TODO: Explain or add link to django docs.
+Load initial sources:
+```bash
+python manage.py load_sources
+```
+
+Create roots (each tree will have exactly one root - invisible for project users) TOOD: explain why:
+```bash
+python manage.py create_roots
+```
+
 ## Social authentication setup.
 
 Given you are running metaeditor app on metaeditor.org

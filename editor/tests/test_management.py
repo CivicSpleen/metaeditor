@@ -26,6 +26,10 @@ class LoadSourcesTest(TestCase):
             for node in reader:
                 cls._csv_rows.append(node)
 
+        cls._csv_id_to_name_map = {}
+        for row in cls._csv_rows:
+            cls._csv_id_to_name_map[row['id']] = row['name']
+
     def test_raises_command_error_if_sources_exist(self):
         SourceFactory()
         self.assertRaises(CommandError, call_command, 'load_sources', verbosity=0)
@@ -35,9 +39,9 @@ class LoadSourcesTest(TestCase):
         self.assertEqual(
             Source.objects.all().count(),
             len(self._csv_rows))
+
         for node in self._csv_rows:
             node_instance = Source.objects.get(
-                id=long(node['id']),
                 name=node['name'],
                 abbreviation=node['abbreviation'],
                 domain=node['domain'],
@@ -45,7 +49,9 @@ class LoadSourcesTest(TestCase):
                 about=node['about'])
 
             if node['parent_id']:
-                self.assertEquals(node_instance.parent.id, long(node['parent_id']))
+                self.assertEquals(
+                    node_instance.parent.name,
+                    self._csv_id_to_name_map[node['parent_id']])
             else:
                 # root node
                 self.assertIsNone(node_instance.parent)
@@ -65,10 +71,10 @@ class LoadSourcesTest(TestCase):
         self._assert_all_nodes_imported()
 
 
-class CreateGlobalRootsTest(TestCase):
+class CreateRootsTest(TestCase):
 
-    def _assert_creates_global_root(self, model_class):
-        call_command('create_global_roots', verbosity=0)
+    def _assert_creates_root(self, model_class):
+        call_command('create_roots', verbosity=0)
         qs = model_class.objects.filter(name='!ROOT!')
         self.assertEquals(qs.count(), 1)
         self.assertIsNone(qs[0].parent)
@@ -89,14 +95,14 @@ class CreateGlobalRootsTest(TestCase):
         instance3 = model_factory(parent=None)
 
         assert model_class.objects.filter(parent__isnull=True).count(), 3
-        call_command('create_global_roots', verbosity=0)
+        call_command('create_roots', verbosity=0)
 
         # now testing
         qs = model_class.objects.filter(parent__isnull=True)
         self.assertEquals(qs.count(), 1)
         self.assertEquals(qs[0].name, '!ROOT!')
 
-        # all old roots moved to global root children
+        # all old roots moved to new root children
         self.assertIsNotNone(model_class.objects.get(id=instance1.id).parent)
         self.assertEquals(
             model_class.objects.get(id=instance1.id).parent.name,
@@ -112,14 +118,14 @@ class CreateGlobalRootsTest(TestCase):
             model_class.objects.get(id=instance3.id).parent.name,
             '!ROOT!')
 
-    def test_creates_source_global_root(self):
-        self._assert_creates_global_root(Source)
+    def test_creates_source_root(self):
+        self._assert_creates_root(Source)
 
-    def test_creates_format_global_root(self):
-        self._assert_creates_global_root(Format)
+    def test_creates_format_root(self):
+        self._assert_creates_root(Format)
 
-    def test_creates_category_global_root(self):
-        self._assert_creates_global_root(Category)
+    def test_creates_category_root(self):
+        self._assert_creates_root(Category)
 
     def test_changes_existing_source_roots(self):
         self._assert_changes_existing_roots(Source)
@@ -130,13 +136,13 @@ class CreateGlobalRootsTest(TestCase):
     def test_changes_existing_format_roots(self):
         self._assert_changes_existing_roots(Format)
 
-    def test_does_not_create_source_global_root_twice(self):
-        call_command('create_global_roots', verbosity=0)
+    def test_does_not_create_source_root_twice(self):
+        call_command('create_roots', verbosity=0)
         qs = Source.objects.filter(name='!ROOT!')
         self.assertEquals(qs.count(), 1)
         self.assertIsNone(qs[0].parent)
 
-        call_command('create_global_roots', verbosity=0)
+        call_command('create_roots', verbosity=0)
         qs = Source.objects.filter(name='!ROOT!')
         self.assertEquals(qs.count(), 1)
         self.assertIsNone(qs[0].parent)
