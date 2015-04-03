@@ -19,11 +19,11 @@ class SourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Source
 
-    name = factory.Sequence(lambda n: 'Test dataset %03d' % n)
-    abbreviation = factory.Sequence(lambda n: 'Test dataset %03d abbreviation' % n)
-    domain = factory.Sequence(lambda n: 'test.dataset-%03d.org' % n)
-    homepage = factory.Sequence(lambda n: 'http://test.dataset-%03d.org' % n)
-    about = factory.Sequence(lambda n: 'Test dataset %03d about' % n)
+    name = factory.Sequence(lambda n: 'Test source %03d' % n)
+    abbreviation = factory.Sequence(lambda n: 'Test source %03d abbreviation' % n)
+    domain = factory.Sequence(lambda n: 'test.source-%03d.org' % n)
+    homepage = factory.Sequence(lambda n: 'http://test.source-%03d.org' % n)
+    about = factory.Sequence(lambda n: 'Test source %03d about' % n)
 
     @factory.post_generation
     def categories(self, create, extracted, **kwargs):
