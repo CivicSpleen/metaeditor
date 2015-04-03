@@ -373,10 +373,10 @@ def scrape(request):
 
     if form.is_valid():
         try:
-            # find links on remote site.
+            # find all urls on remote site.
             links = get_links(form.cleaned_data['url'])
 
-            # remove all links do not match to extensions to include.
+            # keep the links match to extensions to include only.
             links = filter_links(links, include_extensions)
 
             response_data['links'] = links

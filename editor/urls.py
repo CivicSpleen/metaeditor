@@ -12,7 +12,7 @@ urlpatterns = patterns('',
     url(r'^dataset/source/(?P<source_pk>[0-9]+)/create$',
         login_required(views.DatasetCreate.as_view()),
         name='dataset-create'),
-    url(r'^dataset(?P<pk>[0-9]+)/$',
+    url(r'^dataset/(?P<pk>[0-9]+)/$',
         views.DatasetUpdate.as_view(),
         name='dataset-update'),
 
