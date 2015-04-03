@@ -15,11 +15,11 @@ class Command(BaseCommand):
             source_root = model_class.objects.get(name=ROOT_NAME)
             if verbosity > 0:
                 self.stdout.write(
-                    'Global root node for %s model already exists. Using it.' % model_class)
+                    'Root node for %s model already exists. Using it.' % model_class)
         except model_class.DoesNotExist:
             if verbosity > 0:
                 self.stdout.write(
-                    'Global root node for %s model does not exist. Creating...' % model_class)
+                    'Root node for %s model does not exist. Creating...' % model_class)
             source_root = model_class(name=ROOT_NAME)
             source_root.save()
 
