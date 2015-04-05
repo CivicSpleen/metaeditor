@@ -58,3 +58,20 @@ If you already have sources call load_sources with --delete option. (this will d
 ```bash
 python manage.py load_sources --delete
 ```
+
+## Testing
+
+### Running unit tests
+Install dependencies from requirements_dev.txt.
+Run
+```bash
+python manage.py test
+```
+
+### Running functional tests (Requires Firefox)
+Install dependencies from requirements_dev.txt.
+Add `lettuce` to INSTALLED_APPS.
+Run
+```bash
+python manage.py harvest --no-server editor/features
+```
