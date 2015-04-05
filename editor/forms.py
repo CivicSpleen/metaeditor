@@ -82,18 +82,11 @@ class SourceForm(NodeBaseForm):
         model = Source
         fields = ['name', 'parent', 'abbreviation', 'domain', 'homepage', 'about', 'categories']
 
-
     def __init__(self, *args, **kwargs):
         super(self.__class__, self).__init__(*args, **kwargs)
 
-        # display some fields horizontally
-        self.fields['name'].horizontal = True
-        self.fields['parent'].horizontal = True
-        self.fields['abbreviation'].horizontal = True
-        self.fields['domain'].horizontal = True
-        self.fields['homepage'].horizontal = True
-        
         self.fields['about'].widget.attrs['rows'] = 4
+
 
 class CategoryForm(NodeBaseForm):
 
