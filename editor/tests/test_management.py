@@ -35,6 +35,13 @@ class LoadSourcesTest(TestCase):
         self.assertRaises(CommandError, call_command, 'load_sources', verbosity=0)
 
     def _assert_all_nodes_imported(self):
+        missed = []
+        for row in self._csv_rows:
+            qs = Source.objects.filter(name=row['name'])
+            if not qs.exists():
+                missed.append(row['name'])
+
+        self.assertFalse(bool(missed), '%s missed' % missed)
 
         self.assertEqual(
             Source.objects.all().count(),

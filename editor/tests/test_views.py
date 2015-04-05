@@ -384,7 +384,11 @@ class DatasetCreateTest(BaseTest):
         self.assertNotIn('name="user"', resp.content)
 
     def test_creates_new_instance_on_post(self):
-        categ1 = CategoryFactory()
+        root_categ = CategoryFactory()
+        categ1 = CategoryFactory(parent=root_categ)
+
+        root_format = FormatFactory()
+        format1 = FormatFactory(parent=root_format)
         post_params = {
             'title': 'Title 1',
             'categories': [categ1.id],
@@ -396,7 +400,7 @@ class DatasetCreateTest(BaseTest):
             'page': 'http://ya.ru',
             'download_page': 'http://ya.ru',
             'contacts': 'contact@gmail.com',
-            'formats': [FormatFactory().id],
+            'formats': [format1.id],
             'entry_time_minutes': 15,
             'datafile-MAX_NUM_FORMS': 1000,
             'datafile-TOTAL_FORMS': 0,
@@ -451,9 +455,14 @@ class DatasetUpdateTest(TestCase):
         self.assertNotIn('name="user"', resp.content)
 
     def test_updates_instance_on_change(self):
+        root_categ = CategoryFactory()
+        categ1 = CategoryFactory(parent=root_categ)
+
+        root_format = FormatFactory()
+        format1 = FormatFactory(parent=root_format)
         post_params = {
             'title': '%s updated' % self.ds1.title,
-            'categories': [CategoryFactory().id],
+            'categories': [categ1.id],
             'variant': '%s updated' % self.ds1.variant,
             'start_year': 1976,
             'end_year': 1976,
@@ -462,7 +471,7 @@ class DatasetUpdateTest(TestCase):
             'page': 'http://ya.ru',
             'download_page': 'http://ya.ru',
             'contacts': 'contact@gmail.com',
-            'formats': [FormatFactory().id],
+            'formats': [format1.id],
             'entry_time_minutes': 15,
             'datafile-MAX_NUM_FORMS': 1000,
             'datafile-TOTAL_FORMS': 0,

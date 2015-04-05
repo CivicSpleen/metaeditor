@@ -45,6 +45,7 @@ class BaseTreeView(ListView):
             'editor.add_%s' % self.model._meta.model_name)
         kwargs['has_change_perm'] = self.request.user.has_perm(
             'editor.change_%s' % self.model._meta.model_name)
+        kwargs['page_name'] = '%s-tree' % self.model._meta.model_name
         return kwargs
 
 
