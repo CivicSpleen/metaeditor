@@ -36,12 +36,12 @@ class NodeBaseForm(forms.ModelForm):
 class DatasetForm(forms.ModelForm):
 
     categories = forms.ModelMultipleChoiceField(
-        queryset=Category.objects.all().order_by('name'),
+        queryset=Category.objects.filter(parent__isnull=False).order_by('name'),
         widget=forms.CheckboxSelectMultiple(),
         required=False)
 
     formats = forms.ModelMultipleChoiceField(
-        queryset=Format.objects.all().order_by('name'),
+        queryset=Format.objects.filter(parent__isnull=False).order_by('name'),
         widget=forms.CheckboxSelectMultiple(),
         required=False)
 
@@ -62,7 +62,7 @@ class DatasetForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         instance = super(DatasetForm, self).save(commit=False, *args, **kwargs)
         if self.source:
-            # may be empty if it is update action
+            # may be empty if it is an update action
             instance.source = self.source
         instance.user = self.user
         instance.save()
@@ -86,6 +86,9 @@ class SourceForm(NodeBaseForm):
         super(self.__class__, self).__init__(*args, **kwargs)
 
         self.fields['about'].widget.attrs['rows'] = 4
+
+        # do not render root of the category
+        self.fields['categories'].queryset = self.fields['categories'].queryset.exclude(parent__isnull=True)
 
 
 class CategoryForm(NodeBaseForm):
