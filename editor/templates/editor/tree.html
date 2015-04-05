@@ -25,28 +25,33 @@
             <div style="float:left;width:59%;overflow:auto;">
                 <form method="POST">
                     {% csrf_token %}
-                    <div style="float:right">
+                    <div class="pull-right">
                         {% buttons %}
-                            <button type="submit"
-                                    class="btn btn-primary pull-right"
-                                    title="Save and continue editing">
-                                Save
-                            </button>
+                            <a class="btn btn-default pull-left"
+                                href="{{ create_url }}"
+                                title="Create new instance">
+                                New
+                            </a>
                             {% if form.instance and form.instance.id %}
-                                <a class="btn btn-default pull-right"
+                                <a class="btn btn-default pull-left"
                                     href="{{ create_url }}?parent={{ form.instance.id }}"
                                     title="Add new child">
                                     Add child
                                 </a>
                                 {% if create_dataset_url %}
                                     {# source is special case #}
-                                    <a class="btn btn-default pull-right"
+                                    <a class="btn btn-default pull-left"
                                         href="{{ create_dataset_url }}"
                                         title="Add new dataset">
                                         Add dataset
                                     </a>
                                 {% endif %}
                             {% endif %}
+                            <button type="submit"
+                                    class="btn btn-primary pull-left"
+                                    title="Save and continue editing">
+                                Save
+                            </button>
                         {% endbuttons %}
                     </div>
                     <div style="clear:both;"></div>
