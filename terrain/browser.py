@@ -3,7 +3,7 @@
 # initialization script for lettuce BDD framework.
 # running BDD tests:
 #  $ python manage.py harvest --no-server
-# --no-server option is important because dadata BDD tests uses django's live server and test db
+# --no-server option is important because metaeditor BDD tests uses django's live server and test db
 
 from lettuce import before, after, world
 

@@ -94,6 +94,13 @@
                     </ul>
                 {% endif %}
             </div>
+        {% else %}
+            {# form does not exist #}
+            <a class="btn btn-default pull-right"
+                href="{{ create_url }}"
+                title="Create new instance">
+                New
+            </a>
         {% endif %}
     {% else %}
         {# anonymous user or user without permissions #}
