@@ -3,7 +3,7 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    <div style="float:left;width:40%;">
+    <div class="col-md-5">
         <label for="query">Search:</label> <input type="text" id="query"/>
         <div id="tree">
             <ul>
@@ -22,7 +22,7 @@
     </div>
     {% if user.is_authenticated and has_add_perm and has_change_perm %}
         {% if form %}
-            <div style="float:left;width:59%;overflow:auto;">
+            <div class="col-md-7">
                 <form method="POST">
                     {% csrf_token %}
                     <div class="pull-right">
