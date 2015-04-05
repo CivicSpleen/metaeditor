@@ -1,4 +1,4 @@
-Feature: Rocking with lettuce and django
+Feature: Dataset creation.
   Background:
     Given "csv" format exists
       and I am authenticated user

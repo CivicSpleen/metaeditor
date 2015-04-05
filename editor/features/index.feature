@@ -1,4 +1,4 @@
-Feature: Rocking with lettuce and django
+Feature: Index page.
 
     Scenario: Anonymous user index page
         Given I access the "/" url
