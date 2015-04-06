@@ -119,6 +119,7 @@ class Dataset(models.Model):
         help_text='Multiple links to names of categories.')
     variant = models.CharField(
         max_length=100,
+        null=True, blank=True,
         help_text='Distinguished this dataset from similar datasets.')
     start_year = models.IntegerField(
         help_text='The first year for which the dataset has data.')
@@ -133,8 +134,10 @@ class Dataset(models.Model):
     page = models.URLField(
         help_text='URL of a web page about the dataset.')
     download_page = models.URLField(
+        null=True, blank=True,
         help_text='URL of a web page where dataset files can be downloaded.')
     contacts = models.TextField(
+        null=True, blank=True,
         help_text='Freeform text of people to email or call about the dataset. ')
     formats = models.ManyToManyField(
         Format,
