@@ -2,7 +2,7 @@
 1,"Root",,0,0,"None",0,,,1,
 54,"Organizations",,0,0,"None",,,,,1
 104,"Trust for America's Health",,"healthyamericans.org","http://healthyamericans.org","Health",,,,1,54
-105,"UCLA Center for Health Policy Research","UCLA","healthpolicy.ucla.edu","http://healthpolicy.ucla.edu","Health",,,,1,109
+105,"UCLA Center for Health Policy Research",,"healthpolicy.ucla.edu","http://healthpolicy.ucla.edu","Health",,,,1,109
 61,"California Healthcare Performance Information System",,"chpis.org","http://chpis.org","Health",,,,1,54
 62,"California Healthy Kids Survey",,"chks.wested.org","http://chks.wested.org","Health",,,,1,54
 63,"California Hospital Association",,"calhospital.org","http://calhospital.org","Health",,,,1,54
@@ -48,7 +48,7 @@
 99,"The Commonwealth Fund",,"commonwealthfund.org","http://commonwealthfund.org","None",,,,1,54
 13,"RAND California","RAND","ca.rand.org","http://ca.rand.org","None",,,,1,54
 59,"California Breathing",,"californiabreathing.org","http://californiabreathing.org","Health",,,,1,54
-60,"California Health Interview Survey",,"chis.ucla.edu","http://chis.ucla.edu","Health",,,,1,109
+60,"California Health Interview Survey","CHIS","chis.ucla.edu","http://chis.ucla.edu","Health",,,,1,109
 58,"California Adolescent Health Collaborative",,"californiateenhealth.org","http://californiateenhealth.org","Health",,,,1,54
 98,"State Health Access Data Assistance Center",,"shadac.org","http://shadac.org","Health",,,,1,54
 55,"Aligning Forces Humboldt",,"aligningforceshumboldt.org","http://aligningforceshumboldt.org","None",,,,1,54
@@ -68,8 +68,8 @@
 5,"California Department of Consumer Affairs",,"dca.ca.gov","http://dca.ca.gov","Economics",,,,1,4
 7,"California Department of Health Care Services","DHCS","dhcs.ca.gov","http://dhcs.ca.gov","Health",,,,1,4
 6,"California Department of Finance",,"dof.ca.gov","http://dof.ca.gov","Economics",,,,1,4
-9,"California Department of Transportation",,"dot.ca.gov","http://dot.ca.gov","Transportation",,,,1,4
-10,"California Highway Patrol",,"chp.ca.gov","http://chp.ca.gov","Safety",,,,1,9
+9,"California Department of Transportation","CADOT","dot.ca.gov","http://dot.ca.gov","Transportation",,,,1,4
+10,"California Highway Patrol","CHP","chp.ca.gov","http://chp.ca.gov","Safety",,,,1,9
 8,"California Department of Social Services","CDSS","cdss.ca.gov","http://cdss.ca.gov","Human Services",,,,1,4
 2,"US Federal Government","US","usa.gov","http://usa.gov","None",,,,1,1
 24,"United States Department of Agriculture","USDA","usda.gov","http://www.usda.gov/","Agriculture",,,,1,2
@@ -97,7 +97,7 @@
 20,"Federal Financial Institutions Examination Council",,"ffiec.gov","http://www.ffiec.gov/","Commerce",,,,1,2
 21,"National Institutes of Health","NIH","nih.gov","http://www.nih.gov/","Health",,,,1,2
 53,"U.S. National Library of Medicine - National Institutes of Health","NLS","nlm.nih.gov","http://nlm.nih.gov","Health",,,,1,21
-22,"National Traffic Highway Safety Administration","NTHS","nhtsa.gov","http://www.nhtsa.gov/","Transportation",,,,1,2
+22,"National Traffic Highway Safety Administration","NTHSA","nhtsa.gov","http://www.nhtsa.gov/","Transportation",,,,1,2
 23,"United States Census Bureau",,"census.gov","http://census.gov","Demographics",,,,1,2
 19,"Federal Bureau of Investigation","FBI","fbi.gov","http://fbi.gov","Justice",,,,1,2
 18,"Data.gov",,"data.gov","http://data.gov","None",,,,1,2
@@ -106,10 +106,10 @@
 46,"Medicare",,"medicare.gov","http://medicare.gov","Health",,,,1,17
 44,"Centers for Medicare & Medicaid Services Data Navigator",,"dnav.cms.gov","http://dnav.cms.gov","Health",,,,1,17
 108,"Education",,,,,,,,,1
-109,"UCLA",,,,,,,,,108
-111,"Berkeley",,,,,,,,,108
-110,"UCSD",,,,,,,,,108
+109,"University of California Los Angeles","UCLA","ucla.edu","http://ucla.edu",,,,,,108
+111,"Berkeley",,"berkeley.edu","http://berkeley.edu",,,,,,108
+110,"University of California San Diego","UCSD","ucsd.edu","http://ucsd.edu",,,,,,108
 113,"University of Michigan",,,,,,,,,108
-112,"UC Davis",,,,,,,,,108
+112,"UC Davis",,"ucdavis.edu","http://ucdavis.edu/",,,,,,108
 115,"Los Angeles County",,,,,,,,,4
-114,"University of San Francisco",,,,,,,,,108
+114,"University of San Francisco","UCSF","ucsf.edu","http://ucsf.edu",,,,,,108
