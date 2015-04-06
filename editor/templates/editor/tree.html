@@ -10,7 +10,7 @@
             <ul>
                 {% recursetree nodes %}
                     <li {% if selected_node and selected_node == node %}data-jstree='{"opened":true,"selected":true}'{% endif %}>
-                        <a href="{{ node.get_absolute_url }}">{{ node.name }}</a>
+                        <a href="{{ node.get_absolute_url }}">{{ node }}</a>
                         {% if not node.is_leaf_node %}
                             <ul class="children">
                                 {{ children }}

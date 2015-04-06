@@ -33,6 +33,8 @@ class Source(MPTTModel):
         help_text='Multiple links to names of categories.')
 
     def __unicode__(self):
+        if self.abbreviation:
+            return u'%s (%s)' % (self.name, self.abbreviation)
         return self.name
 
     def get_absolute_url(self):

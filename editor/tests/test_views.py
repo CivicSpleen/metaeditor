@@ -242,6 +242,15 @@ class SourceListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
     def get_model_factory_class(self):
         return SourceFactory
 
+    def test_renders_abbreviation_with_name(self):
+        root = SourceFactory()
+        source1 = SourceFactory(parent=root, abbreviation='HHS')
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            '%s (%s)' % (source1.name, source1.abbreviation), resp.content,
+            '%s node abbreviation was not found in the response' % source1.name)
+
 
 class FormatNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreateTestMixin):
 
