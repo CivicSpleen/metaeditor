@@ -61,8 +61,8 @@
         $(".show-remote-links-modal").click(function(e) {
             // shows remote links modal if download page is valid. Otherwise alerts warning.
             e.preventDefault();
-            if ($("#id_download_page").val() === "") {
-                alert("Set download page first.");
+            if ($("#id_download_page").val() === "" && $("#id_page").val() === "") {
+                alert("Set Page or Download page first.");
             } else {
                 $.data($("#remoteLinksModal").get(0), "fieldset", $(this).closest("fieldset"));
                 $("#remoteLinksModal").modal("show");
@@ -86,7 +86,6 @@
                     elemsToAppend = elemsToAppend.add($current);
                 }
                 elemsToAppend.appendTo("#remoteLinksModal .modal-body table.links tbody.content");
-
             }
         };
 
@@ -98,12 +97,15 @@
 
         $("#remoteLinksModal").on("shown.bs.modal", function () {
             // Gets remote links from server side and populates popup.
-            var downloadUrl = $("#id_download_page").val();
+            var downloadURL = $("#id_download_page").val();
+            if (!downloadURL) {
+                downloadURL = $("#id_page").val();
+            }
 
-            // assuming downloadUrl is not empty because it checked before popup showing.
+            // assuming downloadURL is not empty because it checked before popup showing.
             $("#remoteLinksModal .modal-body .wait")
                 .show()
-                .text("Scrapping " + downloadUrl + " . Please wait...");
+                .text("Scrapping " + downloadURL + " . Please wait...");
             $("#remoteLinksModal .modal-body table tbody.content").empty();
             $.ajax({
                 statusCode: {
@@ -118,7 +120,7 @@
                 },
                 url: "/editor/scrape?" + $("#remoteLinksModal").data("fieldset").attr("id"),
                 type: "post",
-                data: {url: downloadUrl},
+                data: {url: downloadURL},
                 success: function(response) {
                     $("#remoteLinksModal .modal-body .wait").text("").hide();
                     if (response.errors) {
