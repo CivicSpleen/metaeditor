@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from urlparse import urlparse
+from urlparse import urljoin
 
 from HTMLParser import HTMLParser
 
@@ -22,8 +22,8 @@ class LinksParser(HTMLParser):
             link = {val: key for val, key in attrs}
             href = link.get('href', '')
             if not href.startswith('http'):
-                # relative path, convert to full
-                link['href'] = urlparse(self.url)._replace(path=href).geturl()
+                # this is not absolute path.
+                link['href'] = urljoin(self.url, href)
             self.links.append(link)
 
     def handle_endtag(self, tag):
