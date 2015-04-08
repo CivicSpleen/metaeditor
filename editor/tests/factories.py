@@ -3,7 +3,7 @@
 import factory
 
 from accounts.tests.factories import UserFactory
-from editor.models import Dataset, Format, Category, Source
+from editor.models import Dataset, Format, Category, Source, Extension
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -42,7 +42,15 @@ class FormatFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Format
 
-    name = factory.Sequence(lambda n: 'Test dataset %03d' % n)
+    name = factory.Sequence(lambda n: 'Test format %03d' % n)
+
+
+class ExtensionFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Extension
+
+    name = factory.Sequence(lambda n: 'ext%03d' % n)
 
 
 class DatasetFactory(factory.django.DjangoModelFactory):

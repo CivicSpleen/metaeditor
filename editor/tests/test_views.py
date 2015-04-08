@@ -8,10 +8,11 @@ from django.test import TestCase
 
 from accounts.tests.helpers import give_perm
 
-from editor.models import Category, Dataset, DataFile, DocumentFile, Source, Format
+from editor.models import Category, Dataset, DataFile, DocumentFile,\
+    Source, Format, Extension
 
 from editor.tests.factories import DatasetFactory, CategoryFactory,\
-    SourceFactory, FormatFactory, UserFactory
+    SourceFactory, FormatFactory, UserFactory, ExtensionFactory
 
 
 class BaseTest(TestCase):
@@ -333,10 +334,40 @@ class FormatNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreate
 
     def get_create_params(self):
         params = {
-            'name': 'Node 2',
-            'parent': None
+            'name': 'Node 2'
         }
         return params
+
+    def test_renders_extensions_field(self):
+        resp = self.client.get(self.url)
+        self.assertIn('id_extensions', resp.content)
+
+    def test_creates_extensions(self):
+        # create root
+        FormatFactory(parent=None)
+
+        params = self.create_params
+        params['extensions'] = 'csv, xls, xlsx'
+        resp = self.client.post(self.url, params)
+        if resp.status_code == 200:
+            raise AssertionError('Invalid form: %s' % resp.context['form'].errors)
+
+        self.assertEquals(resp.status_code, 302)
+        self.assertEquals(
+            Extension.objects.filter(
+                name='csv',
+                format__name=params['name']).count(),
+            1)
+        self.assertEquals(
+            Extension.objects.filter(
+                name='xls',
+                format__name=params['name']).count(),
+            1)
+        self.assertEquals(
+            Extension.objects.filter(
+                name='xlsx',
+                format__name=params['name']).count(),
+            1)
 
 
 class FormatListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
@@ -349,6 +380,68 @@ class FormatListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):
 
     def get_model_factory_class(self):
         return FormatFactory
+
+
+class FormatNodeUpdateTest(BaseUpdateTest):
+    # TODO: check permissions
+    def get_url(self):
+        self.root = FormatFactory()
+        self.format1 = FormatFactory(parent=self.root)
+        return self.format1.get_absolute_url()
+
+    def get_model_class(self):
+        return Format
+
+    def get_model_factory_class(self):
+        return FormatFactory
+
+    def get_update_params(self):
+        params = {
+            'name': 'Node 2'
+        }
+        return params
+
+    def test_renders_extensions(self):
+        ext1 = ExtensionFactory(format=self.format1, name='csv123')
+        ext2 = ExtensionFactory(format=self.format1, name='xlsx123')
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            '%s, %s' % (ext1.name, ext2.name),
+            resp.content,
+            'Extensions was not found in the content.')
+
+    def test_creates_extensions(self):
+        params = self.update_params
+        params['extensions'] = 'csv'
+        resp = self.client.post(self.url, params)
+        if resp.status_code == 200:
+            raise AssertionError('Invalid form: %s' % resp.context['form'].errors)
+
+        self.assertEquals(resp.status_code, 302)
+        self.assertEquals(
+            Extension.objects.filter(
+                name='csv',
+                format__name=params['name']).count(),
+            1)
+
+    def test_deletes_missed_extensions(self):
+        ext1 = ExtensionFactory(format=self.format1, name='csv')
+        ExtensionFactory(format=self.format1, name='xlsx')
+        ExtensionFactory(format=self.format1, name='exe')
+        params = self.update_params
+        params['extensions'] = ext1.name
+        resp = self.client.post(self.url, params)
+        if resp.status_code == 200:
+            raise AssertionError('Invalid form: %s' % resp.context['form'].errors)
+
+        self.assertEquals(resp.status_code, 302)
+        self.assertEquals(Extension.objects.all().count(), 1)
+        self.assertEquals(
+            Extension.objects.filter(
+                name='csv',
+                format__name=params['name']).count(),
+            1)
 
 
 class DatasetListTest(TestCase):

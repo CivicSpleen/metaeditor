@@ -104,6 +104,43 @@ class Format(MPTTModel):
         return reverse('editor:format-create')
 
 
+class Extension(models.Model):
+    name = models.CharField(
+        max_length=20,
+        help_text='The name of the extension.',
+        db_index=True)
+    format = models.ForeignKey(Format)
+
+    class Meta:
+        unique_together = (('name', 'format'),)
+
+    @classmethod
+    def update(cls, format, extensions):
+        """ Adds new extensions and removes missed.
+
+        Args:
+            format (Format):
+            extensions (str): comma separated string of the extensions.
+        """
+
+        # convert to list
+        extensions = [x.strip() for x in extensions.split(',')]
+
+        # create new
+        for extension in extensions:
+            if not extension:
+                # empty extension within list
+                continue
+            cls.objects.get_or_create(
+                format=format, name=extension)
+
+        # delete all missed
+        cls.objects\
+            .filter(format=format)\
+            .exclude(name__in=extensions)\
+            .delete()
+
+
 class Dataset(models.Model):
     NATIONAL = 'national'
     STATE = 'state'

@@ -5,7 +5,7 @@ from django import forms
 from django.forms.models import inlineformset_factory
 
 from editor.models import Dataset, DataFile, DocumentFile, Category,\
-    Format, Source
+    Format, Source, Extension
 
 logger = getLogger(__name__)
 
@@ -101,12 +101,28 @@ class CategoryForm(NodeBaseForm):
 
 
 class FormatForm(NodeBaseForm):
+    extensions = forms.CharField(
+        required=False,
+        help_text='Comma separated list of the extensions.')
 
     horizontal_fields = ['name', 'parent']
 
     class Meta:
         model = Format
         fields = ['name', 'parent']
+
+    def __init__(self, *args, **kwargs):
+        super(self.__class__, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.id:
+            self.fields['extensions'].initial = ', '.join([x.name for x in self.instance.extension_set.all()])
+
+    def save(self, *args, **kwargs):
+        format_instance = super(self.__class__, self).save(*args, **kwargs)
+        extensions = self.cleaned_data.get('extensions')
+        if extensions:
+            Extension.update(format_instance, extensions)
+
+        return format_instance
 
 
 class FileBaseForm(forms.ModelForm):
