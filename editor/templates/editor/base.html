@@ -20,7 +20,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{% static "editor/css/justified-nav.css" %}" rel="stylesheet">
-    <link href="{% static "editor/css/editor.css" %}?v=0.0.1" rel="stylesheet">
+    <link href="{% static "editor/css/editor.css" %}?v=0.0.2" rel="stylesheet">
 
     <!-- columns fallback for ie -->
     <!--[if lt IE 10]>
@@ -52,7 +52,7 @@
 
   <body>
     <div class="container {% block page_class %}{% endblock %}">
-        <ul style="float:right;" class="auth">
+        <ul class="auth pull-right">
             {% if user.is_authenticated %}
                 <li>
                     <a href="{% url 'accounts:profile' %}" title="show profile">

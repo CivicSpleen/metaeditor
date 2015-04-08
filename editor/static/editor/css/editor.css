@@ -27,3 +27,11 @@
 .col-md-5, .col-md-7 {
     overflow: auto;
 }
+.jstree-anchor {
+    /*enable wrapping*/
+    white-space: normal !important;
+    /*ensure lower nodes move down*/
+    height: auto !important;
+    /*offset icon width*/
+    padding-right: 24px;
+}
