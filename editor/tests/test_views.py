@@ -50,6 +50,15 @@ class BaseCreateTest(BaseTest):
         raise NotImplementedError
 
 
+class BaseUpdateTest(BaseTest):
+    def setUp(self):
+        super(BaseUpdateTest, self).setUp()
+        self.update_params = self.get_update_params()
+
+    def get_update_params(self):
+        raise NotImplementedError
+
+
 class CreatePermissionTestMixin(object):
     """ Group of the tests of the permission of the creating model. """
 
@@ -226,10 +235,69 @@ class SourceNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreate
     def get_create_params(self):
         params = {
             'name': 'Node 2',
-            'homepage': 'http://ya.ru',
-            'parent': None
+            'homepage': 'http://ya.ru'
         }
         return params
+
+    def test_saves_user_who_created_source(self):
+        post_params = self.create_params
+        resp = self.client.post(self.url, post_params)
+        self.assertEqual(resp.status_code, 302)
+        qs = Source.objects.filter(name=post_params['name'])
+        self.assertEquals(qs.count(), 1)
+        self.assertEquals(qs[0].created_by, self.user1)
+
+
+class SourceNodeUpdateTest(BaseUpdateTest):
+    # TODO: test other nodes too.
+    def get_url(self):
+        self.root = SourceFactory()
+        self.source = SourceFactory(parent=self.root)
+        return self.source.get_absolute_url()
+
+    def get_model_class(self):
+        return Source
+
+    def get_model_factory_class(self):
+        return SourceFactory
+
+    def get_update_params(self):
+        params = {
+            'name': 'Node 2',
+            'homepage': 'http://ya.ru'
+        }
+        return params
+
+    def test_saves_user_who_updated_source(self):
+        assert self.source.updated_by is None
+        resp = self.client.post(self.url, self.update_params)
+        self.assertEqual(resp.status_code, 302)
+
+        # get updated instance from db
+        source = Source.objects.get(id=self.source.id)
+        self.assertEquals(source.updated_by, self.user1)
+
+    def test_shows_user_who_created_source(self):
+        self.source.created_by = self.user1
+        self.source.save()
+
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            'Created by: %s' % self.user1.get_full_name(),
+            resp.content,
+            'User who updated source was not found in the content')
+
+    def test_shows_user_who_updated_source(self):
+        self.source.updated_by = self.user1
+        self.source.save()
+
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn(
+            'Updated by: %s' % self.source.updated_by.get_full_name(),
+            resp.content,
+            'User who updated source was not found in the content')
 
 
 class SourceListTest(BaseTest, NodeListTestMixin, ListPermissionTestMixin):

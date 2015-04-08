@@ -157,11 +157,22 @@ class SourceList(BaseTreeView):
 class SourceCreate(BaseCreateView):
     model = Source
     form_class = SourceForm
+    template_name = 'editor/source_form.html'
+
+    def form_valid(self, form):
+        """
+        Called if form is valid. Saves form and redirects to success page.
+        """
+        self.object = form.save(commit=False)
+        self.object.created_by = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class SourceUpdate(BaseUpdateView):
     model = Source
     form_class = SourceForm
+    template_name = 'editor/source_form.html'
 
     def get_context_data(self, **kwargs):
         ctx = super(SourceUpdate, self).get_context_data(**kwargs)
@@ -170,6 +181,15 @@ class SourceUpdate(BaseUpdateView):
                 'editor:dataset-create',
                 kwargs={'source_pk': self.object.pk})
         return ctx
+
+    def form_valid(self, form):
+        """
+        Called if form is valid. Saves form and redirects to success page.
+        """
+        source = form.save(commit=False)
+        source.updated_by = self.request.user
+        source.save()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class FormatList(BaseTreeView):

@@ -39,14 +39,7 @@
                                     title="Add new child">
                                     Add child
                                 </a>
-                                {% if create_dataset_url %}
-                                    {# source is special case #}
-                                    <a class="btn btn-default pull-left"
-                                        href="{{ create_dataset_url }}"
-                                        title="Add new dataset">
-                                        Add dataset
-                                    </a>
-                                {% endif %}
+                                {% block node_extra_actions %}{% endblock %}
                             {% endif %}
                             <button type="submit"
                                     class="btn btn-primary pull-left"
@@ -66,7 +59,8 @@
                             {% bootstrap_field field %}
                         {% endif %}
                     {% endfor %}
-                    <div style="float:right;">
+                    {% block node_form_extra_fields %}{% endblock %}
+                    <div class="pull-right">
                     {% buttons %}
                         <button type="submit"
                                 class="btn btn-primary"
@@ -79,20 +73,7 @@
                 <div class="clear:both;"></div>
                 <br />
                 <br />
-                {% if create_dataset_url %}
-                    <div>Datasets</div>
-                    <ul>
-                        {% for dataset in form.instance.dataset_set.all %}
-                            <li>
-                                <a href="{{ dataset.get_absolute_url }}" title="Edit dataset">
-                                    {{ dataset.title }}
-                                </a>
-                            </li>
-                        {% empty %}
-                            <li>Source does not have datasets yet.</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {% block node_extra_data %}{% endblock %}
             </div>
         {% else %}
             {# form does not exist #}

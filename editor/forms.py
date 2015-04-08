@@ -28,7 +28,7 @@ class NodeBaseForm(forms.ModelForm):
             # find and return root
             try:
                 parent = self.Meta.model.objects.get(parent__isnull=True)
-            except self.models.DoesNotExist:
+            except self.Meta.model.DoesNotExist:
                 logger.warning('%s model does not have root node. Create it.' % self.Meta.model)
         return parent
 

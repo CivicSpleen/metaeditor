@@ -31,6 +31,18 @@ class Source(MPTTModel):
         'Category',
         null=True, blank=True,
         help_text='Multiple links to names of categories.')
+    created_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        related_name='created_sources',
+        help_text='User who created that source.')
+    updated_by = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        related_name='updated_sources',
+        help_text='User who last edited that source.')
 
     def __unicode__(self):
         if self.abbreviation:

@@ -1,0 +1,43 @@
+{% extends "editor/tree.html" %}
+{% block title_prefix %}Source Edit - {% endblock %}
+
+{% block node_extra_actions %}
+    {% if create_dataset_url %}
+        {# source is special case #}
+        <a class="btn btn-default pull-left"
+            href="{{ create_dataset_url }}"
+            title="Add new dataset">
+            Add dataset
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block node_form_extra_fields %}
+    {% if form.instance and form.instance.id %}
+        {% with created_by=form.instance.created_by updated_by=form.instance.updated_by %}
+        <div>
+            Created by: {% if created_by %}{{ created_by.get_full_name|default:created_by.username }}{% endif %}
+        </div>
+        <div>
+            Updated by: {% if updated_by %}{{ updated_by.get_full_name|default:updated_by.username }}{% endif %}
+        </div>
+        {% endwith %}
+    {% endif %}
+{% endblock %}
+
+{% block node_extra_data %}
+    {% if form.instance and form.instance.id %}
+        <div>Datasets</div>
+        <ul>
+            {% for dataset in form.instance.dataset_set.all %}
+                <li>
+                    <a href="{{ dataset.get_absolute_url }}" title="Edit dataset">
+                        {{ dataset.title }}
+                    </a>
+                </li>
+            {% empty %}
+                <li>Source does not have datasets yet.</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
