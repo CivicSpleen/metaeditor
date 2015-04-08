@@ -116,12 +116,19 @@ class FormatForm(NodeBaseForm):
         if self.instance and self.instance.id:
             self.fields['extensions'].initial = ', '.join([x.name for x in self.instance.extension_set.all()])
 
+    def clean_extensions(self):
+        extensions = self.cleaned_data.get('extensions', '')
+        if '.' in extensions:
+            raise forms.ValidationError('Extensions should not contain dots.')
+
+        if '*' in extensions:
+            raise forms.ValidationError('Extensions should not contains asterisks.')
+        return extensions
+
     def save(self, *args, **kwargs):
         format_instance = super(self.__class__, self).save(*args, **kwargs)
         extensions = self.cleaned_data.get('extensions')
-        if extensions:
-            Extension.update(format_instance, extensions)
-
+        Extension.update(format_instance, extensions)
         return format_instance
 
 

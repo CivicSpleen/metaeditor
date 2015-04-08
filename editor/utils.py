@@ -5,6 +5,8 @@ from HTMLParser import HTMLParser
 
 import requests
 
+from editor.models import Format
+
 
 class LinksParser(HTMLParser):
     """ Collects all links from given url. """
@@ -76,3 +78,24 @@ def filter_links(links, include_extensions=None):
             if link['href'].endswith(ext):
                 filtered_links.append(link)
     return filtered_links
+
+
+def guess_format(links):
+    """ Guesses format of the each link from given list of links.
+
+    Args:
+        links (list of dicts):
+
+    Returns:
+        list of dicts:
+
+    """
+    guessed_links = []
+    for link in links:
+        link['format'] = {}
+        format = Format.guess_by_path(link['href'])
+        if format:
+            link['format']['id'] = format.id
+            link['format']['name'] = format.name
+        guessed_links.append(link)
+    return guessed_links

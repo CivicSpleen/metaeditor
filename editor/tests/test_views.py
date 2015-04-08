@@ -722,6 +722,23 @@ class ScrapeTest(TestCase):
         self.assertIn('Failed to get urls', content['errors'][0])
         self.assertNotIn('links', content)
 
+    @fudge.patch(
+        'editor.views.get_links',
+        'editor.views.guess_format')
+    def test_returns_guessed_formats(self, fake_get, fake_guess):
+        fake_get.expects_call()\
+            .returns([{'href': 'http://ya.ru'}])
+        fake_guess.expects_call()\
+            .returns([{'href': 'http://ya.ru', 'format': {'id': 1, 'name': 'test'}}])
+        post_data = {'url': 'http://yandex.ru/'}
+        resp = self.client.post(
+            self.url, post_data, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertIn('links', content)
+        self.assertIn('format', content['links'][0])
+        self.assertEqual(content['links'][0]['format']['id'], 1)
+
 
 class ValidateURLTest(TestCase):
     def setUp(self):

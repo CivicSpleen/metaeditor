@@ -33,18 +33,15 @@
     });
 
     $(function() {
-        var addNewForm = function($fieldset, name, url) {
+        var addNewForm = function($fieldset, link) {
             // Adds new form (django formset form) to the given fieldset.
             var formIdx = $(".dynamic-formset-form", $fieldset).size();
             var $newForm = $($(".empty-form", $fieldset).html().replace(/__prefix__/g, formIdx));
             $newForm.addClass("dynamic-formset-form");
-            if (name) {
-                $('.name', $newForm).val(name);
-            }
-            if (url) {
-                $('.url', $newForm).val(url);
-            }
-            if (name || url) {
+            if (link) {
+                $(".name", $newForm).val(link.text);
+                $(".url", $newForm).val(link.href);
+                $("select", $newForm).val(link.format.id);
                 $newForm.prependTo($(".formset", $fieldset));
                 validateURL($(".url", $newForm));
             } else {
@@ -80,9 +77,13 @@
                 var $current = null;
                 for (var i = 0; i < links.length; ++i) {
                     $current = $tmpl.clone();
-                    $("a", $current).text(links[i].text);
-                    $("a", $current).attr("href", links[i].href);
-                    $("a", $current).attr("title", links[i].title);
+                    $("a", $current)
+                        .attr("href", links[i].href)
+                        .attr("title", links[i].title)
+                        .text(links[i].text);
+                    if (links[i].format) {
+                        $("a", $current).attr("data-format-id", links[i].format.id);
+                    }
                     elemsToAppend = elemsToAppend.add($current);
                 }
                 elemsToAppend.appendTo("#remoteLinksModal .modal-body table.links tbody.content");
@@ -93,6 +94,15 @@
             // shows given errors to user.
             // TODO: use bootstrap error instead of alert.
             alert(errors.join('; '));
+        };
+
+        var aToLink = function($a) {
+            // converts <a> node to the link object.
+            return {
+                text: $a.text(),
+                href: $a.attr("href"),
+                format: {id: $a.attr("data-format-id")}
+            };
         };
 
         $("#remoteLinksModal").on("shown.bs.modal", function () {
@@ -136,9 +146,10 @@
         $("#remoteLinksModal .btn-primary").on("click", function () {
             // user selected urls and clicked Ok.
             $("#remoteLinksModal table tbody.content input:checked").each(function(i, e) {
-                var $a = $("a", $(e).closest("tr"));
                 var $fieldset = $("#remoteLinksModal").data("fieldset");
-                addNewForm($fieldset, $a.text(), $a.attr("href"));
+                addNewForm(
+                    $fieldset,
+                    aToLink($("a", $(e).closest("tr"))));
             });
             $("#remoteLinksModal").modal("hide");
         });

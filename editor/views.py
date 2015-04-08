@@ -22,7 +22,7 @@ from django.views.generic.list import ListView
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm,\
     SourceForm, CategoryForm, FormatForm
 from editor.models import Category, Source, Format, Dataset
-from editor.utils import get_links, filter_links
+from editor.utils import get_links, filter_links, guess_format
 
 logger = logging.getLogger(__name__)
 
@@ -401,6 +401,8 @@ def scrape(request):
 
             # keep the links match to extensions to include only.
             links = filter_links(links, include_extensions)
+
+            links = guess_format(links)
 
             response_data['links'] = links
         except Exception as exc:

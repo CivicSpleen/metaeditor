@@ -3,7 +3,8 @@ import fudge
 
 from django.test import TestCase
 
-from editor.utils import get_links
+from editor.tests.factories import FormatFactory
+from editor.utils import get_links, guess_format
 
 
 class GetLinksTest(TestCase):
@@ -61,3 +62,17 @@ class GetLinksTest(TestCase):
         links = get_links('http://python.org/versions')
         self.assertEquals(len(links), 1)
         self.assertEquals(links[0]['href'], 'http://python.org/index')
+
+
+class GuessFormatTest(TestCase):
+    @fudge.patch(
+        'editor.models.Format.guess_by_path')
+    def test_extends_links_with_found_format(self, fake_guess):
+        format1 = FormatFactory()
+        fake_guess.expects_call()\
+            .returns(format1)
+        links = [{'href': 'http://ya.ru'}]
+        guessed_links = guess_format(links)
+        self.assertIn('format', guessed_links[0])
+        self.assertEqual(guessed_links[0]['format']['id'], format1.id)
+        self.assertEqual(guessed_links[0]['format']['name'], format1.name)

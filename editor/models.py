@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
+from logging import getLogger
 
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
 
 from mptt.models import MPTTModel, TreeForeignKey
+
+logger = getLogger(__name__)
 
 
 class Source(MPTTModel):
@@ -103,6 +107,19 @@ class Format(MPTTModel):
     def get_create_url():
         return reverse('editor:format-create')
 
+    @classmethod
+    def guess_by_path(cls, path):
+
+        # get extension from path
+        name, ext = os.path.splitext(path)
+
+        # find first match
+        extensions = Extension.objects.filter(name=ext.strip('.')).order_by('-id')[:1]
+        if extensions:
+            return extensions[0].format
+        logger.warning('Format for %s extension was not found.' % ext)
+        return None
+
 
 class Extension(models.Model):
     name = models.CharField(
@@ -120,7 +137,7 @@ class Extension(models.Model):
 
         Args:
             format (Format):
-            extensions (str): comma separated string of the extensions.
+            extensions (str): comma separated string of the extensions or empty string.
         """
 
         # convert to list

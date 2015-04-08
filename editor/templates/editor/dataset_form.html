@@ -4,7 +4,7 @@
 {% load editor_tags %}
 {% block title_prefix %}Dataset Edit - {% endblock %}
 {% block extrajs %}
-    <script src="{% static "editor/js/dataset.js" %}?v=0.0.1"></script>
+    <script src="{% static "editor/js/dataset.js" %}?v=0.0.2"></script>
 {% endblock %}
 
 {% block page_class %}dataset-form{% endblock %}
@@ -92,7 +92,7 @@
                   <tbody style="display:none;">
                       <tr class="tmpl">
                           <td>
-                              <a href="#" target="_blank"></a>
+                              <a href="#" target="_blank" data-format-id=""></a>
                           </td>
                           <td>
                               <input type="checkbox" />
