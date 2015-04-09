@@ -88,11 +88,25 @@
           </div>
           <div class="modal-body" style="max-height:300px;overflow:auto;">
               <div class="wait"></div>
-              <table class="links">
+              <table class="links table">
+                  <thead>
+                      <tr>
+                          <th>Link</th>
+                          <th>File name</th>
+                          <th>Format</th>
+                          <th><input type="checkbox" class="toggle-all" title="select all" /></th>
+                      </tr>
+                  </thead>
                   <tbody style="display:none;">
                       <tr class="tmpl">
                           <td>
-                              <a href="#" target="_blank" data-format-id=""></a>
+                              <a href="#" target="_blank" data-format-id="" data-format-name=""></a>
+                          </td>
+                          <td>
+                              <span class="file-name"></span>
+                          </td>
+                          <td>
+                              <span class="format-name"></span>
                           </td>
                           <td>
                               <input type="checkbox" />

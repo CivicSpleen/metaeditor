@@ -1,21 +1,13 @@
 # -*- coding: utf-8 -*-
-import subprocess
 
-from lettuce import step, world, after
+from lettuce import step, world
 
 from nose.tools import assert_equals, assert_true, assert_in
 
 import fudge
 
-from editor.models import Dataset
-from editor.tests.factories import SourceFactory
-from editor import views
-
-
-@after.each_scenario
-def kill_pydoc(scenario):
-    if hasattr(world, '__pydoc_process'):
-        world.__pydoc_process.kill()
+from editor.models import Dataset, Extension, Format
+from editor.tests.factories import SourceFactory, FormatFactory
 
 
 def _get_formset_block(name):
@@ -158,35 +150,28 @@ def when_i_click_on_given_button_inside_given_block(step, button_text, fieldset_
     raise Exception('Button with %s text was not found inside %s block' % (button_text, fieldset_legend))
 
 
-@step(u'and pydoc http server is running on "([^"]*)"')
-def and_pydoc_http_server_is_running(step, group1):
-    cmd = 'pydoc -p 1234'
-    world.__pydoc_process = subprocess.Popen(
-        'exec %s' % cmd, stdout=subprocess.PIPE, shell=True)
-
-
 @step(u'and I populate download page with "([^"]*)" url')
-def and_i_populate_download_page_with_group1_page(step, pydoc_url):
+def and_i_populate_download_page_with_group1_page(step, url):
     world.elem('#id_download_page').clear()
-    world.elem('#id_download_page').send_keys(pydoc_url)
+    world.elem('#id_download_page').send_keys(url)
 
 
-@step(u'Then I see popup with urls scrapped from pydoc http server')
-def then_i_see_popup_with_urls_scrapped_from_pydoc_http_server(step):
+@step(u'Then I see popup with urls scrapped from http server')
+def then_i_see_popup_with_urls_scrapped_from_http_server(step):
     popup = world.elem('#remoteLinksModal')
     assert_true(popup.is_displayed())
 
-    def contains_builtin(browser):
+    def contains_file1(browser):
         popup = world.elem('#remoteLinksModal')
-        return '__builtin__' in popup.text
+        return 'file1.csv' in popup.text
 
-    world.wait(contains_builtin, msg='Timeout while waiting __builtin__')
+    world.wait(contains_file1, msg='Timeout while waiting file1.csv')
 
-    def contains_future(browser):
+    def contains_file2(browser):
         popup = world.elem('#remoteLinksModal')
-        return '__future__' in popup.text
+        return 'file2.csv' in popup.text
 
-    world.wait(contains_future, msg='Timeout while waiting __future__')
+    world.wait(contains_file2, msg='Timeout while waiting file2.csv')
 
 
 @step(u'Then I see "([^"]*)" urls added to "([^"]*)" formset')
@@ -209,11 +194,40 @@ def when_i_select_given_file_format_in_both_urls(step, fieldset_legend):
             return
 
 
-@step(u'and datafiles filtering drops everything except urls containing "([^"]*)"')
-def and_datafiles_filtering_drops_everything_except_urls_containing_given_part(step, part):
+@step(u'and GET response to example.com returns links: "([^"]*)"')
+def and_get_response_to_example_com_returns_links(step, links):
+    links = links.split(',')
 
-    def fake_filter(links, include_extensions):
-        ret = [x for x in links if part in x['href']]
-        return ret
+    class FakeResponse(object):
+        status_code = 200
 
-    fudge.patch_object(views, 'filter_links', fake_filter)
+        def __init__(self, content):
+            self.content = content
+
+    links_html = []
+    for link in links:
+        links_html.append('<a href="{link}">{link}</a>'.format(link=link.strip()))
+
+    fake_resp = FakeResponse('<html><body>%s</body></html>' % '\n'.join(links_html))
+
+    # replace requests.get method with fake method returning our html.
+    from editor.utils import requests
+    fudge.patch_object(requests, 'get', fudge.Fake().is_callable().returns(fake_resp))
+
+
+@step(u'and I see "([^"]*)" format name near each data file')
+def and_i_see_format_name_near_each_data_file(step, format_name):
+    found = False
+    for tr in world.elems('table.links tbody.content tr'):
+        assert_equals(
+            tr.find_element_by_css_selector('.format-name').text,
+            format_name)
+        found = True
+    assert_true(found)
+
+
+@step(u'and I see "([^"]*)" file format is selected')
+def and_i_see_file_format_is_selected(step, format_name):
+    format = Format.objects.get(name=format_name)
+    select = world.elems('#datafiles .dynamic-formset-form select')[1]
+    assert_equals(select.get_attribute('value'), unicode(format.id))

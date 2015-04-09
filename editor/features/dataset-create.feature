@@ -1,6 +1,6 @@
 Feature: Dataset creation.
   Background:
-    Given "csv" format exists
+    Given "csv" format with "csv" extensions exists
       and I am authenticated user
       and I have permission to add dataset
       and I have permission to change dataset
@@ -43,22 +43,39 @@ Feature: Dataset creation.
       and I have permission to change datafile
       and I have permission to add documentfile
       and I have permission to change documentfile
-      and pydoc http server is running on "localhost:1234"
-      and datafiles filtering drops everything except urls containing "__"
+      and GET response to example.com returns links: "file1.csv, file2.csv"
     When I populate dataset form title with "Test-title1"
       and I populate other fields of the dataset form with random values
-      and I populate download page with "http://localhost:1234" url
+      and I populate download page with "http://example.com" url
       and I click on "Scrape" button inside "Data files" block
-    Then I see popup with urls scrapped from pydoc http server
-    When I check input next to the "__builtin__" url
-      and I check input next to the "__future__" url
+    Then I see popup with urls scrapped from http server
+    When I check input next to the "file1.csv" url
+      and I check input next to the "file2.csv" url
       and I click on "Ok" button
-    Then I see "__builtin__, __future__" urls added to "Data files" formset
+    Then I see "file1.csv, file2.csv" urls added to "Data files" formset
     When I select "csv" file format in both urls
       and I click on "Save" button
     Then new dataset with "Test-title1" creates
-      and "Test-title1" dataset contains "__builtin__" data file
-      and "Test-title1" dataset contains "__future__" data file
+      and "Test-title1" dataset contains "file1.csv" data file
+      and "Test-title1" dataset contains "file2.csv" data file
       and I see dataset edit form
-      and dataset form contains "__builtin__" data file
-      and dataset form contains "__future__" data file
+      and dataset form contains "file1.csv" data file
+      and dataset form contains "file2.csv" data file
+
+  Scenario: 5. Guessing and populating data file format
+    Given dataset create form is opened
+      and I have permission to add datafile
+      and I have permission to change datafile
+      and I have permission to add documentfile
+      and I have permission to change documentfile
+      and GET response to example.com returns links: "file1.csv, file2.csv"
+    When I populate dataset form title with "Test-title1"
+      and I populate other fields of the dataset form with random values
+      and I populate download page with "http://example.com" url
+      and I click on "Scrape" button inside "Data files" block
+    Then I see popup with urls scrapped from http server
+      and I see "csv" format name near each data file
+    When I check input next to the "file1.csv" url
+      and I click on "Ok" button
+    Then I see "file1.csv" urls added to "Data files" formset
+      and I see "csv" file format is selected

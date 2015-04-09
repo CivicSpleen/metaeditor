@@ -4,7 +4,8 @@ from lettuce import step, world
 
 from accounts.tests.helpers import give_perm
 from editor.tests.factories import FormatFactory, CategoryFactory
-from editor.models import Category, Source, Format, DataFile, DocumentFile, Dataset
+from editor.models import Category, Source, Format, DataFile,\
+    DocumentFile, Dataset, Extension
 
 
 @step(u'(Given|and) I access the "([^"]*)" url')
@@ -38,6 +39,12 @@ def and_i_click_on_button_with_given_text(step, button_text):
 @step(u'(Given|and) "([^"]*)" format exists')
 def and_given_format_exists(step, unused, format_name):
     FormatFactory(name=format_name)
+
+
+@step(u'(Given|and) "([^"]*)" format with "([^"]*)" extensions exists')
+def and_format_with_given_extensions_exists(step, unused, format_name, extensions):
+    format = FormatFactory(name=format_name)
+    Extension.update(format, extensions)
 
 
 @step(u'and I have permission to (add|change) (.*)$')

@@ -97,5 +97,6 @@ def guess_format(links):
         if format:
             link['format']['id'] = format.id
             link['format']['name'] = format.name
+        link['file_name'] = link['href'].split('/')[-1]
         guessed_links.append(link)
     return guessed_links

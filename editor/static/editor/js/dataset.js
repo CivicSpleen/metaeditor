@@ -82,7 +82,11 @@
                         .attr("title", links[i].title)
                         .text(links[i].text);
                     if (links[i].format) {
-                        $("a", $current).attr("data-format-id", links[i].format.id);
+                        $("a", $current)
+                            .attr("data-format-id", links[i].format.id)
+                            .attr("data-format-name", links[i].format.name);
+                        $(".format-name", $current).text(links[i].format.name);
+                        $(".file-name", $current).text(links[i].file_name);
                     }
                     elemsToAppend = elemsToAppend.add($current);
                 }
@@ -101,7 +105,9 @@
             return {
                 text: $a.text(),
                 href: $a.attr("href"),
-                format: {id: $a.attr("data-format-id")}
+                format: {
+                    id: $a.attr("data-format-id"),
+                    name: $a.attr("data-format-name")}
             };
         };
 
@@ -191,6 +197,12 @@
 
         $("#datafiles, #documentfiles").on("change", ".url", function(e) {
             validateURL($(this));
+        });
+
+        $(".toggle-all").change(function(e) {
+            e.preventDefault();
+            $("tbody.content input[type=checkbox]", $(this).closest("table"))
+                .prop("checked", $(this).is(":checked"));
         });
     });
 })();

@@ -683,7 +683,7 @@ class ScrapeTest(TestCase):
     @fudge.patch('editor.views.get_links')
     def test_returns_all_links_from_given_url(self, fake_get):
         fake_get.expects_call()\
-            .returns([{'text': 'Yandex', 'url': 'http://yandex.ru'}])
+            .returns([{'text': 'Yandex', 'href': 'http://yandex.ru'}])
 
         post_data = {'url': 'http://yandex.ru'}
         resp = self.client.post(
@@ -692,8 +692,8 @@ class ScrapeTest(TestCase):
         content = json.loads(resp.content)
         self.assertIn('links', content)
         self.assertIn('text', content['links'][0])
-        self.assertIn('url', content['links'][0])
-        self.assertEquals(content['links'][0]['url'], 'http://yandex.ru')
+        self.assertIn('href', content['links'][0])
+        self.assertEquals(content['links'][0]['href'], 'http://yandex.ru')
         self.assertEquals(content['links'][0]['text'], 'Yandex')
 
     def test_returns_error_if_wrong_url_given(self):
