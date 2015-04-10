@@ -43,7 +43,11 @@ def and_given_format_exists(step, unused, format_name):
 
 @step(u'(Given|and) "([^"]*)" format with "([^"]*)" extensions exists')
 def and_format_with_given_extensions_exists(step, unused, format_name, extensions):
-    format = FormatFactory(name=format_name)
+    try:
+        root = Format.objects.get(parent__isnull=True)
+    except Format.DoesNotExist:
+        root = FormatFactory()
+    format = FormatFactory(name=format_name, parent=root)
     Extension.update(format, extensions)
 
 

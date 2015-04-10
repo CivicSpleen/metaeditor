@@ -3,7 +3,7 @@
 import factory
 
 from accounts.tests.factories import UserFactory
-from editor.models import Dataset, Format, Category, Source, Extension
+from editor.models import Dataset, Format, Category, Source, Extension, DataFile
 
 
 class CategoryFactory(factory.django.DjangoModelFactory):
@@ -92,3 +92,13 @@ class DatasetFactory(factory.django.DjangoModelFactory):
             # A list of formats were passed in, use them
             for format_ in extracted:
                 self.categories.add(format_)
+
+
+class DataFileFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = DataFile
+
+    name = factory.Sequence(lambda n: 'Test datafile %03d' % n)
+    dataset = factory.SubFactory(DatasetFactory)
+    file_format = factory.SubFactory(FormatFactory)

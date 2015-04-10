@@ -221,6 +221,15 @@ class Dataset(models.Model):
         User,
         help_text='Link to the user that edited this dataset. ')
 
+    def update_formats(self):
+        """ Gets all formats from datafiles of the dataset and saves formats with dataset. """
+        formats_to_add = [x.file_format for x in self.datafile_set.all()]
+        if formats_to_add:
+            self.formats.add(*formats_to_add)
+
+            # remove redundant formats
+            self.formats.exclude(id__in=[x.id for x in formats_to_add]).delete()
+
     def __unicode__(self):
         return self.title
 
@@ -242,7 +251,10 @@ class File(models.Model):
 
 
 class DataFile(File):
-    pass
+
+    def save(self, *args, **kwargs):
+        super(self.__class__, self).save()
+        self.dataset.update_formats()
 
 
 class DocumentFile(File):

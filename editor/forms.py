@@ -58,6 +58,8 @@ class DatasetForm(forms.ModelForm):
         self.user = user
         self.source = kwargs.pop('source', None)
         super(DatasetForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.id and self.instance.datafile_set.exists():
+            self.fields['formats'].widget.attrs['disabled'] = 'disabled'
 
     def save(self, *args, **kwargs):
         instance = super(DatasetForm, self).save(commit=False, *args, **kwargs)
