@@ -1,14 +1,27 @@
 {% load bootstrap3 %}
 {% for form in forms %}
-    <div style="border:1px solid gray;" class="dynamic-formset-form">
+    <div class="dynamic-formset-form">
         {% for field in form.hidden_fields %}
             {{ field }}
         {% endfor %}
-        {% for field in form.visible_fields %}
-            <div class="col-xs-3">
-                {% bootstrap_field field %}
+        <div class="row">
+            <div class="col-md-7">
+                {% bootstrap_field form.name %}
             </div>
-        {% endfor %}
-        <div style="clear:both;"></div>
+            <div class="col-md-3">
+                {% bootstrap_field form.file_format %}
+            </div>
+            <div class="col-md-2">
+                {% if formset.can_delete %}
+                    {% bootstrap_field form.DELETE %}
+                {% endif %}
+            </div>
+        </div>
+        {% if form.instance and form.instance.id %}
+            {{ form.url }}
+        {% else %}
+            {% bootstrap_field form.url %}
+        {% endif %}
+        <hr />
     </div>
 {% endfor %}

@@ -4,7 +4,7 @@
 {% load editor_tags %}
 {% block title_prefix %}Dataset Edit - {% endblock %}
 {% block extrajs %}
-    <script src="{% static "editor/js/dataset.js" %}?v=0.0.2"></script>
+    <script src="{% static "editor/js/dataset.js" %}?v=0.0.3"></script>
 {% endblock %}
 
 {% block page_class %}dataset-form{% endblock %}
@@ -13,7 +13,7 @@
     {% if has_add_perm and has_change_perm %}
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div style="float:right;">
+            <div class="pull-right">
                 {% buttons %}
                     <button type="submit"
                             class="btn btn-primary"
@@ -31,12 +31,12 @@
                     {% bootstrap_field form.categories %}
                     <div class="form-horizontal">
                         {% bootstrap_field form.variant layout="horizontal" %}
-                    {% bootstrap_field form.start_year layout="horizontal" %}
-                    {% bootstrap_field form.end_year layout="horizontal" %}
-                    {% bootstrap_field form.coverage layout="horizontal" %}
-                    {% bootstrap_field form.region layout="horizontal" %}
-                    {% bootstrap_field form.page layout="horizontal" %}
-                    {% bootstrap_field form.download_page layout="horizontal" %}
+                        {% bootstrap_field form.start_year layout="horizontal" %}
+                        {% bootstrap_field form.end_year layout="horizontal" %}
+                        {% bootstrap_field form.coverage layout="horizontal" %}
+                        {% bootstrap_field form.region layout="horizontal" %}
+                        {% bootstrap_field form.page layout="horizontal" %}
+                        {% bootstrap_field form.download_page layout="horizontal" %}
                     </div>
                     {% bootstrap_field form.contacts %}
                     {% bootstrap_field form.formats %}
@@ -60,7 +60,7 @@
                 </div>
             </div>
             <br />
-            <div style="float:right;">
+            <div class="pull-right">
                 {% buttons %}
                     <button type="submit"
                             class="btn btn-primary"
@@ -100,7 +100,13 @@
                   <tbody style="display:none;">
                       <tr class="tmpl">
                           <td>
-                              <a href="#" target="_blank" data-format-id="" data-format-name=""></a>
+                              <a href="#"
+                                 target="_blank"
+                                 data-truncated-href="#"
+                                 data-format-id=""
+                                 data-format-name="">
+                                  {# will be populated from js on client side. #}
+                              </a>
                           </td>
                           <td>
                               <span class="file-name"></span>

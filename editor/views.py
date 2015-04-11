@@ -252,7 +252,7 @@ class DatasetEditMixin(object):
         self.object = self.get_formset_instance()
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        datafile_formset = DataFileFormset(prefix='datafile', instance=self.object)
+        datafile_formset = DataFileFormset(prefix='datafile', instance=self.object, auto_id=False)
         docfile_formset = DocumentFileFormset(prefix='documentfile', instance=self.object)
         return self.render_to_response(
             self.get_context_data(

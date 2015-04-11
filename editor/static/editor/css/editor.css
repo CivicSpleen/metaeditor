@@ -35,3 +35,25 @@
     /*offset icon width*/
     padding-right: 24px;
 }
+
+#datafiles .control-label, #documentfiles .control-label {
+    display:none;
+}
+
+#datafiles .form-group, #documentfiles .form-group{
+    margin: 0;
+}
+
+#datafiles .col-md-7, #documentfiles .col-md-7{
+    padding-right: 2px;
+}
+#datafiles .col-md-3, #documentfiles .col-md-3{
+    padding-right: 2px;
+}
+#datafiles .col-md-2, #documentfiles .col-md-2{
+    padding-right: 2px;
+}
+
+#datafiles hr, #documentfiles hr{
+    margin: 8px 0;
+}

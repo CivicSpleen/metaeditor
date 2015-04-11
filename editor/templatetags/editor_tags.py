@@ -6,17 +6,19 @@ register = template.Library()
 
 
 @register.inclusion_tag('editor/includes/formset_forms.html')
-def formset_form(form):
+def formset_form(formset, form):
     """ Renders one formset form. """
     return {
+        'formset': formset,
         'forms': [form]
     }
 
 
 @register.inclusion_tag('editor/includes/formset_forms.html')
-def formset_forms(forms):
+def formset_forms(formset, forms):
     """ Renders all given forms. """
     return {
+        'formset': formset,
         'forms': forms
     }
 

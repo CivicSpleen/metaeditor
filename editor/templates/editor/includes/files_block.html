@@ -1,13 +1,13 @@
 {% load editor_tags %}
 <fieldset id="{{ id }}">
     <legend>{{ title }}</legend>
-    <div class="empty-form" style="display:none;border:solid gray 1px;">
-        {% formset_form formset.empty_form %}
+    <div class="empty-form" style="display:none;">
+        {% formset_form formset formset.empty_form %}
     </div>
     <div class="formset"
-         data-total-forms-id="id_{{ formset.prefix }}-TOTAL_FORMS">
+         data-total-forms-input-name="{{ formset.prefix }}-TOTAL_FORMS">
         {{ formset.management_form }}
-        {% formset_forms formset.forms %}
+        {% formset_forms formset formset.forms %}
     </div>
     <div style="clear:both;"></div>
     <a class="add-new" href="#" title="Add new data file">Add</a>

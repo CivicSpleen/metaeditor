@@ -36,18 +36,34 @@
         var addNewForm = function($fieldset, link) {
             // Adds new form (django formset form) to the given fieldset.
             var formIdx = $(".dynamic-formset-form", $fieldset).size();
+
+            // get name of the input containing total forms.
+            var inputName = $(".formset", $fieldset).attr("data-total-forms-input-name");
+
+            // find empty form and create from it new form.
             var $newForm = $($(".empty-form", $fieldset).html().replace(/__prefix__/g, formIdx));
             $newForm.addClass("dynamic-formset-form");
+
             if (link) {
+                // initialize form with link data.
                 $(".name", $newForm).val(link.text);
-                $(".url", $newForm).val(link.href);
                 $("select", $newForm).val(link.format.id);
+                $(".url", $newForm)
+                    .val(link.href)
+                    .hide();
+                $(".link", $newForm)
+                    .attr("href", link.href)
+                    .text(link.truncated_href)
+                    .show();
                 $newForm.prependTo($(".formset", $fieldset));
                 validateURL($(".url", $newForm));
             } else {
+                // render empty form.
                 $newForm.appendTo($(".formset", $fieldset));
             }
-            $("#" + $(".formset", $fieldset).attr("data-total-forms-id")).val(parseInt(formIdx) + 1);
+
+            // increase total forms counter
+            $("input[name=" + inputName + "]").val(parseInt(formIdx) + 1);
         };
 
         $(".add-new").click(function(e) {
@@ -80,6 +96,7 @@
                     $("a", $current)
                         .attr("href", links[i].href)
                         .attr("title", links[i].title)
+                        .attr("data-truncated-href", links[i].truncated_href)
                         .text(links[i].text);
                     if (links[i].format) {
                         $("a", $current)
@@ -105,6 +122,7 @@
             return {
                 text: $a.text(),
                 href: $a.attr("href"),
+                truncated_href: $a.attr("data-truncated-href"),
                 format: {
                     id: $a.attr("data-format-id"),
                     name: $a.attr("data-format-name")}

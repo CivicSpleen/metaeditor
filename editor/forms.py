@@ -2,12 +2,44 @@
 from logging import getLogger
 
 from django import forms
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, BaseInlineFormSet
+from django.utils.html import format_html
 
 from editor.models import Dataset, DataFile, DocumentFile, Category,\
     Format, Source, Extension
+from editor.utils import truncate_value
 
 logger = getLogger(__name__)
+
+
+class LinkWidget(forms.URLInput):
+
+    def __init__(self, show_link=False, *args, **kwargs):
+        super(LinkWidget, self).__init__(*args, **kwargs)
+        self.show_link = show_link
+
+    def render(self, name, value, attrs=None):
+        if self.show_link:
+            link_style = ''
+            if not attrs:
+                attrs = {'type': 'hidden'}
+            else:
+                attrs['type'] = 'hidden'
+        else:
+            link_style = 'style=display:none;'
+
+        input_html = super(LinkWidget, self).render(name, value, attrs)
+        if value is None:
+            value = '#'
+
+        truncated_value = truncate_value(value)
+
+        a_html = format_html(
+            '<a class="link" href="{0}" title="{1}" {2}>{1}</a>',
+            value,
+            truncated_value,
+            link_style)
+        return format_html('{0}\n{1}', input_html, a_html)
 
 
 class NodeBaseForm(forms.ModelForm):
@@ -138,8 +170,29 @@ class FileBaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(FileBaseForm, self).__init__(*args, **kwargs)
+        if self.instance and self.instance.id:
+            show_link = True
+        else:
+            show_link = False
+        self.fields['url'].widget = LinkWidget(show_link=show_link)
         self.fields['name'].widget.attrs['class'] = 'name'
         self.fields['url'].widget.attrs['class'] = 'url'
+
+        # remove labels from all of the fields
+        self.fields['name'].label = ''
+        self.fields['file_format'].label = ''
+        self.fields['url'].label = ''
+
+        # add title for all of the fields
+        self.fields['name'].widget.attrs['title'] = 'Name of the file.'
+        self.fields['file_format'].widget.attrs['title'] = 'Format of the file.'
+        self.fields['url'].widget.attrs['title'] = 'URL of the file.'
+
+        self.fields['name'].widget.attrs['placeholder'] = 'Name'
+        self.fields['url'].widget.attrs['placeholder'] = 'URL'
+
+        # do not show root format
+        self.fields['file_format'].queryset = self.fields['file_format'].queryset.exclude(parent__isnull=True)
 
 
 class DataFileForm(FileBaseForm):
@@ -155,7 +208,13 @@ class DocumentFileForm(FileBaseForm):
         model = DocumentFile
         fields = ['name', 'dataset', 'file_format', 'url']
 
+
+class MyFormSet(BaseInlineFormSet):
+    def add_fields(self, form, index):
+        super(MyFormSet, self).add_fields(form, index)
+        form.fields['DELETE'].label = 'Del'
+
 DataFileFormset = inlineformset_factory(
-    Dataset, DataFile, form=DataFileForm, extra=1)
+    Dataset, DataFile, form=DataFileForm, formset=MyFormSet, extra=1)
 DocumentFileFormset = inlineformset_factory(
-    Dataset, DocumentFile, form=DocumentFileForm, extra=1)
+    Dataset, DocumentFile, form=DocumentFileForm, formset=MyFormSet, extra=1)

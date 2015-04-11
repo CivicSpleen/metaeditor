@@ -98,5 +98,16 @@ def guess_format(links):
             link['format']['id'] = format.id
             link['format']['name'] = format.name
         link['file_name'] = link['href'].split('/')[-1]
+        link['truncated_href'] = truncate_value(link['href'])
         guessed_links.append(link)
     return guessed_links
+
+
+def truncate_value(value):
+    """ If value is longer then max length, then replaces excess chars in the middle
+        with `...`.
+    """
+    URL_MAX_LENGTH = 60
+    if len(value) > URL_MAX_LENGTH:
+        value = u'%s...%s' % (value[:40], value[-20:])
+    return value
