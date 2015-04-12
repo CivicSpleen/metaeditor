@@ -5,39 +5,46 @@
 
 {% block content %}
 <form method="get">
-    <label for="id_query">Filter</label>
-    <input
-        title="Search by title or source name or page url"
-        id="id_query"
-        type="text"
-        name="query"
-        value="{{ query }}"/>
-    <input type="submit" />
+    <div class="form-horizontal">
+        <div class="form-group">
+        <label class="control-label col-md-1" for="id_query">Search:</label>
+        <div class="col-md-4">
+        <input
+            class="form-control"
+            title="Search by title or source name or page url"
+            id="id_query"
+            type="text"
+            name="query"
+            value="{{ query }}"/>
+        </div>
+        <input value="Submit" type="submit" class="btn"/>
+        </div>
+    </div>
 </form>
-<table border="1">
+<table class="table">
     <tr>
         <th>
-            <a href="{% add_params request.get_full_path o="title" page="1" %}">
+            <a title="order by title" href="{% add_params request.get_full_path o="title" page="1" %}">
                 Title
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="source__name" page="1" %}">
+            <a title="order by source" href="{% add_params request.get_full_path o="source__name" page="1" %}">
                 Source
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="page" page="1" %}">
+            <a title="order by URL" href="{% add_params request.get_full_path o="page" page="1" %}">
                 Dataset page URL
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="datafile__count" page="1" %}">
+            <a title="order by number of datafiles" href="{% add_params request.get_full_path o="datafile__count" page="1" %}">
                 Number of datafiles
             </a>
         </th>
         <th>
-            <a href="{% add_params request.get_full_path o="documentfile__count" page="1" %}">
+            <a title="order by number of documents" href="{% add_params request.get_full_path o="documentfile__count" page="1" %}">
                 Number of documents
             </a>
         </th>
