@@ -71,14 +71,12 @@ def and_i_populate_other_fields_of_the_dataset_form_with_random_values(step):
         field.clear()
         field.send_keys(keys)
 
-    set_value('#id_variant', 'Variant1')
     set_value('#id_start_year', 1976)
     set_value('#id_end_year', 1976)
     world.elems('#id_coverage option')[1].click()
     world.elems('#id_region option')[1].click()
     set_value('#id_page', 'http://ya.ru')
     set_value('#id_download_page', 'http://ya.ru')
-    set_value('#id_contacts', 'Contacts')
     set_value('#id_entry_time_minutes', '15')
 
 

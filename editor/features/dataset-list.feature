@@ -4,7 +4,6 @@ Feature: List of the datasets
         Given 3 datasets exists
           and I am authenticated user
           and I access the "/" url
-          and I click on "Dataset List" menu option
         Then I see dataset list page
           and I see table with all three datasets
           and "Dataset List" menu option is active
@@ -14,7 +13,7 @@ Feature: List of the datasets
           and I am authenticated user
           and I have permission to add dataset
           and I have permission to change dataset
-          and I access the "/editor/dataset" url
+          and I access the "/" url
         Then I see dataset list page
         When I click dataset with "title1" title
         Then I see "title1" dataset edit page

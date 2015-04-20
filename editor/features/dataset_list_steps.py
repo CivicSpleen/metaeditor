@@ -21,7 +21,9 @@ def and_i_click_on_group1_menu_option(step, elem_text):
 
 @step(u'Then I see dataset list page')
 def then_i_see_dataset_list_page(step):
-    assert 'Dataset List' in world.browser.title
+    def is_list(browser):
+        return 'Dataset List' in world.browser.title
+    world.wait(is_list, msg='Timeout waiting Dataset list loading.')
 
 
 @step(u'and I see table with all three datasets')
@@ -52,12 +54,11 @@ def given_dataset_with_given_title_exists(step, title):
 
 @step(u'When I click dataset with "([^"]*)" title')
 def when_i_click_dataset_with_given_title(step, title):
-    clicked = False
     for a in world.elems('table a'):
         if a.text == title:
-            clicked = True
             a.click()
-    assert clicked
+            return
+    raise AssertionError('link with %s title was not found in the dataset table.')
 
 
 @step(u'Then I see "([^"]*)" dataset edit page')
