@@ -209,7 +209,7 @@ class FormatUpdate(BaseUpdateView):
 
 class DatasetList(ListView):
     model = Dataset
-    paginate_by = 5
+    paginate_by = 50
 
     def get_queryset(self, *args, **kwargs):
         qs = super(DatasetList, self).get_queryset(*args, **kwargs)
@@ -225,7 +225,8 @@ class DatasetList(ListView):
                 | Q(page__icontains=query))
 
         order_by = self.request.GET.get('o')
-        if order_by not in ('title', 'source__name', 'page', 'datafile__count', 'documentfile__count'):
+        ORDER_FIELDS = ('title', 'source__name', 'page', 'datafile__count', 'documentfile__count')
+        if order_by not in ORDER_FIELDS:
             order_by = None
         if order_by:
             qs = qs.order_by(order_by)
