@@ -57,7 +57,11 @@
                 </a>
             </td>
             <td>{{ dataset.source }}</td>
-            <td>{{ dataset.page }}</td>
+            <td>
+                <a href="{{ dataset.page }}" title="open in new window" target="_blank">
+                    {{ dataset.page }}
+                </a>
+            </td>
             <td>{{ dataset.datafile__count }}</td>
             <td>{{ dataset.documentfile__count }}</td>
         </tr>
