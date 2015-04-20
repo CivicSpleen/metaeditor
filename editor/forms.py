@@ -81,7 +81,7 @@ class DatasetForm(forms.ModelForm):
         model = Dataset
         fields = [
             'title', 'categories', 'start_year', 'end_year',
-            'coverage', 'region', 'page', 'download_page', 'contacts',
+            'coverage', 'region', 'page', 'download_page',
             'formats', 'is_complex', 'is_reviewed', 'has_restricted_version',
             'has_restrictive_licensing', 'has_direct_public_download',
             'entry_time_minutes']
