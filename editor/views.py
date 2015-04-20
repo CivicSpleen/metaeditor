@@ -12,10 +12,9 @@ from django.core.urlresolvers import reverse
 from django.core.validators import URLValidator
 from django.db.models import Q, Count
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 
 from django.views.decorators.http import require_POST
-from django.views.generic import View
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
@@ -25,13 +24,6 @@ from editor.models import Category, Source, Format, Dataset
 from editor.utils import get_links, filter_links, guess_format
 
 logger = logging.getLogger(__name__)
-
-
-class IndexView(View):
-    template_name = 'editor/index.html'
-
-    def get(self, request):
-        return render(request, self.template_name)
 
 
 class BaseTreeView(ListView):

@@ -84,8 +84,7 @@
             {% url 'editor:source-list' as source_list_url %}
             {% url 'editor:format-list' as format_list_url %}
             {% url 'editor:category-list' as category_list_url %}
-            {% url 'editor:dataset-list' as dataset_list_url %}
-            <li {% if request.path == dataset_list_url %}class="active"{% endif %}>
+            <li {% if request.path == "/" %}class="active"{% endif %}>
                 <a href="{{ dataset_list_url }}">Dataset List</a>
             </li>
             <li {% if request.path == source_list_url %}class="active"{% endif %}>

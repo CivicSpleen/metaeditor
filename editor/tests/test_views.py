@@ -171,26 +171,6 @@ class NodeListTestMixin(object):
             '%s node was not found in the response' % node2.name)
 
 
-class IndexViewTest(TestCase):
-    def setUp(self):
-        self.url = reverse('index')
-
-    def test_renders_menu(self):
-        resp = self.client.get(self.url)
-        self.assertEqual(resp.status_code, 200)
-
-        self.assertIn('Dataset List', resp.content)
-
-        self.assertIn('Source Hierarchy Editor', resp.content)
-        self.assertIn(reverse('editor:source-list'), resp.content)
-
-        self.assertIn('Formats Hierarchy Editor', resp.content)
-        self.assertIn(reverse('editor:format-list'), resp.content)
-
-        self.assertIn('Categories Hierarchy Editor', resp.content)
-        self.assertIn(reverse('editor:category-list'), resp.content)
-
-
 class CategoryNodeCreateTest(BaseCreateTest, CreatePermissionTestMixin, NodeCreateTestMixin):
 
     def get_url(self):
@@ -447,7 +427,7 @@ class FormatNodeUpdateTest(BaseUpdateTest):
 class DatasetListTest(TestCase):
 
     def setUp(self):
-        self.url = reverse('editor:dataset-list')
+        self.url = reverse('dataset-list')
 
     def test_all_existing_datasets_are_listed(self):
         dataset1 = DatasetFactory()

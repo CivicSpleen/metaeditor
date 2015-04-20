@@ -6,9 +6,6 @@ from django.contrib.auth.decorators import login_required
 from editor import views
 
 urlpatterns = patterns('',
-    url(r'^dataset$',
-        views.DatasetList.as_view(),
-        name='dataset-list'),
     url(r'^dataset/source/(?P<source_pk>[0-9]+)/create$',
         login_required(views.DatasetCreate.as_view()),
         name='dataset-create'),
