@@ -80,7 +80,7 @@ class DatasetForm(forms.ModelForm):
     class Meta:
         model = Dataset
         fields = [
-            'title', 'categories', 'variant', 'start_year', 'end_year',
+            'title', 'categories', 'start_year', 'end_year',
             'coverage', 'region', 'page', 'download_page', 'contacts',
             'formats', 'is_complex', 'is_reviewed', 'has_restricted_version',
             'has_restrictive_licensing', 'has_direct_public_download',
