@@ -207,6 +207,9 @@ class Dataset(models.Model):
     contacts = models.TextField(
         null=True, blank=True,
         help_text='Freeform text of people to email or call about the dataset. ')
+    about = models.TextField(
+        null=True, blank=True,
+        help_text='Freeform text about the dataset.')
     formats = models.ManyToManyField(
         Format,
         help_text='Collection of Formats associated with this dataset.')
