@@ -93,6 +93,17 @@ class DatasetForm(forms.ModelForm):
         if self.instance and self.instance.id and self.instance.datafile_set.exists():
             self.fields['formats'].widget.attrs['disabled'] = 'disabled'
 
+        # change start and end years labels
+        self.fields['start_year'].label = 'from'
+        self.fields['end_year'].label = 'to'
+
+        # move help text to the title for start and end year
+        self.fields['start_year'].widget.attrs['title'] = self.fields['start_year'].help_text
+        self.fields['start_year'].help_text = ''
+
+        self.fields['end_year'].widget.attrs['title'] = self.fields['end_year'].help_text
+        self.fields['end_year'].help_text = ''
+
     def save(self, *args, **kwargs):
         instance = super(DatasetForm, self).save(commit=False, *args, **kwargs)
         if self.source:

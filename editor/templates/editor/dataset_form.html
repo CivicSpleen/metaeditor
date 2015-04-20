@@ -31,8 +31,22 @@
                     {% bootstrap_field form.categories %}
                     <div class="form-horizontal">
                         {% bootstrap_field form.variant layout="horizontal" %}
-                        {% bootstrap_field form.start_year layout="horizontal" %}
-                        {% bootstrap_field form.end_year layout="horizontal" %}
+                    </div>
+                    <div class="form-horizontal years">
+                        <div class="col col-xs-2">
+                            <label class="control-label">
+                                Years:
+                            </label>
+                        </div>
+                        <div class="col col-xs-4 col-start-year">
+                            {% bootstrap_field form.start_year layout="horizontal" %}
+                        </div>
+                        <div class="col col-xs-4 col-end-year">
+                            {% bootstrap_field form.end_year layout="horizontal" %}
+                        </div>
+                        <div style="clear:both;"></div>
+                    </div>
+                    <div class="form-horizontal">
                         {% bootstrap_field form.coverage layout="horizontal" %}
                         {% bootstrap_field form.region layout="horizontal" %}
                         {% bootstrap_field form.page layout="horizontal" %}

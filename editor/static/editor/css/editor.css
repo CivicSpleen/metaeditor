@@ -57,3 +57,24 @@
 #datafiles hr, #documentfiles hr{
     margin: 8px 0;
 }
+
+.years .form-group {
+    margin: 0;
+    padding: 0;
+}
+
+.years {
+    margin: 15px -15px
+}
+
+.years div {
+    margin: 0;
+    padding: 0;
+}
+.years label {
+    margin: 0 10px 0 15px;
+    padding: 0;
+}
+.years .col-end-year label {
+    margin: 0 0 0 10px;
+}
