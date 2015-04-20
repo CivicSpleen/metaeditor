@@ -63,6 +63,25 @@ class GetLinksTest(TestCase):
         self.assertEquals(len(links), 1)
         self.assertEquals(links[0]['href'], 'http://python.org/index')
 
+    @fudge.patch('editor.utils.requests.get')
+    def test_strips_link_text(self, fake_get):
+        class FakeSuccessResponse(object):
+            status_code = 200
+            content = '''
+                <html>
+                    <body>
+                        <a href="/index" title="Python">   Python    </a>
+                    </body>
+                </html>
+            '''
+
+        fake_get.expects_call()\
+            .returns(FakeSuccessResponse())
+
+        links = get_links('http://python.org/versions')
+        self.assertEquals(len(links), 1)
+        self.assertEquals(links[0]['text'], 'Python')
+
 
 class GuessFormatTest(TestCase):
     @fudge.patch(

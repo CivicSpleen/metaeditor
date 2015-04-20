@@ -35,7 +35,7 @@ class LinksParser(HTMLParser):
     def handle_data(self, data):
         """ Updates last link found with `a` text. """
         if self.in_a:
-            self.links[-1]['text'] = data
+            self.links[-1]['text'] = data.strip()
 
 
 def get_links(url):
