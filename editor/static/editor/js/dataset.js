@@ -33,6 +33,9 @@
     });
 
     $(function() {
+        $('#id_coverage').typeahead({
+            ajax: '/editor/coverage-list'});
+
         var addNewForm = function($fieldset, link) {
             // Adds new form (django formset form) to the given fieldset.
             var formIdx = $(".dynamic-formset-form", $fieldset).size();

@@ -776,3 +776,18 @@ class ValidateURLTest(TestCase):
         self.assertIn('is_valid', content)
         self.assertTrue(content['is_valid'])
         self.assertNotIn('errors', content)
+
+
+class CoverageListTest(TestCase):
+    def setUp(self):
+        self.user1 = UserFactory()
+        logged_in = self.client.login(
+            username=self.user1.username,
+            password='1')
+        self.assertTrue(logged_in)
+        self.url = reverse('editor:coverage-list')
+
+    def test_is_disabled_for_anonymous(self):
+        self.client.logout()
+        resp = self.client.post(self.url)
+        self.assertEqual(resp.status_code, 302)

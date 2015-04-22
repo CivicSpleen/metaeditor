@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from editor import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^dataset/source/(?P<source_pk>[0-9]+)/create$',
         login_required(views.DatasetCreate.as_view()),
         name='dataset-create'),
@@ -48,4 +48,7 @@ urlpatterns = patterns('',
     url(r'^validate-url$',
         views.validate_url,
         name='validate-url'),
-)
+    url(r'^coverage-list$',
+        views.coverage_list,
+        name='coverage-list'),
+]

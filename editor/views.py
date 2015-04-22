@@ -18,6 +18,8 @@ from django.views.decorators.http import require_POST
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
+import ambry
+
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm,\
     SourceForm, CategoryForm, FormatForm
 from editor.models import Category, Source, Format, Dataset
@@ -450,4 +452,20 @@ def validate_url(request):
         response_data['is_valid'] = True
     return HttpResponse(
         json.dumps(response_data),
+        content_type='application/json')
+
+
+@login_required
+def coverage_list(request):
+    """ Returns list of geo coverages. """
+
+    query = request.GET.get('query', '')
+
+    l = ambry.library()
+    try:
+        results = [name for score, gvid, name in l.search.search_identifiers(query, limit=30)]
+    except Exception as exc:
+        logger.error(u'Coverages search failed with `%s` error.' % exc)
+    return HttpResponse(
+        json.dumps(results),
         content_type='application/json')
