@@ -8,6 +8,7 @@ from django.test import TestCase
 
 from accounts.tests.helpers import give_perm
 
+from editor.constants import REGION_CHOICES
 from editor.models import Category, Dataset, DataFile, DocumentFile,\
     Source, Format, Extension
 
@@ -544,8 +545,8 @@ class DatasetCreateTest(BaseTest):
             'categories': [categ1.id],
             'start_year': 1976,
             'end_year': 1976,
-            'coverage': Dataset.STATE,
-            'region': Dataset.STATE,
+            'coverage': '?',
+            'region': REGION_CHOICES[0][0],
             'page': 'http://ya.ru',
             'formats': [format1.id],
             'entry_time_minutes': 15,
@@ -613,8 +614,8 @@ class DatasetUpdateTest(TestCase):
             'variant': '%s updated' % self.ds1.variant,
             'start_year': 1976,
             'end_year': 1976,
-            'coverage': Dataset.STATE,
-            'region': Dataset.STATE,
+            'coverage': '?',
+            'region': REGION_CHOICES[0][0],
             'page': 'http://ya.ru',
             'download_page': 'http://ya.ru',
             'contacts': 'contact@gmail.com',

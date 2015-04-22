@@ -8,6 +8,8 @@ from django.db import models
 
 from mptt.models import MPTTModel, TreeForeignKey
 
+from editor.constants import REGION_CHOICES
+
 logger = getLogger(__name__)
 
 
@@ -159,23 +161,6 @@ class Extension(models.Model):
 
 
 class Dataset(models.Model):
-    NATIONAL = 'national'
-    STATE = 'state'
-    COUNTY = 'county'
-    SUB_COUNTY = 'sub-county'
-
-    COVERAGE_CHOICES = (
-        (NATIONAL, 'National'),
-        (STATE, 'State'),
-        (COUNTY, 'County'),
-        (SUB_COUNTY, 'Sub county'))
-
-    STATE_AND_COUNTY = 'state_and_county'
-
-    REGION_CHOICES = (
-        (STATE, 'State'),
-        (STATE_AND_COUNTY, 'State and county'))
-
     source = models.ForeignKey(
         Source,
         help_text='Source of the dataset.')
@@ -194,9 +179,10 @@ class Dataset(models.Model):
     end_year = models.IntegerField(
         help_text='The last year for which the dataset has data.')
     coverage = models.CharField(
-        max_length=50,
-        choices=COVERAGE_CHOICES)
+        'Geo Coverage',
+        max_length=50)
     region = models.CharField(
+        'Geo Grain',
         max_length=100,
         choices=REGION_CHOICES)
     page = models.URLField(

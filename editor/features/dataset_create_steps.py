@@ -6,8 +6,8 @@ from nose.tools import assert_equals, assert_true, assert_in
 
 import fudge
 
-from editor.models import Dataset, Extension, Format
-from editor.tests.factories import SourceFactory, FormatFactory
+from editor.models import Dataset, Format
+from editor.tests.factories import SourceFactory
 
 
 def _get_formset_block(name):
@@ -73,7 +73,7 @@ def and_i_populate_other_fields_of_the_dataset_form_with_random_values(step):
 
     set_value('#id_start_year', 1976)
     set_value('#id_end_year', 1976)
-    world.elems('#id_coverage option')[1].click()
+    set_value('#id_coverage', '?')
     world.elems('#id_region option')[1].click()
     set_value('#id_page', 'http://ya.ru')
     set_value('#id_download_page', 'http://ya.ru')

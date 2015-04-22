@@ -3,6 +3,8 @@
 import factory
 
 from accounts.tests.factories import UserFactory
+
+from editor.constants import REGION_CHOICES
 from editor.models import Dataset, Format, Category, Source, Extension, DataFile
 
 
@@ -63,8 +65,8 @@ class DatasetFactory(factory.django.DjangoModelFactory):
     variant = factory.Sequence(lambda n: 'Test dataset %03d variant' % n)
     start_year = 1976
     end_year = 1976
-    coverage = Dataset.STATE
-    region = Dataset.STATE
+    coverage = ''
+    region = REGION_CHOICES[0][0]
     page = factory.Sequence(lambda n: 'Test dataset %03d page' % n)
     download_page = factory.Sequence(lambda n: 'Test dataset %03d download page' % n)
     contacts = factory.Sequence(lambda n: 'Test dataset %03d contacts' % n)

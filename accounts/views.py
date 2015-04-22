@@ -33,4 +33,4 @@ class UserUpdate(UpdateView):
         messages.add_message(self.request, messages.SUCCESS, 'Profile saved.')
         if 'save-and-continue' in self.request.POST:
             return reverse('accounts:profile')
-        return reverse('index')
+        return reverse('dataset-list')
