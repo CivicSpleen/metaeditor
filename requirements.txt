@@ -20,3 +20,7 @@ wsgiref==0.1.2
 django-url-tools==0.0.8
 django-extensions==1.5.2
 geoid==0.0.6
+
+# install ambry from develop branch because last release does not
+# have necessary functionality. Should be changed after new ambry release.
+git+https://github.com/CivicKnowledge/ambry@develop
