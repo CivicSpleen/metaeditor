@@ -10,6 +10,8 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 from editor.constants import REGION_CHOICES
 
+from compat import ambry_utils
+
 logger = getLogger(__name__)
 
 
@@ -209,6 +211,9 @@ class Dataset(models.Model):
     user = models.ForeignKey(
         User,
         help_text='Link to the user that edited this dataset. ')
+    vid = models.CharField(
+        max_length=20, null=True, blank=True, unique=True,
+        help_text='An unique number from ambry.')
 
     def update_formats(self):
         """ Gets all formats from datafiles of the dataset and saves formats with dataset. """
@@ -224,6 +229,11 @@ class Dataset(models.Model):
 
     def get_absolute_url(self):
         return reverse('editor:dataset-update', kwargs={'pk': self.id})
+
+    def save(self, *args, **kwargs):
+        if not self.vid:
+            self.vid = ambry_utils.get_vid()
+        super(self.__class__, self).save(*args, **kwargs)
 
 
 class File(models.Model):

@@ -64,6 +64,9 @@
                     <div class="form-horizontal">
                         {% bootstrap_field form.entry_time_minutes layout="horizontal" %}
                     </div>
+                    <div class="form-horizontal">
+                        {% bootstrap_field form.vid layout="horizontal" %}
+                    </div>
                 </div>
                 <div class="col-xs-6">
                     {% files_block datafile_formset "Data files" "datafiles" %}

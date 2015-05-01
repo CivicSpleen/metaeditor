@@ -78,6 +78,7 @@ def and_i_populate_other_fields_of_the_dataset_form_with_random_values(step):
     set_value('#id_page', 'http://ya.ru')
     set_value('#id_download_page', 'http://ya.ru')
     set_value('#id_entry_time_minutes', '15')
+    set_value('#id_vid', 'd0001')
 
 
 @step(u'Then new dataset with "([^"]*)" creates')

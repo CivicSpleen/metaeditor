@@ -3,6 +3,7 @@
 from django.test import TestCase
 
 import fudge
+from fudge.inspector import arg
 
 from editor.models import Format, Dataset
 from editor.tests.factories import FormatFactory, ExtensionFactory,\
@@ -73,6 +74,22 @@ class DatasetTest(TestCase):
         # now dataset should have datafiles formats only
         self.assertIn(
             dataset_format, ds1.formats.all())
+
+    @fudge.patch(
+        'editor.models.ambry_utils.get_vid')
+    def test_gets_vid_from_ambry_if_vid_is_empty(self, fake_get):
+        fake_get.expects_call()\
+            .returns('d0000001')
+        ds1 = DatasetFactory(vid=None)
+        self.assertEquals(
+            Dataset.objects.get(id=ds1.id).vid,
+            'd0000001')
+
+    def test_saves_given_vid(self):
+        ds1 = DatasetFactory(vid='abcde')
+        self.assertEquals(
+            Dataset.objects.get(id=ds1.id).vid,
+            'abcde')
 
 
 class DataFileTest(TestCase):

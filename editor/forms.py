@@ -84,7 +84,7 @@ class DatasetForm(forms.ModelForm):
             'coverage', 'region', 'page', 'download_page', 'about',
             'formats', 'is_complex', 'is_reviewed', 'has_restricted_version',
             'has_restrictive_licensing', 'has_direct_public_download',
-            'entry_time_minutes']
+            'entry_time_minutes', 'vid']
 
     def __init__(self, user, *args, **kwargs):
         self.user = user
@@ -103,6 +103,8 @@ class DatasetForm(forms.ModelForm):
 
         self.fields['end_year'].widget.attrs['title'] = self.fields['end_year'].help_text
         self.fields['end_year'].help_text = ''
+
+        self.fields['vid'].help_text = 'Leave empty to get unique number from ambry on save.'
 
     def save(self, *args, **kwargs):
         instance = super(DatasetForm, self).save(commit=False, *args, **kwargs)

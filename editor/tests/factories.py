@@ -72,6 +72,7 @@ class DatasetFactory(factory.django.DjangoModelFactory):
     contacts = factory.Sequence(lambda n: 'Test dataset %03d contacts' % n)
     entry_time_minutes = 11
     user = factory.SubFactory(UserFactory)
+    vid = factory.Sequence(lambda n: 'd0%03d' % n)
 
     @factory.post_generation
     def categories(self, create, extracted, **kwargs):
