@@ -463,9 +463,13 @@ def coverage_list(request):
 
     l = ambry.library()
     try:
-        results = [name for score, gvid, name in l.search.search_identifiers(query, limit=30)]
+        search_result = l.search.search_identifiers(query, limit=30)
+        names = []
+        if search_result:
+            for result in search_result:
+                names.append(result[-1])
     except Exception as exc:
         logger.error(u'Coverages search failed with `%s` error.' % exc)
     return HttpResponse(
-        json.dumps(results),
+        json.dumps(names),
         content_type='application/json')
