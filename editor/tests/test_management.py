@@ -2,6 +2,8 @@
 import os
 import csv
 
+import fudge
+
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -153,3 +155,72 @@ class CreateRootsTest(TestCase):
         qs = Source.objects.filter(name='!ROOT!')
         self.assertEquals(qs.count(), 1)
         self.assertIsNone(qs[0].parent)
+
+
+class SetupAmbrySearchTest(TestCase):
+
+    # helpers
+    def _patch_identifier_index(self, result):
+        """ Patches ambry search identifier to return given result. """
+        from ambry.library.search import Search
+
+        class FakeSearcher(object):
+            def search(self, query, limit=20):
+                return result
+
+            def __enter__(self, *args, **kwargs):
+                return self
+
+            def __exit__(self, *args, **kwargs):
+                pass
+
+        class FakeIdentifierIndex(object):
+            schema = '?'
+
+            def searcher(*args, **kwargs):
+                return FakeSearcher()
+
+        self._patched_identifier_index = fudge.patch_object(
+            Search, 'identifier_index', FakeIdentifierIndex())
+
+    def _restore_patched(self):
+        self._patched_identifier_index.restore()
+
+    @fudge.patch('ambry._meta')
+    def test_raises_commanderror_if_old_version_of_ambry_found(self, fake_meta):
+        fake_meta.has_attr(__version__='0.3.704')
+        try:
+            call_command('setup_ambry_search', verbosity=0)
+        except CommandError as exc:
+            self.assertIn('ambry >= 0.3.705', exc.message)
+
+    @fudge.patch(
+        'ambry._meta',
+        'editor.management.commands.setup_ambry_search.call')
+    def test_sets_up_search_system(self, fake_meta, fake_call):
+        fake_meta.has_attr(__version__='0.3.705')
+        fake_call.expects_call()\
+            .with_args(['ambry', 'config', 'install'])\
+            .next_call()\
+            .with_args(['ambry', 'sync'])\
+            .next_call()\
+            .with_args(['ambry', 'search', '-R'])
+        call_command('setup_ambry_search', verbosity=0)
+
+    @fudge.patch(
+        'ambry._meta',
+        'editor.management.commands.setup_ambry_search.call')
+    def test_raises_exception_if_search_failed(self, fake_meta, fake_call):
+        fake_meta.has_attr(__version__='0.3.705')
+        fake_call.expects_call()
+
+        # fudge failed to patch methods from library package because
+        # of ambry/__init__.py/library function. That is why I patch it here.
+        search_result = []
+        self._patch_identifier_index(search_result)
+        try:
+            call_command('setup_ambry_search', verbosity=0)
+        except CommandError as exc:
+            self.assertIn('I couldn\'t find California term', exc.message)
+        finally:
+            self._restore_patched()

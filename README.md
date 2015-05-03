@@ -15,6 +15,21 @@ Create roots (each tree will have exactly one root - invisible for project users
 python manage.py create_roots
 ```
 
+Setup ambry search system (used for typeahead in the dataset's coverage):
+```bash
+python manage.py setup_ambry_search
+```
+If automatic ambry search system (previous step) failed, try install it manually:
+```bash
+$ ambry config install
+$ ambry info                 # Verify version >= 0.3.705.
+$ ambry sync                 # Verify that you are geting the civicknowledge.com-terms-0.0.3 bundle
+$ ambry list terms           # Should return civicknowledge.com-terms
+$ ambry search terms         # Should return civicknowledge.com-terms
+$ ambry search -R            # Rebuilds place identifiers; datasets built during sync
+$ ambry search -i California # Should return California state and a lot of counties. 
+```
+
 ## Social authentication setup.
 
 Given you are running metaeditor app on metaeditor.org
@@ -27,7 +42,6 @@ Given you are running metaeditor app on metaeditor.org
     SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = "..."  # Client Id
     SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = "..."  # Client secret
 
-    TODO: describe env vars populating too.
 4. Make sure the Google+ API is in the list of enabled APIs on the Google Developer Console (under APIs)
 5. Now try to log in and log out.
 
@@ -37,7 +51,6 @@ Given you are running metaeditor app on metaeditor.org
 3. Copy the App ID and App Secret, and place them into local_settings.py file:
     SOCIAL_AUTH_FACEBOOK_KEY = "..."  # App ID
     SOCIAL_AUTH_FACEBOOK_SECRET = "..."  # App secret
-    TODO: describe env vars populating too.
 4. Now try to log in and log out.
 
 ## Email notification setup.
