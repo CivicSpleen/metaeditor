@@ -18,7 +18,7 @@ from django.views.decorators.http import require_POST
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic.list import ListView
 
-import ambry
+from compat import ambry_utils
 
 from editor.forms import DatasetForm, DataFileFormset, DocumentFileFormset, ScrapeForm,\
     SourceForm, CategoryForm, FormatForm
@@ -460,16 +460,7 @@ def coverage_list(request):
     """ Returns list of geo coverages. """
 
     query = request.GET.get('query', '')
-
-    l = ambry.library()
-    try:
-        search_result = l.search.search_identifiers(query, limit=30)
-        names = []
-        if search_result:
-            for result in search_result:
-                names.append(result[-1])
-    except Exception as exc:
-        logger.error(u'Coverages search failed with `%s` error.' % exc)
+    names = ambry_utils.search(query, limit=30)
     return HttpResponse(
         json.dumps(names),
         content_type='application/json')

@@ -5,7 +5,8 @@ from django.test import TestCase
 import fudge
 from fudge.inspector import arg
 
-from compat.ambry_utils import get_vid
+from compat.ambry_utils import get_vid, search
+from compat.tests import helpers
 
 
 class GetVidTest(TestCase):
@@ -32,3 +33,15 @@ class GetVidTest(TestCase):
         fake_error.expects_call()\
             .with_args(arg.contains('error while retrieving vid'))
         get_vid()
+
+
+class SearchTest(TestCase):
+    def test_returns_list_of_names(self):
+        result = [
+            {'identifier': '1', 'name': 'name1'},
+            {'identifier': '2', 'name': 'name2'}]
+        helpers.patch_identifier_index(result)
+        try:
+            self.assertEquals(search('ab'), ['name1', 'name2'])
+        finally:
+            helpers.restore_patched()

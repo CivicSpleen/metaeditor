@@ -9,6 +9,8 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
+from compat.tests.helpers import patch_identifier_index, restore_patched
+
 from editor.models import Source, Category, Format
 from editor.tests.factories import SourceFactory, CategoryFactory, FormatFactory
 
@@ -162,29 +164,10 @@ class SetupAmbrySearchTest(TestCase):
     # helpers
     def _patch_identifier_index(self, result):
         """ Patches ambry search identifier to return given result. """
-        from ambry.library.search import Search
-
-        class FakeSearcher(object):
-            def search(self, query, limit=20):
-                return result
-
-            def __enter__(self, *args, **kwargs):
-                return self
-
-            def __exit__(self, *args, **kwargs):
-                pass
-
-        class FakeIdentifierIndex(object):
-            schema = '?'
-
-            def searcher(*args, **kwargs):
-                return FakeSearcher()
-
-        self._patched_identifier_index = fudge.patch_object(
-            Search, 'identifier_index', FakeIdentifierIndex())
+        patch_identifier_index(result)
 
     def _restore_patched(self):
-        self._patched_identifier_index.restore()
+        restore_patched()
 
     @fudge.patch('ambry._meta')
     def test_raises_commanderror_if_old_version_of_ambry_found(self, fake_meta):

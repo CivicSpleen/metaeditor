@@ -793,3 +793,12 @@ class CoverageListTest(TestCase):
         self.client.logout()
         resp = self.client.post(self.url)
         self.assertEqual(resp.status_code, 302)
+
+    @fudge.patch(
+        'editor.views.ambry_utils.search')
+    def test_returns_list_of_names(self, fake_search):
+        fake_search.expects_call().returns(['a', 'b'])
+        resp = self.client.get(self.url)
+        self.assertEqual(resp.status_code, 200)
+        content = json.loads(resp.content)
+        self.assertEquals(content, ['a', 'b'])
